@@ -1,7 +1,4 @@
-ALL_ARGS=("--interactive" "" "--yoked")
-model="gemini-3-flash-preview"
-API_BASE="google"
+#!/bin/zsh
+MODEL="gemini-3-flash-preview"
 
-for ARGS in "${ALL_ARGS[@]}"; do
-    sbatch run_model_api.sh $model $ARGS --api_base $API_BASE
-done
+sbatch run_model_api.sh $MODEL --interactive --api_base https://generativelanguage.googleapis.com/ --n_samples 10 --n_trials 5

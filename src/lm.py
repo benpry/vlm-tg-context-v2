@@ -110,7 +110,9 @@ def get_samples_single_row(client, model_name, messages, n_samples):
         tokens = [choice.message.content.strip() for choice in response.choices]
     else:
         # Claude and Gemini: sequential calls per row (cross-row parallelism handles throughput)
-        tokens = [_get_single_sample(client, model_name, messages) for _ in range(n_samples)]
+        tokens = [
+            _get_single_sample(client, model_name, messages) for _ in range(n_samples)
+        ]
 
     counts = Counter(t for t in tokens if t in CHOICES)
     return _counts_to_logprobs(counts, n_samples) if counts else {}
@@ -143,7 +145,7 @@ def get_logits(
         )
 
     if n_trials is not None:
-        df = df.head(n_trials)
+        df = df.sample(n_trials)
 
     df["chat_prompt"] = df.apply(preprocess_messages, axis=1)
 

@@ -34,7 +34,9 @@ def _add_session_id(df: pd.DataFrame) -> None:
     if "workerid" in df.columns:
         df["_session_id"] = df["workerid"]
     elif "shuffle_rep" in df.columns:
-        df["_session_id"] = df["gameId"].astype(str) + "_" + df["shuffle_rep"].astype(str)
+        df["_session_id"] = (
+            df["gameId"].astype(str) + "_" + df["shuffle_rep"].astype(str)
+        )
     else:
         df["_session_id"] = df["gameId"]
 
@@ -88,8 +90,12 @@ def update_histories(df: pd.DataFrame, trial_num: int):
 
 def process_interactive_row(client, model_name, messages, n_samples=None):
     if n_samples:
-        choice_logprobs = get_samples_single_row(client, model_name, messages, n_samples)
-        prediction = max(choice_logprobs, key=choice_logprobs.get) if choice_logprobs else ""
+        choice_logprobs = get_samples_single_row(
+            client, model_name, messages, n_samples
+        )
+        prediction = (
+            max(choice_logprobs, key=choice_logprobs.get) if choice_logprobs else ""
+        )
         return choice_logprobs, prediction
 
     response = get_completion_with_backoff(
@@ -161,7 +167,9 @@ def run_interactive_evaluation(
             results = list(
                 tqdm(
                     executor.map(
-                        lambda msgs: process_interactive_row(client, model_name, msgs, n_samples),
+                        lambda msgs: process_interactive_row(
+                            client, model_name, msgs, n_samples
+                        ),
                         row_messages,
                     ),
                     total=len(row_messages),

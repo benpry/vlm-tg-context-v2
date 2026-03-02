@@ -178,9 +178,7 @@ def get_openai_messages(
         for i, msg in enumerate(chat_messages):
             if msg["role"] == "user":
                 if isinstance(msg["content"], str):
-                    chat_messages[i]["content"] = (
-                        f"{system_prompt}\n{msg['content']}"
-                    )
+                    chat_messages[i]["content"] = f"{system_prompt}\n{msg['content']}"
                 elif isinstance(msg["content"], list):
                     # If content is already a list, prepend system prompt as text
                     chat_messages[i]["content"] = [
@@ -209,9 +207,7 @@ def get_openai_messages(
                 new_content = [
                     {
                         "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/png;base64,{base64_image}"
-                        },
+                        "image_url": {"url": f"data:image/png;base64,{base64_image}"},
                     },
                     *content,
                 ]
@@ -219,9 +215,7 @@ def get_openai_messages(
                 new_content = [
                     {
                         "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/png;base64,{base64_image}"
-                        },
+                        "image_url": {"url": f"data:image/png;base64,{base64_image}"},
                     },
                     {"type": "text", "text": content},
                 ]
@@ -277,6 +271,7 @@ def get_logprobs_from_genai_response(response, choice_tokens):
     if not all(token in choice_logprobs for token in choice_tokens):
         warnings.warn("Not all choice tokens found in top logprobs.")
     return choice_logprobs
+
 
 from google.genai import types
 
