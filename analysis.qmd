@@ -1,0 +1,906 @@
+---
+title: "analysis"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(here)
+library(glue)
+library(jsonlite)
+library(patchwork)
+library(lme4)
+library(lmerTest)
+library(brms)
+library(udpipe)
+
+source(here("analysis_scripts", "logprobs.R"))
+source(here("analysis_scripts", "plot_helpers.R"))
+
+CONTEXT_LOC <- here("context_prep")
+OUTPUT_LOC <- here("data", "logprobs")
+```
+
+# Load data
+
+Exp 3 data
+```{r}
+human_data <- read_csv(url("https://raw.githubusercontent.com/vboyce/tg-matcher/refs/heads/main/data/tgmatcheryoked-trials.csv"))
+
+human_selections <- human_data |>
+  filter(!is.na(correct_tangram)) |>
+  filter(type == "selection") |>
+  select(
+    workerid, correct, correct_tangram, condition,
+    gameId, selected, trial_index, type, orig_trialNum, orig_repNum
+  ) |>
+  mutate(workerid = as.factor(workerid),
+         matcher_trialNum = (trial_index - 3) %/% 3,
+         matcher_repNum = matcher_trialNum %/% 12,
+         # somehow two participants were assigned to 3157/139 -- but each set looks complete?
+         workerid = ifelse(workerid == "3157" & condition == "yoked", "3157a", workerid),
+         workerid = ifelse(workerid == "139" & gameId == "Z2WAkYpWiXwuGcdME", "139a", workerid)) |> 
+  filter(workerid != "141", workerid != "35") |> # exclude two participants who didn't finish
+  select(-trial_index)
+```
+
+Exp 5 data
+```{r}
+human_data_new <- read_csv(url("https://raw.githubusercontent.com/vboyce/tg-matcher/refs/heads/main/data/tgmatcher5.csv"))
+
+human_selections_new <- human_data_new |>
+  filter(!is.na(correct_tangram),
+         type == "selection") |>
+  select(
+    workerid, correct, correct_tangram, condition,
+    gameId, selected, trial_index, type, orig_trialNum, orig_repNum
+  ) |>
+  mutate(workerid = as.factor(workerid),
+         matcher_trialNum = (trial_index - 3) %/% 3,
+         matcher_repNum = matcher_trialNum %/% 12,
+         workerid = case_when( # some error in id assignment so that two prolific id got the same assigment
+           workerid == 4969 & row_number() > 5000 ~ "4969a",
+           workerid == 5003 & row_number() > 10000 ~ "5003a",
+           T ~ as.character(workerid)
+         )) |> 
+  filter(workerid != "4957") |> # exclude participant who didn't finish
+  select(-trial_index)
+```
+
+
+Original data
+```{r}
+choose <- c(
+  "Z2WAkYpWiXwuGcdME", "GWCD2NGoiA2n5Wh2i", "zviCQXNM4xWoYTmoY", "MEJ8y7jRW4947MPrH",
+  "x8BXJBHh3RxchPoHv", "rSMFkjhskBteiyQMB", "LzNv7CD7gRuxpk7cQ", "MDLyuv29jevaGLSeT",
+  "BTbGhXZvjdSFubTBg", "22dyGMRgestp8u5Lc"
+)
+
+original_chat <- read_csv(url("https://raw.githubusercontent.com/vboyce/tg-matcher/refs/heads/main/expt_prep_code/combined_chat.csv")) |> 
+  filter(gameId %in% choose)
+```
+
+## Reshape human data
+```{r}
+human_orig <- original_chat |>
+  mutate(
+    role = case_when(
+      role == "speaker" ~ "describer",
+      role == "listener" ~ "matcher"
+    ),
+    playerCount = coalesce(activePlayerCount, numPlayers),
+    accuracy = realCorrect / (playerCount - 1)
+  ) |>
+  mutate(
+    matcher_trialNum = trialNum,
+    matcher_repNum = repNum,
+    type = "human_original",
+    condition = "yoked"
+  ) |>
+  select(gameId, condition, orig_trialNum = trialNum, orig_repNum = repNum, 
+         matcher_trialNum, matcher_repNum, target = tangram, accuracy, type) |>
+  distinct()
+```
+
+```{r}
+yoked_human <- human_selections |> 
+  filter(condition == "yoked") |>
+  group_by(gameId, condition, orig_trialNum, orig_repNum, 
+           matcher_trialNum, matcher_repNum, target = correct_tangram) |>
+  summarise(accuracy = mean(correct),
+            .groups = "drop") |> 
+  mutate(type = "human_naive")
+
+shuffled_human <- human_selections |> 
+  filter(condition == "shuffled") |>
+  group_by(gameId, condition, orig_trialNum, orig_repNum, 
+           matcher_trialNum, matcher_repNum, target = correct_tangram) |>
+  summarise(accuracy = mean(correct),
+            .groups = "drop") |> 
+  mutate(type = "human_naive")
+```
+
+```{r}
+backward_human <- human_selections_new |> 
+  filter(condition == "backwards") |>
+  group_by(gameId, condition, orig_trialNum, orig_repNum, 
+           matcher_trialNum, matcher_repNum, target = correct_tangram) |>
+  summarise(accuracy = mean(correct),
+            .groups = "drop") |> 
+  mutate(type = "human_naive",
+         condition = "backward")
+
+random_human <- human_selections_new |> 
+  filter(condition == "random") |>
+  group_by(gameId, condition, orig_trialNum, orig_repNum, 
+           matcher_trialNum, matcher_repNum, target = correct_tangram) |>
+  summarise(accuracy = mean(correct),
+            .groups = "drop") |> 
+  mutate(type = "human_naive")
+```
+
+
+## Everything
+```{r}
+logprob_files <- list.files(here("data", "logprobs"), recursive = TRUE)
+
+full_logprobs <- map(logprob_files[95:116], \(f) {
+  if (f == "human_yoked/limited_feedback_yoked_Molmo2-8B_logprobs.csv") NULL
+  else load_logprobs(f)
+}) |> list_rbind()
+
+logprobs_base <- full_logprobs |> 
+  filter_logprobs()
+```
+
+Fix lengths
+```{r}
+human_orig_fixed <- human_orig |> 
+  cbind(logprobs_base |> 
+          filter(type == "model_gemma",
+                 feedback == "full",
+                 condition == "yoked") |> 
+          select(message_length, context_length)) |> 
+  mutate(runId = "1")
+yoked_human_fixed <- yoked_human |> 
+  cbind(logprobs_base |> 
+          filter(type == "model_gemma",
+                 feedback == "full",
+                 condition == "yoked") |> 
+          select(message_length, context_length)) |> 
+  mutate(runId = "1")
+shuffled_human_fixed <- human_selections |> 
+  filter(condition == "shuffled") |> 
+  cbind(logprobs_base |> 
+          filter(type == "model_gemma",
+                 feedback == "full",
+                 condition == "shuffled") |> 
+          select(message_length, context_length)) |> 
+  mutate(runId = as.character(workerid)) |>
+  group_by(gameId, runId, condition, orig_trialNum, orig_repNum, 
+           matcher_trialNum, matcher_repNum, target = correct_tangram) |>
+  summarise(accuracy = mean(correct),
+            message_length = mean(message_length),
+            context_length = mean(context_length),
+            .groups = "drop") |> 
+  mutate(type = "human_naive")
+```
+
+```{r}
+backward_human_fixed <- backward_human |> 
+  cbind(logprobs_base |> 
+          filter(type == "model_gemma",
+                 feedback == "full",
+                 condition == "backward") |> 
+          select(message_length, context_length)) |> 
+  mutate(runId = "1")
+random_msgs <- read_csv(here("context_prep", "full_feedback", "random.csv")) |> 
+  mutate(message = map(message, fromJSON),
+         message_history = message_history |>
+           replace_na("[]") |>
+           map(fromJSON),
+         message_len = map_int(message, \(m) {
+           m$text |>
+             replace_na("") |>
+             str_c(collapse = " ") |>
+             str_count("\\S+")
+         }),
+         context_len = map_int(message_history, \(m) {
+           if (length(m) == 0) {
+             return(0L)
+           }
+           m |>
+             list_rbind() |>
+             pull(text) |>
+             replace_na("") |>
+             str_c(collapse = " ") |>
+             str_count("\\S+")
+         }))
+random_human_fixed <- human_selections_new |> 
+  filter(condition == "random") |> 
+  left_join(random_msgs |> 
+              select(workerid, matcher_trialNum, matcher_repNum, 
+                     message_length = message_len, context_length = context_len),
+            by = join_by(workerid, matcher_trialNum, matcher_repNum)) |> 
+  mutate(runId = as.character(workerid)) |>
+  group_by(runId, condition, matcher_trialNum, matcher_repNum, 
+           orig_trialNum, orig_repNum, gameId, target = correct_tangram) |>
+  summarise(accuracy = mean(correct),
+            message_length = mean(message_length),
+            context_length = mean(context_length),
+            .groups = "drop") |> 
+  mutate(type = "human_naive")
+```
+
+```{r}
+full_combined <- bind_rows(
+  human_orig_fixed,
+  yoked_human_fixed,
+  shuffled_human_fixed,
+  backward_human_fixed,
+  random_human_fixed,
+  logprobs_base
+) |> 
+  mutate(type = factor(type, levels = c("human_original", "human_naive", "model_qwen", "model_gemma", 
+                                      "model_llama", "model_kimi")),
+         condition = factor(condition, levels = c("yoked", "shuffled", "backward", "ablated", 
+                                                  "other-within", "other-across", "random", "no context"))) |> 
+  arrange(type, condition, runId, matcher_trialNum, feedback, image) |>
+  group_by(type, condition, runId, target, feedback, image) |>
+  mutate(matcher_repNum = ifelse(condition %in% c("shuffled", "random"), 0:5, matcher_repNum)) |> 
+  ungroup()
+```
+
+```{r}
+all_combined <- full_combined |> 
+  rename(image_type = image) |> 
+  pivot_wider(names_from = image_type,
+              values_from = accuracy) |> 
+  mutate(accuracy = image - `no image`)
+```
+
+
+# Plots
+## Big plot
+```{r eval=F}
+p_matcher <- make_accuracy_plot(full_combined)
+ggsave(here("figs", "matcher_plot.png"), p_matcher, width = 9, height = 4.5)
+p_original <- full_combined |> 
+  filter(condition %in% c("shuffled", "backward", "random", "no context")) |> 
+  make_accuracy_plot(repnum_type = "original") +
+  COL_SCALE_NOLIM
+ggsave(here("figs", "original_plot.png"), p_original, width = 5.7, height = 4.5)
+```
+
+```{r}
+p_big_matcher <- full_combined |> 
+  filter(condition != "no context") |> 
+  cast_random() |> 
+  arrange(type, condition, gameId, runId, matcher_trialNum) |> 
+  make_accuracy_plot() +
+  theme(legend.position = "bottom")
+p_big_orig <- full_combined |> 
+  filter(condition %in% c("shuffled", "backward", "random", "no context")) |> 
+  make_accuracy_plot(repnum_type = "original") +
+  theme(legend.position = "none")
+p_big <- (p_big_matcher | p_big_orig) + 
+  plot_annotation(tag_levels = 'A') +
+  plot_layout(
+    widths = c(2.05, 1.05),
+    guides = "collect") &
+  theme(legend.position = "bottom")
+ggsave(here("figs", "big_plot.png"), p_big, width = 10, height = 5.5)
+```
+
+## No image plots
+```{r}
+p_noimg_diff <- all_combined |> 
+  make_accuracy_plot(ref_level = 0) +
+  COL_SCALE_NOLIM +
+  labs(y = "Accuracy difference (text-only − image–text)")
+ggsave(here("figs", "diff_plot.png"), p_noimg_diff, width = 9, height = 4.5)
+```
+
+
+## Context length plot
+```{r}
+h_len <- full_combined |> 
+  filter(type == "model_qwen") |> 
+  ggplot(aes(x = context_length, fill = condition)) +
+  geom_density(alpha = .2) +
+  labs(x = "Context length", y = "Density", fill = "Condition")
+p_len <- full_combined |> 
+  filter(type == "model_qwen") |>
+  ggplot(aes(x = context_length, y = accuracy, col = condition)) +
+  geom_hline(yintercept = 1 / 12, lty = "dashed") +
+  geom_point(position = position_jitter(width = .2), alpha = .05) +
+  geom_smooth(method = "loess") +
+  labs(x = "Context length", y = "Accuracy", col = "Condition")
+
+p_full_len <- h_len / p_len +
+  plot_layout(
+    heights = c(1, 4),
+    guides = "collect",
+    axes = "collect") &
+  theme(legend.position = "bottom") &
+  guides(fill = "none")
+```
+
+## Model vs human plot
+```{r}
+yoked_data <- full_combined |> 
+  filter(condition == "yoked",
+         !str_starts(type, "human_")) |> 
+  left_join(full_combined |> 
+              filter(condition == "yoked",
+                     type == "human_naive") |> 
+              rename(orig_acc = accuracy) |> 
+              select(-condition, -matcher_trialNum, -matcher_repNum, 
+                     -message_length, -context_length, -type),
+            by = join_by(gameId, orig_trialNum, orig_repNum, target)) |> 
+  mutate(repnum = orig_repNum + 1,
+         condition = "yoked")
+
+shuffled_data <- full_combined |> 
+  filter(condition == "shuffled",
+         !str_starts(type, "human_")) |> 
+  left_join(full_combined |> 
+              filter(condition == "shuffled",
+                     type == "human_naive") |> 
+              rename(orig_acc = accuracy) |> 
+              select(-condition, -message_length, -context_length, -type),
+            by = join_by(gameId, runId, orig_trialNum, orig_repNum, 
+                         matcher_trialNum, matcher_repNum, target)) |> 
+  mutate(repnum = orig_repNum + 1) |> 
+  group_by(gameId, orig_trialNum, orig_repNum, type) |>
+  summarise(
+    accuracy = mean(accuracy),
+    orig_acc = mean(orig_acc),
+    .groups = "drop"
+  ) |> 
+  mutate(condition = "shuffled")
+
+backward_data <- full_combined |> 
+  filter(condition == "backward",
+         !str_starts(type, "human_")) |> 
+  left_join(full_combined |> 
+              filter(condition == "backward",
+                     type == "human_naive") |> 
+              rename(orig_acc = accuracy) |> 
+              select(-condition, -matcher_trialNum, -matcher_repNum, 
+                     -message_length, -context_length, -type),
+            by = join_by(gameId, orig_trialNum, orig_repNum, target)) |> 
+  mutate(repnum = orig_repNum + 1,
+         condition = "backward")
+
+random_data <- full_combined |> 
+  filter(condition == "random",
+         !str_starts(type, "human_")) |> 
+  left_join(full_combined |> 
+              filter(condition == "random",
+                     type == "human_naive") |> 
+              rename(orig_acc = accuracy) |> 
+              select(-condition, -message_length, -context_length, -type),
+            by = join_by(gameId, runId, orig_trialNum, orig_repNum, 
+                         matcher_trialNum, matcher_repNum, target)) |> 
+  mutate(repnum = orig_repNum + 1) |> 
+  group_by(gameId, orig_trialNum, orig_repNum, type) |>
+  summarise(
+    accuracy = mean(accuracy),
+    orig_acc = mean(orig_acc),
+    .groups = "drop"
+  ) |> 
+  mutate(condition = "random")
+
+comparison_data <- bind_rows(yoked_data, shuffled_data, backward_data, random_data) |> 
+  mutate(type = fct_drop(type),
+         condition = factor(condition, levels = c("yoked", "shuffled", "backward", "random")))
+```
+
+```{r}
+comparison_plot <- comparison_data |> 
+  ggplot(aes(x = orig_acc, y = accuracy, col = type)) +
+  geom_abline(slope = 1, intercept = 0, lty = "dashed") +
+  geom_point(alpha = .1) +
+  geom_smooth(method = "lm") +
+  coord_cartesian(xlim = c(0, 1), ylim = c(0, 1)) +
+  facet_grid(~condition,
+             labeller = as_labeller(str_to_sentence)) +
+  COL_SCALE_NOLIM +
+  labs(
+    x = "Naïve human accuracy",
+    y = "Model accuracy",
+    col = "Matcher"
+  ) +
+  theme(legend.position = "bottom",
+        legend.box.spacing = unit(0.5, "pt"))
+
+ggsave(here("figs", "comparison_plot.png"), comparison_plot, width = 10.5, height = 3.2)
+```
+
+```{r}
+comparison_cors <- comparison_data |> 
+  group_by(type, condition, gameId, orig_trialNum) |> 
+  summarise(
+    accuracy = mean(accuracy),
+    orig_acc = mean(orig_acc),
+    .groups = "drop"
+  ) |>
+  group_by(type, condition) |> 
+  summarise(
+    correlation = cor(orig_acc, accuracy, use = "pairwise.complete.obs"),
+    spearman = cor(orig_acc, accuracy, method = "spearman", use = "pairwise.complete.obs"),
+    .groups = "drop"
+  )
+
+cor_text <- comparison_cors |> 
+  group_by(condition) |> 
+  summarise(
+    cor_text = glue(
+    'plain(\"model \") * italic(r) %in% \"[{min(correlation) |> strip_zero()}, ',
+    '{max(correlation) |> strip_zero()}]\"'),
+  )
+```
+
+Human split-half
+```{r}
+all_human <- bind_rows(human_selections, human_selections_new |> 
+                         mutate(condition = ifelse(condition == "backwards", "backward", condition)))
+workers <- all_human |> 
+  distinct(workerid)
+
+sh_cors <- map(1:1000, \(i) {
+  set.seed(i)
+  
+  workers_split <- workers |> 
+    mutate(split = sample(1:2, n(), replace = TRUE))
+  
+  sh_split <- all_human |> 
+    left_join(workers_split, by = "workerid") |>
+    group_by(condition, split, gameId, orig_trialNum, orig_repNum, 
+             correct_tangram) |>
+    summarise(accuracy = mean(correct),
+              .groups = "drop") |>
+    pivot_wider(names_from = split, values_from = accuracy, names_prefix = "split_") |>
+    filter(!is.na(split_1) & !is.na(split_2)) |>
+    group_by(condition) |> 
+    summarise(
+      cor = cor(split_1, split_2, use = "pairwise.complete.obs"),
+      spearman = cor(split_1, split_2, method = "spearman", use = "pairwise.complete.obs"),
+      .groups = "drop"
+    ) |> 
+    mutate(split = i)
+  sh_split
+}) |> list_rbind()
+
+sh_cors_sum <- sh_cors |> 
+  group_by(condition) |> 
+  summarise(
+    mean_cor = mean(cor),
+    sd_cor = sd(cor),
+    median_cor = median(cor),
+    ci_lower = quantile(cor, .025),
+    ci_upper = quantile(cor, .975),
+    .groups = "drop"
+  )
+
+sh_sum_text <- sh_cors_sum |> 
+  mutate(
+    sh_text = glue(
+      'plain(\"human \") * italic(r) == \"{mean_cor |> strip_zero()} [{ci_lower |> strip_zero()}, ',
+    '{ci_upper |> strip_zero()}]\"')
+  ) |> 
+  select(condition, sh_text)
+```
+
+```{r}
+full_cor_text <- cor_text |> 
+  left_join(sh_sum_text, by = join_by(condition)) |> 
+  mutate(cor_text = glue("atop({cor_text}, {sh_text})")) |> 
+  mutate(condition = factor(condition, 
+                           levels = c("yoked", "shuffled", "backward")))
+```
+
+
+Plot
+```{r}
+comparison_plot_text <- comparison_plot +
+  geom_label(
+    aes(x = 1, y = 0, label = cor_text),
+    col = "black",
+    data = full_cor_text,
+    parse = TRUE,
+    size = 3,
+    hjust = 1,
+    vjust = 0
+  )
+ggsave(here("figs", "comparison_plot.png"), comparison_plot_text, width = 9, height = 3)
+```
+
+
+# Modelling
+```{r}
+model_data <- full_combined |> 
+  filter(type != "human_original") |> 
+  left_join(full_combined |> 
+              filter(type == "human_original") |> 
+              rename(orig_acc = accuracy) |> 
+              select(-condition, -matcher_trialNum, -matcher_repNum, 
+                     -message_length, -context_length, -type),
+            by = join_by(gameId, orig_trialNum, orig_repNum, target)) |> 
+  mutate(
+    type = fct_drop(type),
+    across(c(type, condition), \(x) x |> `contrasts<-`(value = contr.sum(nlevels(x))))
+  )
+
+model <- lmer(
+  accuracy ~ type * condition * (poly(matcher_repNum, 5) + poly(orig_repNum, 5)) + 
+    type * (poly(message_length, 2) + poly(context_length, 2)) + orig_acc + (1 | gameId) + (1 | target),
+  data = model_data,
+  # prior = c(
+  #   set_prior("normal(0, 1)", class = "b"),
+  #   set_prior("normal(0, 1)", class = "Intercept")
+  # ),
+  # iter = 4000, warmup = 2000, chains = 4, cores = 4
+)
+
+summary(model)
+```
+
+```{r}
+library(emmeans)
+emt <- emtrends(model, ~ type, var = "context_length", max.degree = 2)
+emt_pairs <- pairs(emt)
+```
+
+```{r, eval=F}
+# doesn't work---lots of nonEst in the emm
+emm <- emmeans(model, ~ type * matcher_repNum | condition , 
+               at = list(matcher_repNum = 1:6))
+cons <- contrast(emm, "pairwise", by = c("type", "matcher_repNum"),
+                 adjust = "tukey")
+```
+
+# Item-level analysis
+```{r}
+p_items <- full_combined |> 
+  mutate(target = fct_reorder(target, accuracy, .na_rm = TRUE)) |>
+  ggplot(aes(x = target, y = accuracy, col = type)) +
+  geom_hline(yintercept = 1 / 12, lty = "dashed") +
+  stat_summary(
+      aes(group = interaction(gameId, type, target)),
+      fun = mean, geom = "point", alpha = .2,
+      position = position_jitter(width = .2)
+    ) +
+  stat_summary(fun.data = mean_cl_boot, 
+               geom = "pointrange", size = .4,
+               position = position_dodge(width = .2)) +
+  facet_wrap(~condition, nrow = 2,
+             labeller = as_labeller(str_to_sentence)) +
+  COL_SCALE +
+  labs(x = "Tangram", y = "Accuracy", col = "Matcher") +
+  theme(legend.position = "bottom")
+ggsave(here("figs", "items_plot.png"), p_items, width = 9, height = 5.5)
+```
+
+# Learning
+```{r}
+accs_full <- map(logprobs_full_base, calculate_accuracies)
+
+orig_acc <- human_orig |> 
+  mutate(runId = as.character(1),
+         orig_accuracy = accuracy,
+         accuracy = as.numeric(accuracy > 0),
+         target_repNum = matcher_repNum) |> 
+  calculate_accuracies(join_only = TRUE) |> 
+  mutate(accuracy = orig_accuracy) |> 
+  select(-orig_accuracy)
+
+naive_acc <- human_selections |> 
+  bind_rows(human_selections_new) |> 
+  mutate(type = "human_naive",
+         runId = as.character(workerid), 
+         accuracy = as.numeric(correct),
+         condition = ifelse(condition == "backwards", "backward", condition)) |> 
+  cast_random() |> 
+  rename(target = correct_tangram) |> 
+  select(type, condition, gameId, runId, orig_trialNum, orig_repNum,
+         matcher_trialNum, matcher_repNum, target, accuracy) |> 
+  arrange(type, condition, gameId, runId, matcher_trialNum) |>
+  group_by(type, condition, gameId, runId, target) |>
+  mutate(target_repNum = ifelse(condition %in% c("shuffled", "random"), 0:5, matcher_repNum)) |> 
+  calculate_accuracies(join_only = TRUE)
+
+all_acc <- bind_rows(
+  bind_rows(accs_full), orig_acc, naive_acc
+) |> 
+  mutate(
+    type = factor(type, 
+                  levels = c("human_original", "human_naive", "model_qwen", "model_gemma", 
+                             "model_llama", "model_kimi")),
+    condition = factor(condition, 
+                       levels = c("yoked", "shuffled", "backward", "ablated", 
+                                  "other-within", "other-across", "random", "no context"))
+  )
+```
+
+
+```{r}
+p_learning <- all_acc |> 
+  filter(!is.na(prev_accuracy),
+         condition %in% c("yoked", "shuffled", "backward", "random")) |> 
+  mutate(target_repNum = target_repNum + 1,
+         prev_accuracy = ifelse(prev_accuracy == 1, 
+                                "Prev correct", "Prev incorrect")) |> 
+  ggplot(aes(x = target_repNum, y = accuracy, 
+             col = type)) +
+  geom_hline(yintercept = 1 / 12, lty = "dashed") +
+  stat_summary(
+      aes(group = interaction(gameId, type)),
+      fun = mean, geom = "line", alpha = .15,
+      show.legend = TRUE
+    ) +
+  stat_smooth(
+    method = "loess", formula = y ~ x, se = FALSE,
+    span = .9,
+    show.legend = TRUE
+  ) +
+  stat_summary(
+    fun.data = mean_cl_boot, geom = "pointrange",
+    lty = "solid",
+    show.legend = TRUE
+  ) +
+  facet_grid(prev_accuracy ~ condition, # nrow = 2,
+             labeller = as_labeller(str_to_sentence)) +
+  scale_x_continuous(breaks = 2:6) +
+  # scale_shape_manual(values = c(1, 16)) +
+  # scale_linetype_manual(values = c("longdash", "solid")) +
+  COL_SCALE +
+  labs(
+    x = glue("Matcher repetition number"),
+    y = "Accuracy", col = "Matcher"# ,
+    # lty = "Previous accuracy", shape = "Previous accuracy"
+  )
+ggsave(here("figs", "learning_plot.png"), p_learning, width = 9, height = 4.5)
+```
+
+# Confusion matrices
+Do confusion matrices, and look at RSA across conditions
+```{r}
+mat_conf <- bind_rows(logprobs_full_base) |> 
+  group_by(type, condition, target, selection) |>
+  summarise(
+    prob = mean(prob, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+```{r}
+mat_conf |> 
+  filter(type == "model_qwen", condition == "yoked") |> 
+  ggplot(aes(x = target, y = selection, fill = prob)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "#7212b3", limits = c(0, 1)) +
+  labs(x = "Target", y = "Selection", fill = "Probability")
+```
+
+```{r}
+mat_conf_wide <- mat_conf |> 
+  pivot_wider(names_from = condition,
+              values_from = prob)
+mat_conf_rsa <- mat_conf_wide |> 
+  select(-target, -selection) |> 
+  nest(data = -type) |> 
+  mutate(correl = map(data, \(d) cor(d |> as.matrix()) |> list()))
+```
+
+```{r}
+mat_conf_rsa_long <- mat_conf_rsa |> 
+  select(-data) |> 
+  mutate(correl = map(correl, \(c) as_tibble(c[[1]], rownames = "condition1"))) |> 
+  unnest(correl) |> 
+  pivot_longer(cols = yoked:`no context`,
+               names_to = "condition2",
+               values_to = "cor") |> 
+  mutate(across(starts_with("condition"), 
+                \(c) c |> str_to_sentence() |> 
+                  factor(levels = c("Yoked", "Shuffled", "Backward", "Ablated", 
+                                    "Other-within", "Other-across", "Random", "No context"))))
+```
+
+```{r}
+p_rsa <- mat_conf_rsa_long |> 
+  mutate(type = case_when(
+           type == "model_gemma" ~ "Gemma 3",
+           type == "model_qwen" ~ "Qwen 2.5 VL",
+           type == "model_llama" ~ "Llama 3.2",
+           type == "model_kimi" ~ "Kimi VL"
+         ) |> factor(levels = c("Qwen 2.5 VL", "Gemma 3", "Llama 3.2", "Kimi VL"))) |>
+  ggplot(aes(x = condition2, y = condition1, fill = cor)) +
+  geom_tile() +
+  facet_grid(~type) +
+  scale_fill_gradient(low = "white", high = "#7212b3", limits = c(0, 1)) +
+  labs(x = "", y = "", fill = "Correlation") +
+  theme(axis.text.x = element_text(hjust = 1, angle = 45))
+ggsave(here("figs", "rsa_plot.png"), p_rsa, width = 10, height = 3.3)
+```
+
+# Error analysis
+```{r}
+# reload texts
+game_texts <- original_chat |>
+  mutate(
+    role = case_when(
+      role == "speaker" ~ "describer",
+      role == "listener" ~ "matcher"
+    )) |> 
+  rename(orig_trialNum = trialNum,
+         orig_repNum = repNum) |> 
+  select(gameId, orig_trialNum, orig_repNum, role, text, condition) |> 
+  mutate(role_text = glue("{role}: {text}")) |>
+  group_by(gameId, orig_trialNum, orig_repNum, condition) |> 
+  summarise(role_text = str_c(role_text, collapse = "\n"),
+            text = str_c(text, collapse = " "),
+            .groups = "drop")
+
+# lemmatise
+ud_model <- udpipe_load_model(here("resources", "english-ewt-ud-2.5-191206.udpipe"))
+game_texts_lemmas <- game_texts |> 
+  mutate(ud = map(text, \(t) udpipe_annotate(ud_model, x = str_to_lower(t)) |> 
+                    as_tibble() |> select(lemma) |> 
+                    # manual corrections
+                    mutate(lemma = case_when(
+                      lemma == "triangles" ~ "triangle", 
+                      lemma == "ears" ~ "ear",
+                      lemma == "backwards" ~ "backward",
+                      lemma == "forwards" ~ "forward",
+                      lemma == "kneeling" ~ "kneel",
+                      lemma == "leaning" ~ "lean",
+                      lemma == "shapes" ~ "shape",
+                      lemma == "shoulders" ~ "shoulder",
+                      lemma == "sitting" ~ "sit",
+                      lemma == "towards" ~ "toward",
+                      lemma == "upwards" ~ "upward",
+                      lemma == "walking" ~ "walk",
+                      .default = lemma)) |> 
+                    distinct())) |> 
+  unnest(ud)
+```
+
+```{r}
+random_combined <- full_combined |> 
+  filter(condition == "random") |> 
+  group_by(type, gameId, orig_trialNum, orig_repNum, target) |>
+  summarise(accuracy = mean(accuracy),
+            .groups = "drop")
+```
+
+```{r}
+# error_analysis <- random_combined |> 
+#   pivot_wider(names_from = type, values_from = accuracy) |> 
+#   mutate(across(starts_with("model_"), \(x) x - human_naive, .names = "{.col}_vs_naive"))
+
+error_analysis <- random_combined |> 
+  mutate(type = ifelse(str_starts(type, "model_"), "model", "human_naive")) |> 
+  group_by(type, gameId, orig_trialNum, orig_repNum, target) |>
+  summarise(accuracy = mean(accuracy),
+            .groups = "drop") |> 
+  pivot_wider(names_from = type, values_from = accuracy) |> 
+  mutate(diff = model - human_naive) |> 
+  left_join(game_texts, by = join_by(gameId, orig_trialNum, orig_repNum))
+```
+
+```{r}
+error_analysis_lemmas <- error_analysis |> 
+  left_join(game_texts_lemmas, by = join_by(gameId, orig_trialNum, orig_repNum)) |> 
+  group_by(lemma) |> 
+  summarise(
+    n = n(),
+    n_games = n_distinct(gameId),
+    mean_diff = mean(diff, na.rm = TRUE),
+    sd_diff = sd(diff, na.rm = TRUE),
+    se_diff = sd_diff / sqrt(n),
+    ci_lower = mean_diff - qt(0.975, n - 1) * se_diff,
+    ci_upper = mean_diff + qt(0.975, n - 1) * se_diff,
+    .groups = "drop"
+  ) |> 
+  filter(n > 1) |> 
+  mutate(diff_vs_grand_mean = mean_diff - mean(error_analysis$diff, na.rm = TRUE),
+         ci_lower_vs_grand_mean = ci_lower - mean(error_analysis$diff, na.rm = TRUE),
+         ci_upper_vs_grand_mean = ci_upper - mean(error_analysis$diff, na.rm = TRUE),
+         ci_vs_grand_mean = case_when(
+           ci_lower > mean(error_analysis$diff, na.rm = TRUE) ~ "above",
+           ci_upper < mean(error_analysis$diff, na.rm = TRUE) ~ "below",
+           TRUE ~ "includes"
+         ))
+
+error_analysis_lemmas |> 
+  filter(n > 10) |> 
+  write_csv("mean_diff_by_lemma.csv")
+```
+
+
+```{r}
+# quick n dirty plot
+# body parts are bad: arm, leg, foot, hand, head
+# directions are bad: up, left, right, but not down
+# shapes ns: diamond, square, triangle, rectangle
+
+# good words: bunny, candle (but just two games)
+
+SEARCH_WORD = "candle"
+
+error_analysis |> 
+  mutate(!!SEARCH_WORD := str_detect(text, SEARCH_WORD)) |>
+  ggplot(aes(x = diff, fill = !!sym(SEARCH_WORD))) +
+  geom_density(alpha = .6)
+
+# t-test for search vs full distribution
+t.test(
+  error_analysis |> pull(diff),
+  error_analysis |> filter(str_detect(text, SEARCH_WORD)) |> pull(diff)
+)
+```
+
+Trying a different plot
+```{r}
+lemmas_annotated <- read_csv(here("resources", "lemmas_annotated.csv"))
+
+error_analysis_lemmas_annotated <- error_analysis_lemmas |> 
+  left_join(lemmas_annotated, by = join_by(lemma)) |> 
+  filter(!is.na(category)) |> 
+  mutate(category = fct_reorder(category, diff_vs_grand_mean),
+         lemma = fct_reorder(lemma, diff_vs_grand_mean, .desc = TRUE))
+
+p_errors <- error_analysis_lemmas_annotated |> 
+  mutate(signif = ifelse(ci_vs_grand_mean == "includes", "no", "yes")) |>
+  ggplot(aes(x = diff_vs_grand_mean, y = lemma, col = category)) +
+  geom_vline(xintercept = 0, lty = "dashed") +
+  geom_errorbarh(aes(xmin = ci_lower_vs_grand_mean, xmax = ci_upper_vs_grand_mean),
+                 height = .4) +
+  geom_point(aes(shape = signif), size = 2) +
+  facet_grid(category ~ ., scales = "free_y", space = "free_y") +
+  scale_shape_manual(values = c(1, 16)) +
+  labs(x = "Centred discrepancy (model – human)", y = "Lemma") +
+  theme(legend.position = "none")
+
+ggsave(here("figs", "error_plot.png"), p_errors, width = 6, height = 8)
+```
+
+For completeness
+```{r}
+error_analysis_lemmas |> 
+  left_join(lemmas_annotated, by = join_by(lemma)) |> 
+  filter(is.na(category), n >= 20, n_games >= 4) |> 
+  mutate(lemma = fct_reorder(lemma, diff_vs_grand_mean, .desc = TRUE)) |> 
+  mutate(signif = ifelse(ci_vs_grand_mean == "includes", "no", "yes")) |>
+  ggplot(aes(x = diff_vs_grand_mean, y = lemma, col = category)) +
+  geom_vline(xintercept = 0, lty = "dashed") +
+  geom_errorbarh(aes(xmin = ci_lower_vs_grand_mean, xmax = ci_upper_vs_grand_mean),
+                 height = .4) +
+  geom_point(aes(shape = signif), size = 2) +
+  facet_grid(category ~ ., scales = "free_y", space = "free_y") +
+  scale_shape_manual(values = c(1, 16)) +
+  labs(x = "Centred discrepancy (model – human)", y = "Lemma") +
+  theme(legend.position = "none")
+```
+
+
+# Limited feedback
+
+```{r, eval=F}
+qwen_logprobs_full_lf_hh <- get_all_logprobs("Qwen2.5-VL-32B-Instruct", 
+                                             prefix = "human_history/limited_feedback_")
+gemma_logprobs_full_lf_hh <- get_all_logprobs("gemma-3-27b-it", 
+                                             prefix = "human_history/limited_feedback_")
+llama_logprobs_full_lf_hh <- get_all_logprobs("Llama-3.2-11B-Vision-Instruct", 
+                                             prefix = "human_history/limited_feedback_")
+kimi_logprobs_full_lf_hh <- get_all_logprobs("Kimi-VL-A3B-Instruct", 
+                                             prefix = "human_history/limited_feedback_")
+
+qwen_logprobs_lf_hh <- filter_logprobs(qwen_logprobs_full_lf_hh)
+gemma_logprobs_lf_hh <- filter_logprobs(gemma_logprobs_full_lf_hh)
+llama_logprobs_lf_hh <- filter_logprobs(llama_logprobs_full_lf_hh)
+kimi_logprobs_lf_hh <- filter_logprobs(kimi_logprobs_full_lf_hh)
+```
+
