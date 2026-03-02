@@ -24,9 +24,9 @@ echo "model name: $MODEL_NAME"
 echo "extra args: ${EXTRA_ARGS}"
 
 if [[ $MODEL_NAME == "meta-llama/Llama-3.2-11B-Vision-Instruct" ]]; then
-    uv pip install vllm==0.10.2 transformers==4.56.2
+    uv pip install vllm==0.10.1.1 transformers==4.56.2 torch==2.7.1
 else
-    uv pip install vllm==0.15.1 transformers==4.57.6
+    uv pip install vllm==0.15.1 transformers==4.57.6 torch==2.9.1
 fi
 
 # Pick a unique port per job (override with PORT env var if set)
