@@ -12,6 +12,7 @@ import tiktoken
 from google.genai import types
 from openai import OpenAI
 from PIL import Image
+from tenacity import retry, stop_after_attempt, wait_exponential
 from tqdm import tqdm
 
 from src.utils import (
@@ -30,7 +31,7 @@ Please answer with just the letter corresponding to the image you think the desc
 """
 
 
-# @retry(wait=wait_exponential(multiplier=1, min=4, max=60), stop=stop_after_attempt(10))
+@retry(wait=wait_exponential(multiplier=1, min=4, max=60), stop=stop_after_attempt(10))
 def get_completion_with_backoff(client, model, messages):
     if "gemini" in model.lower():
         # use the google genai client
