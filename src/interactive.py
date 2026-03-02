@@ -19,6 +19,7 @@ from src.lm import (
     _estimate_image_tokens,
     _get_encoding,
     get_completion_with_backoff,
+    get_samples_single_row,
 )
 from src.utils import (
     get_logprobs_from_genai_response,
@@ -26,6 +27,16 @@ from src.utils import (
     get_openai_messages,
     preprocess_messages,
 )
+
+
+def _add_session_id(df: pd.DataFrame) -> None:
+    """Add a _session_id column that uniquely identifies each session within a trialNum."""
+    if "workerid" in df.columns:
+        df["_session_id"] = df["workerid"]
+    elif "shuffle_rep" in df.columns:
+        df["_session_id"] = df["gameId"].astype(str) + "_" + df["shuffle_rep"].astype(str)
+    else:
+        df["_session_id"] = df["gameId"]
 
 
 def update_histories(df: pd.DataFrame, trial_num: int):
@@ -38,7 +49,7 @@ def update_histories(df: pd.DataFrame, trial_num: int):
 
     df_future_rounds = df.loc[future_rounds_mask][
         [
-            "workerid",
+            "_session_id",
             "trialNum",
             "selection_history",
             "correctness_history",
@@ -47,10 +58,10 @@ def update_histories(df: pd.DataFrame, trial_num: int):
     ].copy()
 
     # Use map instead of merge to preserve the original index and row count
-    prediction_map = df[df["trialNum"] == trial_num].set_index("workerid")[
+    prediction_map = df[df["trialNum"] == trial_num].set_index("_session_id")[
         "model_prediction"
     ]
-    df_future_rounds["model_prediction"] = df_future_rounds["workerid"].map(
+    df_future_rounds["model_prediction"] = df_future_rounds["_session_id"].map(
         prediction_map
     )
 
@@ -75,7 +86,12 @@ def update_histories(df: pd.DataFrame, trial_num: int):
     ].values
 
 
-def process_interactive_row(client, model_name, messages):
+def process_interactive_row(client, model_name, messages, n_samples=None):
+    if n_samples:
+        choice_logprobs = get_samples_single_row(client, model_name, messages, n_samples)
+        prediction = max(choice_logprobs, key=choice_logprobs.get) if choice_logprobs else ""
+        return choice_logprobs, prediction
+
     response = get_completion_with_backoff(
         client=client,
         model=model_name,
@@ -104,12 +120,15 @@ def run_interactive_evaluation(
     grid_image: Image.Image,
     include_image: bool = True,
     n_trials: Optional[int] = None,
+    n_samples: Optional[int] = None,
 ) -> pd.DataFrame:
     if n_trials is not None:
         df = df.head(n_trials)
 
     if "trialNum" not in df.columns:
         df["trialNum"] = df["matcher_trialNum"]
+
+    _add_session_id(df)
 
     df["selection_history"] = [[] for _ in range(len(df))]
     df["correctness_history"] = [[] for _ in range(len(df))]
@@ -142,7 +161,7 @@ def run_interactive_evaluation(
             results = list(
                 tqdm(
                     executor.map(
-                        lambda msgs: process_interactive_row(client, model_name, msgs),
+                        lambda msgs: process_interactive_row(client, model_name, msgs, n_samples),
                         row_messages,
                     ),
                     total=len(row_messages),
@@ -159,7 +178,7 @@ def run_interactive_evaluation(
         # update the selection and correctness histories
         update_histories(df, trial_num)
 
-    return df
+    return df.drop(columns=["_session_id"])
 
 
 def count_tokens_interactive(
@@ -179,6 +198,8 @@ def count_tokens_interactive(
 
     if "trialNum" not in df.columns:
         df["trialNum"] = df["matcher_trialNum"]
+
+    _add_session_id(df)
 
     df["selection_history"] = [[] for _ in range(len(df))]
     df["correctness_history"] = [[] for _ in range(len(df))]

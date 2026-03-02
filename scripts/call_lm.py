@@ -45,6 +45,12 @@ if __name__ == "__main__":
         action="store_true",
         help="Count tokens without calling any language models (for cost estimation)",
     )
+    parser.add_argument(
+        "--n_samples",
+        type=int,
+        default=None,
+        help="Resample N times instead of using logprobs (for frontier models without logprob support)",
+    )
 
     args = parser.parse_args()
 
@@ -148,6 +154,7 @@ if __name__ == "__main__":
                 grid_image,
                 include_image=not args.no_image,
                 n_trials=args.n_trials,
+                n_samples=args.n_samples,
             )
             print(f"Saving {output_path}...")
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -160,6 +167,7 @@ if __name__ == "__main__":
                 grid_image,
                 include_image=not args.no_image,
                 n_trials=args.n_trials,
+                n_samples=args.n_samples,
             )
             print(f"Saving {output_path}...")
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -169,4 +177,16 @@ if __name__ == "__main__":
         print("\n=== Dry Run Summary ===")
         print(f"Model: {args.model_name}")
         print(f"Total input tokens:  {grand_totals['total_input_tokens']}")
+        print(f"Total output tokens: {grand_totals['total_output_tokens']}")
+        print(f"Total output tokens: {grand_totals['total_output_tokens']}")
+        print(f"Total output tokens: {grand_totals['total_output_tokens']}")
+        print(f"Total output tokens: {grand_totals['total_output_tokens']}")
+        print(f"Total output tokens: {grand_totals['total_output_tokens']}")
+        print(f"Total output tokens: {grand_totals['total_output_tokens']}")
+        print(f"Total output tokens: {grand_totals['total_output_tokens']}")
+        print(f"Total output tokens: {grand_totals['total_output_tokens']}")
+        print(f"Total output tokens: {grand_totals['total_output_tokens']}")
+        print(f"Total output tokens: {grand_totals['total_output_tokens']}")
+        print(f"Total output tokens: {grand_totals['total_output_tokens']}")
+        print(f"Total output tokens: {grand_totals['total_output_tokens']}")
         print(f"Total output tokens: {grand_totals['total_output_tokens']}")

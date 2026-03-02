@@ -2,6 +2,8 @@
 Code for calling the language model to get choice logits
 """
 
+import math
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
@@ -80,6 +82,40 @@ def get_logits_single_row(
         return get_logprobs_from_openai_choice(response.choices[0], CHOICES)
 
 
+def _get_single_sample(client, model_name, messages):
+    """Make a single API call and return the generated token."""
+    response = get_completion_with_backoff(client, model_name, messages)
+    if "gemini" in model_name.lower():
+        return response.text.strip()
+    else:
+        return response.choices[0].message.content.strip()
+
+
+def _counts_to_logprobs(counts, n_samples):
+    """Convert a Counter of choice frequencies to log-probabilities."""
+    return {choice: math.log(count / n_samples) for choice, count in counts.items()}
+
+
+def get_samples_single_row(client, model_name, messages, n_samples):
+    """Resample n_samples times and return frequency-based log-probabilities."""
+    if "gemini" not in model_name.lower() and "claude" not in model_name.lower():
+        # OpenAI models support n parameter — single call, multiple completions
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=messages,
+            max_tokens=1,
+            temperature=1,
+            n=n_samples,
+        )
+        tokens = [choice.message.content.strip() for choice in response.choices]
+    else:
+        # Claude and Gemini: sequential calls per row (cross-row parallelism handles throughput)
+        tokens = [_get_single_sample(client, model_name, messages) for _ in range(n_samples)]
+
+    counts = Counter(t for t in tokens if t in CHOICES)
+    return _counts_to_logprobs(counts, n_samples) if counts else {}
+
+
 REQUIRED_COLUMNS = [
     "message_history",
     "selection_history",
@@ -95,6 +131,7 @@ def get_logits(
     grid_image: Image.Image,
     include_image: bool = True,
     n_trials: Optional[int] = None,
+    n_samples: Optional[int] = None,
 ) -> pd.DataFrame:
     # Validate required columns exist
     missing_columns = [col for col in REQUIRED_COLUMNS if col not in df.columns]
@@ -120,13 +157,15 @@ def get_logits(
 
     print("Doing inference...")
 
+    def row_fn(msgs):
+        if n_samples:
+            return get_samples_single_row(client, model_name, msgs, n_samples)
+        return get_logits_single_row(client, model_name, msgs)
+
     with ThreadPoolExecutor(max_workers=20) as executor:
         all_choice_logprobs = list(
             tqdm(
-                executor.map(
-                    lambda msgs: get_logits_single_row(client, model_name, msgs),
-                    all_messages,
-                ),
+                executor.map(row_fn, all_messages),
                 total=len(all_messages),
             )
         )
