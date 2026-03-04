@@ -93,11 +93,7 @@ if __name__ == "__main__":
         # only run yoked evaluations if we're not using a local model
         if (
             "localhost" not in args.api_base
-            and "yoked" not in filepath
-            and "shuffled" not in filepath
-            and "backward" not in filepath
-            and "random" not in filepath
-            and "no_context" not in filepath
+            and "limited_feedback_yoked" not in filepath
         ):
             continue
 
@@ -146,7 +142,14 @@ if __name__ == "__main__":
             print(f"  Total output tokens: {token_summary['total_output_tokens']}")
             grand_totals["total_input_tokens"] += token_summary["total_input_tokens"]
             grand_totals["total_output_tokens"] += token_summary["total_output_tokens"]
-        elif args.interactive:
+        elif args.n_samples is not None:
+            raw_responses_path = None
+            if args.n_samples:
+                raw_responses_path = output_path.replace(
+                    "data/logprobs", "data/raw_responses"
+                ).replace(".csv", ".json")
+                os.makedirs(os.path.dirname(raw_responses_path), exist_ok=True)
+
             df_results = run_interactive_evaluation(
                 df,
                 args.model_name,
@@ -155,11 +158,19 @@ if __name__ == "__main__":
                 include_image=not args.no_image,
                 n_trials=args.n_trials,
                 n_samples=args.n_samples,
+                raw_responses_path=raw_responses_path,
             )
             print(f"Saving {output_path}...")
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
             df_results.to_csv(here(output_path), index=False)
         else:
+            raw_responses_path = None
+            if args.n_samples:
+                raw_responses_path = output_path.replace(
+                    "data/logprobs", "data/raw_responses"
+                ).replace(".csv", ".json")
+                os.makedirs(os.path.dirname(raw_responses_path), exist_ok=True)
+
             df_results = get_logits(
                 df,
                 args.model_name,
@@ -168,6 +179,7 @@ if __name__ == "__main__":
                 include_image=not args.no_image,
                 n_trials=args.n_trials,
                 n_samples=args.n_samples,
+                raw_responses_path=raw_responses_path,
             )
             print(f"Saving {output_path}...")
             os.makedirs(os.path.dirname(output_path), exist_ok=True)

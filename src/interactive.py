@@ -3,6 +3,7 @@ Code for the interactive version of the language model evaluation, where the mod
 feedback on its own choices rather than human responses.
 """
 
+import json
 import random
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
@@ -90,13 +91,13 @@ def update_histories(df: pd.DataFrame, trial_num: int):
 
 def process_interactive_row(client, model_name, messages, n_samples=None):
     if n_samples:
-        choice_logprobs = get_samples_single_row(
+        choice_logprobs, raw_responses = get_samples_single_row(
             client, model_name, messages, n_samples
         )
         prediction = (
             max(choice_logprobs, key=choice_logprobs.get) if choice_logprobs else ""
         )
-        return choice_logprobs, prediction
+        return choice_logprobs, prediction, raw_responses
 
     response = get_completion_with_backoff(
         client=client,
@@ -112,11 +113,10 @@ def process_interactive_row(client, model_name, messages, n_samples=None):
     if choice_logprobs:
         prediction = max(choice_logprobs, key=choice_logprobs.get)
     else:
-        # If no choice tokens found, take the generated text
         content = response.choices[0].message.content
         prediction = content.strip() if content else ""
 
-    return choice_logprobs, prediction
+    return choice_logprobs, prediction, None
 
 
 def run_interactive_evaluation(
@@ -127,6 +127,7 @@ def run_interactive_evaluation(
     include_image: bool = True,
     n_trials: Optional[int] = None,
     n_samples: Optional[int] = None,
+    raw_responses_path: Optional[str] = None,
 ) -> pd.DataFrame:
     if n_trials is not None:
         df = df.head(n_trials)
@@ -144,6 +145,8 @@ def run_interactive_evaluation(
     df["model_prediction"] = None
     # We need to make sure we can assign lists to model_logprobs, so convert to object type if needed
     df["model_logprobs"] = df["model_logprobs"].astype(object)
+
+    all_raw_responses = {} if raw_responses_path else None
 
     for trial_num in range(df["trialNum"].max() + 1):
         df_round = df[df["trialNum"] == trial_num].copy()
@@ -178,13 +181,22 @@ def run_interactive_evaluation(
 
         choice_logprobs_list = [r[0] for r in results]
         predictions_list = [r[1] for r in results]
+        raw_responses_list = [r[2] for r in results]
 
-        # save the logprobs to the dataframe
         df.loc[df_round.index, "model_logprobs"] = choice_logprobs_list
         df.loc[df_round.index, "model_prediction"] = predictions_list
+        if all_raw_responses is not None:
+            for idx, raw in zip(df_round.index, raw_responses_list):
+                if raw is not None:
+                    all_raw_responses[int(idx)] = raw
 
         # update the selection and correctness histories
         update_histories(df, trial_num)
+
+    if raw_responses_path and all_raw_responses:
+        with open(raw_responses_path, "w") as f:
+            json.dump(all_raw_responses, f, indent=2)
+        print(f"Raw responses saved to {raw_responses_path}")
 
     return df.drop(columns=["_session_id"])
 

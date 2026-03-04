@@ -2,6 +2,7 @@
 Code for calling the language model to get choice logits
 """
 
+import json
 import math
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
@@ -26,13 +27,25 @@ from src.utils import (
 
 CHOICES = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
 
+
+def _extract_choice(text: str) -> str:
+    """Extract a choice letter from potentially longer reasoning output."""
+    text = text.strip()
+    if text in CHOICES:
+        return text
+    for ch in reversed(text):
+        if ch in CHOICES:
+            return ch
+    return text
+
+
 SYSTEM_PROMPT = """You will be presented with a list of messages between people playing a reference game, where the describer has to get the matcher to choose a shape from a set of shapes. Your goal is to guess which of the shapes the describer is trying to get the matcher to choose. The shapes, with their labels, are shown in the image.
 Please answer with just the letter corresponding to the image you think the describer is trying to get the matcher to choose, and no other text. You will receive feedback telling you whether your choice was correct or incorrect.
 """
 
 
 @retry(wait=wait_exponential(multiplier=1, min=4, max=60), stop=stop_after_attempt(10))
-def get_completion_with_backoff(client, model, messages):
+def get_completion_with_backoff(client, model, messages, use_logprobs=True):
     if "gemini" in model.lower():
         # use the google genai client
         genai_messages, system_instruction = convert_to_google_genai_style(messages)
@@ -40,31 +53,33 @@ def get_completion_with_backoff(client, model, messages):
             model=model,
             contents=genai_messages,
             config=types.GenerateContentConfig(
-                response_logprobs=True,
-                logprobs=20,
-                temperature=1,
                 system_instruction=system_instruction,
+                thinking_config=types.ThinkingConfig(thinking_level="medium"),
             ),
         )
     else:
         # we're using an openai-style client
         if "claude" in model.lower():
-            # add cache control to the last message
             messages[-1]["cache_control"] = {
                 "type": "ephemeral",
             }
-            n_logprobs = 20
-        else:
-            n_logprobs = 1000
 
-        return client.chat.completions.create(
-            model=model,
-            messages=messages,
-            max_tokens=1,
-            temperature=1,
-            logprobs=True,
-            top_logprobs=n_logprobs,
-        )
+        if use_logprobs:
+            n_logprobs = 20 if "claude" in model.lower() else 1000
+            return client.chat.completions.create(
+                model=model,
+                messages=messages,
+                max_completion_tokens=1,
+                temperature=1,
+                logprobs=True,
+                top_logprobs=n_logprobs,
+            )
+        else:
+            return client.chat.completions.create(
+                model=model,
+                messages=messages,
+                max_completion_tokens=256,
+            )
 
 
 def get_logits_single_row(
@@ -84,12 +99,15 @@ def get_logits_single_row(
 
 
 def _get_single_sample(client, model_name, messages):
-    """Make a single API call and return the generated token."""
-    response = get_completion_with_backoff(client, model_name, messages)
+    """Make a single API call and return (raw_text, extracted_choice)."""
+    response = get_completion_with_backoff(
+        client, model_name, messages, use_logprobs=False
+    )
     if "gemini" in model_name.lower():
-        return response.text.strip()
+        raw = response.text.strip()
     else:
-        return response.choices[0].message.content.strip()
+        raw = response.choices[0].message.content.strip()
+    return raw, _extract_choice(raw)
 
 
 def _counts_to_logprobs(counts, n_samples):
@@ -98,25 +116,15 @@ def _counts_to_logprobs(counts, n_samples):
 
 
 def get_samples_single_row(client, model_name, messages, n_samples):
-    """Resample n_samples times and return frequency-based log-probabilities."""
-    if "gemini" not in model_name.lower() and "claude" not in model_name.lower():
-        # OpenAI models support n parameter — single call, multiple completions
-        response = client.chat.completions.create(
-            model=model_name,
-            messages=messages,
-            max_tokens=1,
-            temperature=1,
-            n=n_samples,
-        )
-        tokens = [choice.message.content.strip() for choice in response.choices]
-    else:
-        # Claude and Gemini: sequential calls per row (cross-row parallelism handles throughput)
-        tokens = [
-            _get_single_sample(client, model_name, messages) for _ in range(n_samples)
-        ]
-
+    """Resample n_samples times and return (logprobs_dict, raw_responses)."""
+    results = [
+        _get_single_sample(client, model_name, messages) for _ in range(n_samples)
+    ]
+    raw_responses = [raw for raw, _ in results]
+    tokens = [choice for _, choice in results]
     counts = Counter(t for t in tokens if t in CHOICES)
-    return _counts_to_logprobs(counts, n_samples) if counts else {}
+    logprobs = _counts_to_logprobs(counts, n_samples) if counts else {}
+    return logprobs, raw_responses
 
 
 REQUIRED_COLUMNS = [
@@ -135,6 +143,7 @@ def get_logits(
     include_image: bool = True,
     n_trials: Optional[int] = None,
     n_samples: Optional[int] = None,
+    raw_responses_path: Optional[str] = None,
 ) -> pd.DataFrame:
     # Validate required columns exist
     missing_columns = [col for col in REQUIRED_COLUMNS if col not in df.columns]
@@ -160,20 +169,39 @@ def get_logits(
 
     print("Doing inference...")
 
-    def row_fn(msgs):
-        if n_samples:
+    if n_samples:
+
+        def row_fn(msgs):
             return get_samples_single_row(client, model_name, msgs, n_samples)
-        return get_logits_single_row(client, model_name, msgs)
 
-    with ThreadPoolExecutor(max_workers=20) as executor:
-        all_choice_logprobs = list(
-            tqdm(
-                executor.map(row_fn, all_messages),
-                total=len(all_messages),
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            results = list(
+                tqdm(
+                    executor.map(row_fn, all_messages),
+                    total=len(all_messages),
+                )
             )
-        )
 
-    df["model_logprobs"] = all_choice_logprobs
+        df["model_logprobs"] = [logprobs for logprobs, _ in results]
+        if raw_responses_path:
+            raw_responses = [raw for _, raw in results]
+            with open(raw_responses_path, "w") as f:
+                json.dump(raw_responses, f, indent=2)
+            print(f"Raw responses saved to {raw_responses_path}")
+    else:
+
+        def row_fn(msgs):
+            return get_logits_single_row(client, model_name, msgs)
+
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            all_choice_logprobs = list(
+                tqdm(
+                    executor.map(row_fn, all_messages),
+                    total=len(all_messages),
+                )
+            )
+
+        df["model_logprobs"] = all_choice_logprobs
 
     return df.drop(columns=["chat_prompt"])
 
