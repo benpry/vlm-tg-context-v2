@@ -25,6 +25,7 @@ from src.lm import (
 from src.utils import (
     get_logprobs_from_genai_response,
     get_logprobs_from_openai_choice,
+    get_logprobs_from_responses_api,
     get_openai_messages,
     preprocess_messages,
 )
@@ -89,10 +90,14 @@ def update_histories(df: pd.DataFrame, trial_num: int):
     ].values
 
 
-def process_interactive_row(client, model_name, messages, n_samples=None):
+def process_interactive_row(
+    client, model_name, messages, n_samples=None, use_responses_api=False,
+    use_anthropic_api=False,
+):
     if n_samples:
         choice_logprobs, raw_responses = get_samples_single_row(
-            client, model_name, messages, n_samples
+            client, model_name, messages, n_samples, use_responses_api,
+            use_anthropic_api,
         )
         prediction = (
             max(choice_logprobs, key=choice_logprobs.get) if choice_logprobs else ""
@@ -103,17 +108,26 @@ def process_interactive_row(client, model_name, messages, n_samples=None):
         client=client,
         model=model_name,
         messages=messages,
+        use_responses_api=use_responses_api,
+        use_anthropic_api=use_anthropic_api,
     )
 
     if "gemini" in model_name.lower():
         choice_logprobs = get_logprobs_from_genai_response(response, CHOICES)
+    elif use_responses_api:
+        choice_logprobs = get_logprobs_from_responses_api(response, CHOICES)
     else:
         choice_logprobs = get_logprobs_from_openai_choice(response.choices[0], CHOICES)
 
     if choice_logprobs:
         prediction = max(choice_logprobs, key=choice_logprobs.get)
     else:
-        content = response.choices[0].message.content
+        if use_responses_api:
+            content = response.output_text
+        elif use_anthropic_api:
+            content = response.content[0].text
+        else:
+            content = response.choices[0].message.content
         prediction = content.strip() if content else ""
 
     return choice_logprobs, prediction, None
@@ -128,6 +142,8 @@ def run_interactive_evaluation(
     n_trials: Optional[int] = None,
     n_samples: Optional[int] = None,
     raw_responses_path: Optional[str] = None,
+    use_responses_api: bool = False,
+    use_anthropic_api: bool = False,
 ) -> pd.DataFrame:
     if n_trials is not None:
         df = df.head(n_trials)
@@ -171,7 +187,8 @@ def run_interactive_evaluation(
                 tqdm(
                     executor.map(
                         lambda msgs: process_interactive_row(
-                            client, model_name, msgs, n_samples
+                            client, model_name, msgs, n_samples, use_responses_api,
+                            use_anthropic_api,
                         ),
                         row_messages,
                     ),

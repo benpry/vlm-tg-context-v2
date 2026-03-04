@@ -250,6 +250,35 @@ def get_logprobs_from_openai_choice(choice, choice_tokens):
     return choice_logprobs
 
 
+def get_logprobs_from_responses_api(response, choice_tokens):
+    """Parse logprobs from an OpenAI Responses API response."""
+    if not response.output or not response.output[0].content:
+        return {}
+
+    content_item = response.output[0].content[0]
+    if not hasattr(content_item, "logprobs") or not content_item.logprobs:
+        return {}
+
+    first_token_logprobs = content_item.logprobs[0]
+    top_logprobs = first_token_logprobs.top_logprobs
+
+    choice_logprobs = {}
+    for top_lp in top_logprobs:
+        token = top_lp.token.strip()
+        if token in choice_tokens:
+            if token in choice_logprobs:
+                choice_logprobs[token] = float(
+                    np.logaddexp(choice_logprobs[token], top_lp.logprob)
+                )
+            else:
+                choice_logprobs[token] = top_lp.logprob
+
+    if not all(token in choice_logprobs for token in choice_tokens):
+        warnings.warn("Not all choice tokens found in top logprobs.")
+
+    return choice_logprobs
+
+
 def get_logprobs_from_genai_response(response, choice_tokens):
     candidates = response.candidates
     if not candidates or not candidates[0].logprobs_result:

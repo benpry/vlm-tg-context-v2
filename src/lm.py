@@ -21,6 +21,7 @@ from src.utils import (
     encode_image,
     get_logprobs_from_genai_response,
     get_logprobs_from_openai_choice,
+    get_logprobs_from_responses_api,
     get_openai_messages,
     preprocess_messages,
 )
@@ -44,8 +45,57 @@ Please answer with just the letter corresponding to the image you think the desc
 """
 
 
+def _convert_to_anthropic_format(messages):
+    """Convert OpenAI-format messages to Anthropic API format.
+
+    Returns (system_prompt, anthropic_messages) where system_prompt is extracted
+    from the system role message and image content blocks are converted.
+    """
+    system_prompt = ""
+    anthropic_messages = []
+
+    for msg in messages:
+        if msg["role"] == "system":
+            system_prompt = msg["content"]
+            continue
+
+        converted = {"role": msg["role"]}
+        content = msg["content"]
+
+        if isinstance(content, str):
+            converted["content"] = content
+        elif isinstance(content, list):
+            new_blocks = []
+            for block in content:
+                if block.get("type") == "image_url":
+                    # Convert OpenAI image_url to Anthropic image format
+                    url = block["image_url"]["url"]
+                    # Extract base64 data from data URL
+                    base64_data = url.split("base64,", 1)[1]
+                    new_blocks.append({
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": "image/png",
+                            "data": base64_data,
+                        },
+                    })
+                elif block.get("type") == "text":
+                    new_blocks.append(block)
+                else:
+                    new_blocks.append(block)
+            converted["content"] = new_blocks
+
+        anthropic_messages.append(converted)
+
+    return system_prompt, anthropic_messages
+
+
 @retry(wait=wait_exponential(multiplier=1, min=4, max=60), stop=stop_after_attempt(10))
-def get_completion_with_backoff(client, model, messages, use_logprobs=True):
+def get_completion_with_backoff(
+    client, model, messages, use_logprobs=True, use_responses_api=False,
+    use_anthropic_api=False,
+):
     if "gemini" in model.lower():
         # use the google genai client
         genai_messages, system_instruction = convert_to_google_genai_style(messages)
@@ -57,22 +107,56 @@ def get_completion_with_backoff(client, model, messages, use_logprobs=True):
                 thinking_config=types.ThinkingConfig(thinking_level="medium"),
             ),
         )
-    else:
-        # we're using an openai-style client
-        if "claude" in model.lower():
-            messages[-1]["cache_control"] = {
-                "type": "ephemeral",
-            }
-
+    elif use_anthropic_api:
+        # use the native Anthropic Messages API
+        system_prompt, anthropic_messages = _convert_to_anthropic_format(messages)
+        # Apply cache_control to the last content block
+        last_msg = anthropic_messages[-1]
+        if isinstance(last_msg["content"], list):
+            last_msg["content"][-1]["cache_control"] = {"type": "ephemeral"}
+        else:
+            # Convert string content to block format for cache_control
+            last_msg["content"] = [
+                {
+                    "type": "text",
+                    "text": last_msg["content"],
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ]
+        max_tokens = 1 if use_logprobs else 256
+        return client.messages.create(
+            model=model,
+            system=system_prompt,
+            messages=anthropic_messages,
+            max_tokens=max_tokens,
+        )
+    elif use_responses_api:
+        # use the OpenAI Responses API
         if use_logprobs:
-            n_logprobs = 20 if "claude" in model.lower() else 1000
+            return client.responses.create(
+                model=model,
+                input=messages,
+                max_output_tokens=1,
+                temperature=1,
+                top_logprobs=1000,
+                include=["message.output_text.logprobs"],
+            )
+        else:
+            return client.responses.create(
+                model=model,
+                input=messages,
+                max_output_tokens=256,
+            )
+    else:
+        # use the OpenAI Chat Completions API (for local models, etc.)
+        if use_logprobs:
             return client.chat.completions.create(
                 model=model,
                 messages=messages,
                 max_completion_tokens=1,
                 temperature=1,
                 logprobs=True,
-                top_logprobs=n_logprobs,
+                top_logprobs=1000,
             )
         else:
             return client.chat.completions.create(
@@ -83,28 +167,42 @@ def get_completion_with_backoff(client, model, messages, use_logprobs=True):
 
 
 def get_logits_single_row(
-    client: OpenAI,
+    client,
     model_name: str,
     messages: list,
+    use_responses_api: bool = False,
+    use_anthropic_api: bool = False,
 ) -> dict:
     response = get_completion_with_backoff(
         client=client,
         model=model_name,
         messages=messages,
+        use_responses_api=use_responses_api,
+        use_anthropic_api=use_anthropic_api,
     )
     if "gemini" in model_name.lower():
         return get_logprobs_from_genai_response(response, CHOICES)
+    elif use_responses_api:
+        return get_logprobs_from_responses_api(response, CHOICES)
     else:
         return get_logprobs_from_openai_choice(response.choices[0], CHOICES)
 
 
-def _get_single_sample(client, model_name, messages):
+def _get_single_sample(
+    client, model_name, messages, use_responses_api=False, use_anthropic_api=False
+):
     """Make a single API call and return (raw_text, extracted_choice)."""
     response = get_completion_with_backoff(
-        client, model_name, messages, use_logprobs=False
+        client, model_name, messages, use_logprobs=False,
+        use_responses_api=use_responses_api,
+        use_anthropic_api=use_anthropic_api,
     )
     if "gemini" in model_name.lower():
         raw = response.text.strip()
+    elif use_responses_api:
+        raw = response.output_text.strip()
+    elif use_anthropic_api:
+        raw = response.content[0].text.strip()
     else:
         raw = response.choices[0].message.content.strip()
     return raw, _extract_choice(raw)
@@ -115,10 +213,16 @@ def _counts_to_logprobs(counts, n_samples):
     return {choice: math.log(count / n_samples) for choice, count in counts.items()}
 
 
-def get_samples_single_row(client, model_name, messages, n_samples):
+def get_samples_single_row(
+    client, model_name, messages, n_samples, use_responses_api=False,
+    use_anthropic_api=False,
+):
     """Resample n_samples times and return (logprobs_dict, raw_responses)."""
     results = [
-        _get_single_sample(client, model_name, messages) for _ in range(n_samples)
+        _get_single_sample(
+            client, model_name, messages, use_responses_api, use_anthropic_api
+        )
+        for _ in range(n_samples)
     ]
     raw_responses = [raw for raw, _ in results]
     tokens = [choice for _, choice in results]
@@ -144,6 +248,8 @@ def get_logits(
     n_trials: Optional[int] = None,
     n_samples: Optional[int] = None,
     raw_responses_path: Optional[str] = None,
+    use_responses_api: bool = False,
+    use_anthropic_api: bool = False,
 ) -> pd.DataFrame:
     # Validate required columns exist
     missing_columns = [col for col in REQUIRED_COLUMNS if col not in df.columns]
@@ -172,7 +278,10 @@ def get_logits(
     if n_samples:
 
         def row_fn(msgs):
-            return get_samples_single_row(client, model_name, msgs, n_samples)
+            return get_samples_single_row(
+                client, model_name, msgs, n_samples, use_responses_api,
+                use_anthropic_api,
+            )
 
         with ThreadPoolExecutor(max_workers=20) as executor:
             results = list(
@@ -191,7 +300,9 @@ def get_logits(
     else:
 
         def row_fn(msgs):
-            return get_logits_single_row(client, model_name, msgs)
+            return get_logits_single_row(
+                client, model_name, msgs, use_responses_api, use_anthropic_api
+            )
 
         with ThreadPoolExecutor(max_workers=20) as executor:
             all_choice_logprobs = list(

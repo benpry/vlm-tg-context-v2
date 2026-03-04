@@ -2,6 +2,7 @@ import os
 from argparse import ArgumentParser
 from glob import glob
 
+import anthropic
 import pandas as pd
 from google import genai
 from openai import OpenAI
@@ -72,17 +73,21 @@ if __name__ == "__main__":
 
     grid_image = Image.open(here(args.grid_image_path))
 
+    use_responses_api = False
+    use_anthropic_api = False
+
     if args.dry_run:
         client = None
     elif "google" in args.api_base:
         client = genai.Client(vertexai=True, project="hs-llmevals")
+    elif "anthropic" in args.api_base:
+        client = anthropic.Anthropic()
+        use_anthropic_api = True
     else:
         client = OpenAI(
             base_url=args.api_base,
         )
-        if "anthropic" in args.api_base:
-            client.api_key = os.getenv("ANTHROPIC_API_KEY")
-            print(f"using api key: {client.api_key}")
+        use_responses_api = "openai.com" in args.api_base
 
     grand_totals = {
         "total_input_tokens": 0,
@@ -159,6 +164,8 @@ if __name__ == "__main__":
                 n_trials=args.n_trials,
                 n_samples=args.n_samples,
                 raw_responses_path=raw_responses_path,
+                use_responses_api=use_responses_api,
+                use_anthropic_api=use_anthropic_api,
             )
             print(f"Saving {output_path}...")
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -180,6 +187,8 @@ if __name__ == "__main__":
                 n_trials=args.n_trials,
                 n_samples=args.n_samples,
                 raw_responses_path=raw_responses_path,
+                use_responses_api=use_responses_api,
+                use_anthropic_api=use_anthropic_api,
             )
             print(f"Saving {output_path}...")
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
