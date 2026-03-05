@@ -1,0 +1,734 @@
+trialNum,repNum,gameId,tangram,playerId,role,numPlayers,text,condition,realCorrect,targetNum,activePlayerCount,spans,span_offsets,raw_spans
+54,4,GWCD2NGoiA2n5Wh2i,K,3J4RLFqgNJW7BsT9G,listener,6,Kneeling man right side,6_thick,5,6,6,"[{""span"": ""kneeling man"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}, {""span"": ""right side"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}]","[[-1, -1], [13, 23]]","""kneeling man"" METAPHOR HOLISTIC  
+""right side"" LITERAL PART"
+54,4,GWCD2NGoiA2n5Wh2i,K,Z6TmKzSh7SAQns8Sg,speaker,6,double diamond this time,6_thick,5,6,6,"[{""span"":""double diamond"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[0,14]]","""double diamond"" LITERAL HOLISTIC"
+45,3,zviCQXNM4xWoYTmoY,A,Q5Bs5Daz3vBi66sSW,speaker,6,lifting foot up holding cloth,no_rotate,5,9,NA,"[{""span"":""lifting foot up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""holding cloth"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,15],[16,29]]","lifting foot LITERAL PART
+foot up LITERAL PART
+holding cloth LITERAL PART"
+42,3,x8BXJBHh3RxchPoHv,K,APorxfw5ZESs4jLDh,speaker,5,"kneeling, arms up to the right, feet up",5_rotate,4,6,NA,"[{""span"":""kneeling"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""arms up to the right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""feet up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,8],[10,30],[32,39]]","""kneeling"" METAPHOR PART
+""arms up to the right"" LITERAL PART
+""feet up"" LITERAL PART"
+42,3,x8BXJBHh3RxchPoHv,K,po2Kc9pGb6B3wwFAh,listener,5,i think this one looks like it is praying maybe,5_rotate,4,6,NA,"[{""span"":""praying"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[34,41]]","""looks like it"" METAPHOR HOLISTIC  
+""is"" (not labeled, too short/function word)  
+""praying"" METAPHOR HOLISTIC  
+""maybe"" (not labeled, too short/function word)"
+66,5,rSMFkjhskBteiyQMB,L,ZvhRyXkvKz6ES5HwX,speaker,4,bent knee speaker,4_rotate,3,6,NA,"[{""span"":""bent knee"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""speaker"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,9],[10,17]]","""bent knee"" METAPHOR PART  
+""speaker"" LITERAL PART"
+69,5,x8BXJBHh3RxchPoHv,A,po2Kc9pGb6B3wwFAh,speaker,5,dangling,5_rotate,4,9,NA,"[{""span"":""dangling"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,8]]","""dangling"" METAPHOR PART"
+44,3,Z2WAkYpWiXwuGcdME,I,R3cRgh4HmEtRsmQyp,speaker,2,karate,2_thick,1,8,2,"[{""span"": ""karate"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 6]]","""karate"" METAPHOR HOLISTIC"
+3,0,LzNv7CD7gRuxpk7cQ,J,ePuHpSEgEgZdLy5Hp,speaker,3,body is completely square on the left,3_rotate,2,3,NA,"[{""span"":""body "",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""completely square on the left"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[0,5],[8,37]]","""body is completely square"" METAPHOR HOLISTIC  
+""on the left"" LITERAL PART"
+3,0,LzNv7CD7gRuxpk7cQ,J,MrNX5Si499ovSY845,listener,3,Are the facing right or left,3_rotate,2,3,NA,"[{""span"":""facing right or left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[8,28]]","""the facing"" METAPHOR HOLISTIC  
+""right or left"" LITERAL PART"
+3,0,LzNv7CD7gRuxpk7cQ,J,ePuHpSEgEgZdLy5Hp,speaker,3,head in the centre,3_rotate,2,3,NA,"[{""span"":""head in the centre"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,18]]","""head in the centre"" METAPHOR HOLISTIC"
+3,0,LzNv7CD7gRuxpk7cQ,J,5beKfX6iGcYFWgGg5,listener,3,is he pointing right,3_rotate,2,3,NA,"[{""span"":""pointing right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[6,20]]","""pointing right"" METAPHOR PART"
+3,0,LzNv7CD7gRuxpk7cQ,J,MrNX5Si499ovSY845,listener,3,Is the square for the head like a diamond,3_rotate,2,3,NA,"[{""span"":""like a diamond"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""square"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":"" for the head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[27,41],[7,13],[13,26]]","""square for the head"" METAPHOR PART  
+""like a diamond"" METAPHOR PART"
+3,0,LzNv7CD7gRuxpk7cQ,J,ePuHpSEgEgZdLy5Hp,speaker,3,top are left of body are straight lines,3_rotate,2,3,NA,"[{""span"":""straight lines"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""top are left of body "",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[25,39],[0,21]]","""top"" LITERAL PART  
+""left"" LITERAL PART  
+""body"" METAPHOR HOLISTIC  
+""straight lines"" LITERAL PART"
+3,0,LzNv7CD7gRuxpk7cQ,J,ePuHpSEgEgZdLy5Hp,speaker,3,make a right angle,3_rotate,2,3,NA,"[{""span"": ""right angle"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}]","[[7, 18]]","""right angle"" LITERAL PART"
+3,0,LzNv7CD7gRuxpk7cQ,J,MrNX5Si499ovSY845,listener,3,Does it look like a candle,3_rotate,2,3,NA,"[{""span"": ""look like a candle"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[8, 26]]","""look like a candle"" METAPHOR HOLISTIC"
+3,0,LzNv7CD7gRuxpk7cQ,J,ePuHpSEgEgZdLy5Hp,speaker,3,then right side is zig zag,3_rotate,2,3,NA,"[{""span"":""right side"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""zig zag"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[5,15],[19,26]]","""right side"" METAPHOR PART  
+""zig zag"" LITERAL PART"
+67,5,Z2WAkYpWiXwuGcdME,G,R3cRgh4HmEtRsmQyp,speaker,2,square bunny,2_thick,1,7,2,"[{""span"":""square"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""bunny"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,6],[7,12]]","""square"" LITERAL PART  
+""bunny"" METAPHOR PART"
+4,0,GWCD2NGoiA2n5Wh2i,F,Z6TmKzSh7SAQns8Sg,speaker,6,"anyway this guy looks like they're sitting, legs to the left",6_thick,5,4,6,"[{""span"":""looks like they're sitting"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""legs to the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""this guy"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[16,42],[44,60],[7,15]]","""looks like they're sitting"" METAPHOR HOLISTIC  
+""legs to the left"" LITERAL PART"
+4,0,GWCD2NGoiA2n5Wh2i,F,3J4RLFqgNJW7BsT9G,listener,6,head tilted down towards legs,6_thick,5,4,6,"[{""span"":""head tilted down"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""towards legs"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,16],[17,29]]","""head tilted down"" METAPHOR PART  
+""towards legs"" LITERAL PART"
+4,0,GWCD2NGoiA2n5Wh2i,F,7CNcmu99Gs4McbRom,listener,6,"reclining, with the head tilted slightly forward",6_thick,5,4,6,"[{""span"":""reclining"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""the head tilted slightly forward"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,9],[16,48]]","""reclining"" METAPHOR HOLISTIC  
+""head"" METAPHOR PART  
+""tilted"" LITERAL PART  
+""forward"" LITERAL PART"
+9,0,MDLyuv29jevaGLSeT,C,MKCTjgM8AFzBJaAuA,speaker,6,"This person looks like they are flying, both arms are extended (one on each side of them) and their body is pointed to the right",6_thin,5,9,6,"[{""span"":""This person"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""they are flying"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""both arms are extended"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""one on each side of them"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""their body is pointed to the right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,11],[23,38],[40,62],[64,88],[94,128]]","""This person"" METAPHOR HOLISTIC  
+""looks like"" METAPHOR METAPHOR  
+""they are flying"" METAPHOR METAPHOR  
+""both arms are extended"" PART PART  
+""one on each side of them"" PART PART  
+""their body is pointed to the right"" PART PART"
+43,3,rSMFkjhskBteiyQMB,L,o7s7B6kZLqvaG62N4,speaker,4,"sermon speaker, with bent knees",4_rotate,3,7,NA,"[{""span"": ""sermon speaker"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}, {""span"": ""bent knees"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 14], [21, 31]]","""sermon speaker"" METAPHOR HOLISTIC  
+""bent knees"" METAPHOR PART"
+24,2,BTbGhXZvjdSFubTBg,E,WXmyGwByDtSr3gTyk,speaker,6,rabbit ears guy,6_thick,5,0,6,"[{""span"":""rabbit ears"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""guy"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,11],[12,15]]","""rabbit ears"" METAPHOR PART"
+66,5,MEJ8y7jRW4947MPrH,D,sLmWkpuX6yKjgpnPQ,speaker,6,priest,full_feedback,5,6,NA,"[{""span"": ""priest"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 6]]","""priest"" METAPHOR HOLISTIC"
+15,1,BTbGhXZvjdSFubTBg,G,WXmyGwByDtSr3gTyk,speaker,6,The one doing the dramatic yoga pose,6_thick,4,3,6,"[{""span"": ""dramatic yoga pose"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[18, 36]]","""The one"" HOLISTIC PART  
+""dramatic yoga pose"" METAPHOR HOLISTIC"
+15,1,BTbGhXZvjdSFubTBg,G,teS8cAZWPXbdKTZP4,listener,6,I don't know that one,6_thick,4,3,6,[],[],"don't know  METAPHOR  HOLISTIC  
+that one  LITERAL  PART"
+15,1,BTbGhXZvjdSFubTBg,G,9nyyLZ9PJhX7LnAx7,listener,6,The ice skater,6_thick,4,3,6,"[{""span"": ""The ice skater"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 14]]","""The ice skater"" METAPHOR HOLISTIC"
+15,1,BTbGhXZvjdSFubTBg,G,WXmyGwByDtSr3gTyk,speaker,6,one arm in front one leg in front,6_thick,4,3,6,"[{""span"": ""one arm in front"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}, {""span"": ""one leg in front"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 16], [17, 33]]","""one arm in front"" METAPHOR PART  
+""one leg in front"" METAPHOR PART"
+15,1,BTbGhXZvjdSFubTBg,G,WXmyGwByDtSr3gTyk,speaker,6,not the ice skater,6_thick,4,3,6,"[{""span"": ""ice skater"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[8, 18]]","""ice skater"" METAPHOR HOLISTIC"
+15,1,BTbGhXZvjdSFubTBg,G,YZav64FB85yPmwMCq,listener,6,Like kung fu from the side,6_thick,4,3,6,"[{""span"":""kung fu from the side"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[5,26]]","""Like kung fu"" METAPHOR HOLISTIC  
+""from the side"" LITERAL PART"
+15,1,BTbGhXZvjdSFubTBg,G,teS8cAZWPXbdKTZP4,listener,6,Like he's doing a dance from Disturbia lol,6_thick,4,3,6,"[{""span"":""he's doing a dance from Disturbia "",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[5,39]]","""Like he's doing"" METAPHOR HOLISTIC  
+""dance from"" LITERAL PART  
+""Disturbia"" LITERAL PART  
+""lol"""
+44,3,GWCD2NGoiA2n5Wh2i,I,3J4RLFqgNJW7BsT9G,listener,6,Sitting man,6_thick,5,8,6,"[{""span"": ""Sitting man"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 11]]","""Sitting man"" METAPHOR HOLISTIC"
+44,3,GWCD2NGoiA2n5Wh2i,I,Z6TmKzSh7SAQns8Sg,speaker,6,"this one is the ice skater! one leg up and pointing to the right, one on the ground with foot pointing to the left",6_thick,5,8,6,"[{""span"":""the ice skater"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""one leg up and pointing to the right,"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""one on the ground"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""foot pointing to the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[12,26],[28,65],[66,83],[89,114]]","this one is the ice skater! METAPHOR HOLISTIC  
+ice skater METAPHOR HOLISTIC  
+one leg up METAPHOR PART  
+one leg METAPHOR PART  
+pointing to the right LITERAL PART  
+pointing to the left LITERAL PART  
+one on the ground METAPHOR PART  
+foot pointing to the left LITERAL PART  
+foot pointing METAPHOR PART"
+33,2,GWCD2NGoiA2n5Wh2i,G,3J4RLFqgNJW7BsT9G,listener,6,flying man (or fainting man),6_thick,5,9,6,"[{""span"": ""flying man"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}, {""span"": ""(or fainting man)"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 10], [11, 28]]","""flying man"" METAPHOR HOLISTIC  
+""(or fainting man)"" METAPHOR HOLISTIC"
+33,2,GWCD2NGoiA2n5Wh2i,G,QgoNBGkyARtJgkjBG,listener,6,i like flying,6_thick,5,9,6,"[{""span"": ""flying"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[7, 13]]","""flying"" METAPHOR HOLISTIC"
+33,2,GWCD2NGoiA2n5Wh2i,G,7CNcmu99Gs4McbRom,listener,6,"yeah, flying is good",6_thick,5,9,6,"[{""span"": ""flying"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[6, 12]]","""flying"" METAPHOR HOLISTIC"
+33,2,GWCD2NGoiA2n5Wh2i,G,Z6TmKzSh7SAQns8Sg,speaker,6,"i don't know if we have a name for this one head leaning forward and to the left (he looks bummed), with tiny pointy triangle below it, also facing left",6_thick,5,9,6,"[{""span"":""head leaning forward and to the left "",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""he looks bummed"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""tiny pointy triangle below it"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[44,81],[82,97],[105,134],[141,152]]","don't know if we have a name for this one  METAPHOR  HOLISTIC  
+head leaning forward  METAPHOR  PART  
+and to the left  LITERAL  PART  
+he looks bummed  METAPHOR  HOLISTIC  
+with tiny pointy triangle  LITERAL  PART  
+below it  LITERAL  PART  
+also facing left  LITERAL  PART"
+33,2,GWCD2NGoiA2n5Wh2i,G,Z6TmKzSh7SAQns8Sg,speaker,6,"distinct triangle on the right, sort of hanging off",6_thick,5,9,6,"[{""span"":""distinct triangle on the right, sort of hanging off"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[0,51]]","""distinct triangle"" LITERAL PART  
+""on the right"" LITERAL PART  
+""sort of hanging off"" METAPHOR HOLISTIC"
+33,2,GWCD2NGoiA2n5Wh2i,G,3J4RLFqgNJW7BsT9G,listener,6,bottom triangle on right,6_thick,5,9,6,"[{""span"":""bottom triangle on right"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[0,24]]","""bottom triangle"" LITERAL PART
+""right"" LITERAL PART"
+33,2,GWCD2NGoiA2n5Wh2i,G,Z6TmKzSh7SAQns8Sg,speaker,6,"yeah, distinct triangle on bottom right and top right",6_thick,5,9,6,"[{""span"": ""distinct triangle"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}, {""span"": ""on bottom right"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}, {""span"": ""and top right"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}]","[[6, 23], [24, 39], [40, 53]]","""distinct triangle"" LITERAL PART  
+""on bottom right"" LITERAL PART  
+""and top right"" LITERAL PART"
+33,2,GWCD2NGoiA2n5Wh2i,G,QgoNBGkyARtJgkjBG,listener,6,maybe bummed dude,6_thick,5,9,6,"[{""span"": ""bummed dude"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[6, 17]]","""bummed dude"" METAPHOR HOLISTIC"
+33,2,GWCD2NGoiA2n5Wh2i,G,3J4RLFqgNJW7BsT9G,listener,6,going to call it bummed man with triangle butt,6_thick,5,9,6,"[{""span"":""bummed man"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""triangle"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""butt"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[17,27],[33,41],[42,46]]","""bummed man"" METAPHOR HOLISTIC  
+""triangle butt"" LITERAL PART"
+33,2,GWCD2NGoiA2n5Wh2i,G,9QmKZcuPiHgYsxSQX,listener,6,looks like the person who would be catching the ice skater if they were doing pairs,6_thick,5,9,6,"[{""span"":""the person who would be catching the ice skater if they were doing pairs"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[11,83]]","""looks like the person who would be catching the ice skater"" METAPHOR HOLISTIC  
+""ice skater"" METAPHOR PART"
+55,4,BTbGhXZvjdSFubTBg,H,WXmyGwByDtSr3gTyk,speaker,6,sitting no arms and legs to one side I will call them Kevin,6_thick,5,7,6,"[{""span"":""sitting"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":"" I will call them Kevin"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""no arms"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""legs to one side"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,7],[36,59],[8,15],[20,36]]","""sitting"" METAPHOR HOLISTIC  
+""no arms and legs"" LITERAL PART  
+""to one side"" LITERAL PART  
+""I will call them"" HOLISTIC PART  
+""Kevin"" HOLISTIC PART"
+55,4,BTbGhXZvjdSFubTBg,H,teS8cAZWPXbdKTZP4,listener,6,<3 Kevin,6_thick,5,7,6,"[{""span"":""<3 Kevin"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,8]]",<3 Kevin METAPHOR HOLISTIC
+55,4,BTbGhXZvjdSFubTBg,H,j9qfbLnF9TpFABZaJ,listener,6,bb kevin,6_thick,5,7,6,"[{""span"":""bb kevin"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,8]]","""bb kevin"" HOLISTIC PART"
+65,5,22dyGMRgestp8u5Lc,B,zbNWfn7CxR9SSytWA,speaker,2,baby with bow on back of head,2_thin,1,5,2,"[{""span"":""baby"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""bow on back of head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,4],[10,29]]","""baby"" METAPHOR HOLISTIC  
+""bow on back of head"" LITERAL PART"
+41,3,Z2WAkYpWiXwuGcdME,A,R3cRgh4HmEtRsmQyp,speaker,2,two head guy,2_thick,1,5,2,"[{""span"":""two head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""guy"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,8],[9,12]]","""two head guy"" METAPHOR HOLISTIC"
+68,5,22dyGMRgestp8u5Lc,K,zbNWfn7CxR9SSytWA,speaker,2,"priest kneeling, heel up, facing right",2_thin,1,8,2,"[{""span"":""priest kneeling"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""heel up,"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""facing right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,15],[17,25],[26,38]]","""priest"" METAPHOR HOLISTIC  
+""kneeling"" METAPHOR PART  
+""heel"" METAPHOR PART  
+""up"" LITERAL PART  
+""right"" LITERAL PART"
+41,3,GWCD2NGoiA2n5Wh2i,K,3J4RLFqgNJW7BsT9G,listener,6,Flying man,6_thick,4,5,6,"[{""span"": ""Flying man"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 10]]","""Flying man"" METAPHOR HOLISTIC"
+41,3,GWCD2NGoiA2n5Wh2i,K,Z6TmKzSh7SAQns8Sg,speaker,6,"double diamond, triangle at the bottom left that is pointing up",6_thick,4,5,6,"[{""span"":""double diamond"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""triangle at the bottom left"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""that is pointing up"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[0,14],[16,43],[44,63]]","""double diamond"" METAPHOR HOLISTIC  
+""triangle at the bottom left"" LITERAL PART  
+""that is pointing up"" LITERAL PART"
+41,3,GWCD2NGoiA2n5Wh2i,K,7CNcmu99Gs4McbRom,listener,6,I think Flying man is like Neo from the Matrix but it's all good,6_thick,4,5,6,"[{""span"":""Flying man is like Neo from the Matrix"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[8,46]]","""I think"" HOLISTIC PART  
+""Flying man"" METAPHOR HOLISTIC  
+""like"" LITERAL PART  
+""Neo from the Matrix"" METAPHOR HOLISTIC  
+""but"" PART  
+""it's all good"" HOLISTIC PART"
+41,3,GWCD2NGoiA2n5Wh2i,K,3J4RLFqgNJW7BsT9G,listener,6,Johnny 5!,6_thick,4,5,6,"[{""span"": ""Johnny 5"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 8]]","""Johnny 5"" METAPHOR HOLISTIC"
+18,1,zviCQXNM4xWoYTmoY,L,Q5Bs5Daz3vBi66sSW,speaker,6,"bending knees, facing right, arms out in front",no_rotate,5,6,NA,"[{""span"":""bending knees"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""facing right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""arms out in front"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,13],[15,27],[29,46]]","""bending knees"" METAPHOR PART  
+""facing right"" LITERAL PART  
+""arms out in front"" LITERAL PART"
+8,0,BTbGhXZvjdSFubTBg,C,WXmyGwByDtSr3gTyk,speaker,6,a person flying,6_thick,5,8,6,"[{""span"": ""a person flying"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 15]]","""a person flying"" METAPHOR HOLISTIC"
+8,0,BTbGhXZvjdSFubTBg,C,9nyyLZ9PJhX7LnAx7,listener,6,"no legs hands up in the air like ""I DON'T KNOW!""",6_thick,5,8,6,"[{""span"":""legs"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""hands up in the air like \""I DON'T KNOW!\"""",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[3,7],[8,48]]","""legs"" METAPHOR PART  
+""hands up"" METAPHOR PART  
+""in the air"" LITERAL PART  
+""like"" LITERAL PART  
+""I DON'T KNOW!"" LITERAL HOLISTIC"
+8,0,BTbGhXZvjdSFubTBg,C,j9qfbLnF9TpFABZaJ,listener,6,no legs huh,6_thick,5,8,6,"[{""span"": ""no legs"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 7]]","""no legs"" METAPHOR PART"
+8,0,BTbGhXZvjdSFubTBg,C,teS8cAZWPXbdKTZP4,listener,6,Is he at a concert with his hands in the air like he just doesn't care,6_thick,5,8,6,"[{""span"":""at a concert"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""with his hands in the air"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""like he just doesn't care"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[6,18],[19,44],[45,70]]","""at a concert"" LITERAL PART  
+""with his hands in the air"" METAPHOR PART  
+""like he just doesn't care"" METAPHOR HOLISTIC"
+8,0,BTbGhXZvjdSFubTBg,C,WXmyGwByDtSr3gTyk,speaker,6,no legs,6_thick,5,8,6,"[{""span"": ""no legs"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 7]]","""no legs"" METAPHOR PART"
+8,0,BTbGhXZvjdSFubTBg,C,j9qfbLnF9TpFABZaJ,listener,6,"""SUE ME""",6_thick,5,8,6,"[{""span"": ""SUE ME"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[1, 7]]","""SUE ME"" METAPHOR HOLISTIC"
+8,0,BTbGhXZvjdSFubTBg,C,9nyyLZ9PJhX7LnAx7,listener,6,Angry skeleton meme pose,6_thick,5,8,6,"[{""span"":""Angry skeleton meme pose"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,24]]","""Angry skeleton"" METAPHOR HOLISTIC  
+""meme pose"" LITERAL PART"
+20,1,MEJ8y7jRW4947MPrH,E,o6obBbzzSPJE34pKb,speaker,6,bunny ear guy,full_feedback,5,8,NA,"[{""span"":""bunny ear"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":"" guy"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,9],[9,13]]","""bunny ear guy"" METAPHOR HOLISTIC"
+49,4,LzNv7CD7gRuxpk7cQ,D,MrNX5Si499ovSY845,speaker,3,Man reading book standing facing left,3_rotate,2,1,NA,"[{""span"":""reading book"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""standing"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""Man"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[4,16],[17,25],[26,37],[0,3]]","""reading book"" METAPHOR PART  
+""standing"" METAPHOR PART  
+""facing left"" LITERAL PART"
+18,1,Z2WAkYpWiXwuGcdME,E,R3cRgh4HmEtRsmQyp,speaker,2,"rabbit with triangle ears, kind of lying down",2_thick,1,6,2,"[{""span"":""rabbit"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""lying down"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""triangle "",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""ears"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,6],[35,45],[12,21],[21,25]]","""rabbit"" METAPHOR HOLISTIC  
+""triangle ears"" LITERAL PART  
+""lying down"" METAPHOR PART"
+18,1,Z2WAkYpWiXwuGcdME,E,nt3EW7xXyRQqvDebf,listener,2,With the triangular body,2_thick,1,6,2,"[{""span"":""triangular"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""body"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[9,19],[20,24]]",With the triangular LITERAL PART
+18,1,Z2WAkYpWiXwuGcdME,E,nt3EW7xXyRQqvDebf,listener,2,Pointing right,2_thick,1,6,2,"[{""span"": ""Pointing right"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 14]]","""Pointing right"" METAPHOR HOLISTIC"
+6,0,zviCQXNM4xWoYTmoY,G,Q5Bs5Daz3vBi66sSW,speaker,6,erm like lots of weird shapes Doesn't look like anything,no_rotate,5,6,NA,"[{""span"":""erm like lots of weird shapes"",""literal_metaphor"":""literal"",""part_holistic"":""holistic""},{""span"":""anything"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,29],[48,56]]","""erm like lots of weird shapes"" METAPHOR HOLISTIC  
+""Doesn't look like"" METAPHOR  
+""anything"" METAPHOR HOLISTIC"
+6,0,zviCQXNM4xWoYTmoY,G,5J7qybS6Kinu3Cgrf,listener,6,Small triangle in bottom right,no_rotate,5,6,NA,"[{""span"":""Small triangle in bottom right"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[0,30]]","""Small triangle"" LITERAL PART  
+""bottom right"" LITERAL PART"
+6,0,zviCQXNM4xWoYTmoY,G,Q5Bs5Daz3vBi66sSW,speaker,6,"flat base bottom left, diamond near the top, small triangle bottom right",no_rotate,5,6,NA,"[{""span"":""flat base bottom left"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""diamond near the top"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":"" small triangle bottom right"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[0,21],[23,43],[44,72]]","flat base LITERAL PART
+bottom left LITERAL PART
+diamond near the top LITERAL PART
+small triangle LITERAL PART
+bottom right LITERAL PART"
+43,3,x8BXJBHh3RxchPoHv,G,APorxfw5ZESs4jLDh,speaker,5,dancer,5_rotate,4,7,NA,"[{""span"": ""dancer"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 6]]","""dancer"" METAPHOR HOLISTIC"
+55,4,zviCQXNM4xWoYTmoY,H,Q5Bs5Daz3vBi66sSW,speaker,6,not the candle,no_rotate,5,7,NA,"[{""span"": ""not the candle"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 14]]","""not the candle"" METAPHOR HOLISTIC"
+21,1,LzNv7CD7gRuxpk7cQ,J,MrNX5Si499ovSY845,speaker,3,the candle,3_rotate,2,9,NA,"[{""span"": ""the candle"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 10]]","""the candle"" METAPHOR HOLISTIC"
+38,3,zviCQXNM4xWoYTmoY,L,Q5Bs5Daz3vBi66sSW,speaker,6,bending knees hands out again,no_rotate,5,2,NA,"[{""span"":""bending knees"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""hands out"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,13],[14,23]]","""bending knees"" METAPHOR PART  
+""hands out"" LITERAL PART  
+""again"" PART"
+45,3,22dyGMRgestp8u5Lc,H,zbNWfn7CxR9SSytWA,speaker,2,"no arms or legs, upright",2_thin,1,9,2,"[{""span"":""no arms or legs"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":"" upright"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,15],[16,24]]","no arms or legs"" METAPHOR PART  
+upright"" LITERAL PART"
+32,2,zviCQXNM4xWoYTmoY,B,Q5Bs5Daz3vBi66sSW,speaker,6,dog diamond and triangle at the top,no_rotate,5,8,NA,"[{""span"":""dog"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""diamond and triangle at the top"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[0,3],[4,35]]","dog METAPHOR HOLISTIC  
+diamond LITERAL PART  
+and LITERAL PART  
+triangle LITERAL PART  
+at the top LITERAL PART"
+44,3,MEJ8y7jRW4947MPrH,I,XNra8yzmu6p3Xw6m5,speaker,6,karate,full_feedback,5,8,NA,"[{""span"": ""karate"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 6]]","""karate"" METAPHOR HOLISTIC"
+25,2,MDLyuv29jevaGLSeT,K,9SydRxgkpDiJakuxY,speaker,6,kneeling facing right arms out,6_thin,5,1,6,"[{""span"":""kneeling"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""arms out"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,8],[9,21],[22,30]]","""kneeling"" METAPHOR PART  
+""facing right"" LITERAL PART  
+""arms out"" LITERAL PART"
+4,0,BTbGhXZvjdSFubTBg,F,WXmyGwByDtSr3gTyk,speaker,6,sitting down in a slouched position,6_thick,5,4,6,"[{""span"":""sitting down"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""slouched position"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,12],[18,35]]","""sitting down"" METAPHOR HOLISTIC  
+""slouched position"" METAPHOR PART"
+4,0,BTbGhXZvjdSFubTBg,F,j9qfbLnF9TpFABZaJ,listener,6,kinda like me rn,6_thick,5,4,6,"[{""span"": ""kinda like me"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 13]]","""kinda like me"" METAPHOR HOLISTIC"
+4,0,BTbGhXZvjdSFubTBg,F,WXmyGwByDtSr3gTyk,speaker,6,arms down,6_thick,5,4,6,"[{""span"": ""arms down"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 9]]","""arms down"" METAPHOR PART"
+4,0,BTbGhXZvjdSFubTBg,F,9nyyLZ9PJhX7LnAx7,listener,6,Legs or no legs,6_thick,5,4,6,"[{""span"": ""Legs"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}, {""span"": ""no legs"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 4], [8, 15]]","""Legs"" METAPHOR PART  
+""no legs"" METAPHOR PART"
+4,0,BTbGhXZvjdSFubTBg,F,WXmyGwByDtSr3gTyk,speaker,6,legs,6_thick,5,4,6,"[{""span"":""legs"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,4]]",legs METAPHOR PART
+4,0,BTbGhXZvjdSFubTBg,F,EnZxY9HcC4c6WuCd8,listener,6,In a bean bag chair,6_thick,5,4,6,"[{""span"": ""In a bean bag chair"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 19]]","""In a bean bag chair"" METAPHOR HOLISTIC"
+9,0,Z2WAkYpWiXwuGcdME,L,R3cRgh4HmEtRsmQyp,speaker,2,looks like someone begging and facing right but there are two that look like this it's the one which has quite a clear bend in the knee and no triangle pointing out the back,2_thick,1,9,2,"[{""span"":""someone begging"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":"" facing right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""quite a clear bend in the knee "",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""no triangle"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""pointing out the back"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[11,26],[30,43],[105,136],[140,151],[152,173]]","looks like someone begging  METAPHOR  HOLISTIC  
+facing right  LITERAL  PART  
+two that look like this  METAPHOR  PART  
+one which has quite a clear bend in the knee  METAPHOR  PART  
+no triangle pointing out the back  LITERAL  PART"
+53,4,Z2WAkYpWiXwuGcdME,D,R3cRgh4HmEtRsmQyp,speaker,2,letter,2_thick,1,5,2,"[{""span"":""letter"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,6]]","""letter"" METAPHOR PART"
+44,3,zviCQXNM4xWoYTmoY,J,Q5Bs5Daz3vBi66sSW,speaker,6,candle,no_rotate,5,8,NA,"[{""span"": ""candle"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 6]]","""candle"" METAPHOR HOLISTIC"
+37,3,Z2WAkYpWiXwuGcdME,L,R3cRgh4HmEtRsmQyp,speaker,2,beg no triangle,2_thick,1,1,2,"[{""span"":""triangle"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""beg"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[7,15],[0,3]]","""beg"" HOLISTIC PART  
+""no"" HOLISTIC PART  
+""triangle"" LITERAL PART"
+53,4,22dyGMRgestp8u5Lc,C,aSeEmufWmsbLn7YEQ,speaker,2,jumping off building arms up,2_thin,1,5,2,"[{""span"":""jumping off building"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""arms up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,20],[21,28]]","""jumping off building"" METAPHOR HOLISTIC  
+""arms up"" LITERAL PART"
+61,5,rSMFkjhskBteiyQMB,A,ZvhRyXkvKz6ES5HwX,speaker,4,dancing man,4_rotate,3,1,NA,"[{""span"": ""dancing man"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 11]]","""dancing man"" METAPHOR HOLISTIC"
+63,5,GWCD2NGoiA2n5Wh2i,E,3J4RLFqgNJW7BsT9G,listener,6,minnesota,6_thick,5,3,6,"[{""span"":""minnesota"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,9]]","""minnesota"" HOLISTIC PART"
+63,5,GWCD2NGoiA2n5Wh2i,E,Z6TmKzSh7SAQns8Sg,speaker,6,bunny ears for this round! we're really truckin',6_thick,5,3,6,"[{""span"":""bunny ears"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,10]]","""bunny ears"" METAPHOR PART  
+""this round"" HOLISTIC PART  
+""we're really truckin'"" METAPHOR HOLISTIC"
+31,2,LzNv7CD7gRuxpk7cQ,B,5beKfX6iGcYFWgGg5,speaker,3,kneeling down both arms out,3_rotate,2,7,NA,"[{""span"":""kneeling down"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""both arms out"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,13],[14,27]]","""kneeling down"" METAPHOR PART  
+""both arms"" PART  
+""arms out"" PART"
+31,2,LzNv7CD7gRuxpk7cQ,B,5beKfX6iGcYFWgGg5,speaker,3,like an ninger,3_rotate,2,7,NA,"[{""span"": ""like an ninger"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 14]]","""like an ninger"" METAPHOR HOLISTIC"
+31,2,LzNv7CD7gRuxpk7cQ,B,MrNX5Si499ovSY845,listener,3,facing which ay,3_rotate,2,7,NA,"[{""span"":""facing"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,6]]","""facing"" METAPHOR PART"
+31,2,LzNv7CD7gRuxpk7cQ,B,5beKfX6iGcYFWgGg5,speaker,3,right,3_rotate,2,7,NA,"[{""span"":""right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,5]]","""right"" METAPHOR PART"
+31,2,LzNv7CD7gRuxpk7cQ,B,5beKfX6iGcYFWgGg5,speaker,3,could have angel wings,3_rotate,2,7,NA,"[{""span"":""angel wings"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[11,22]]","""angel wings"" METAPHOR HOLISTIC"
+5,0,LzNv7CD7gRuxpk7cQ,D,ePuHpSEgEgZdLy5Hp,speaker,3,like a person facing left holding a book,3_rotate,2,5,NA,"[{""span"":""holding a book"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""a person facing left "",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[26,40],[5,26]]","""like a person"" METAPHOR HOLISTIC  
+""facing left"" LITERAL PART  
+""holding a book"" LITERAL PART"
+5,0,LzNv7CD7gRuxpk7cQ,D,5beKfX6iGcYFWgGg5,listener,3,is the right hand side straight,3_rotate,2,5,NA,"[{""span"":""right hand side straight"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[7,31]]","""is the right hand side"" METAPHOR HOLISTIC  
+""straight"" LITERAL PART"
+28,2,GWCD2NGoiA2n5Wh2i,E,3J4RLFqgNJW7BsT9G,listener,6,podium guy ;),6_thick,5,4,6,"[{""span"":""podium guy "",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,11]]","podium guy"" METAPHOR HOLISTIC"
+28,2,GWCD2NGoiA2n5Wh2i,E,Z6TmKzSh7SAQns8Sg,speaker,6,bunny ears for this one!,6_thick,5,4,6,"[{""span"": ""bunny ears"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 10]]","""bunny ears"" METAPHOR PART"
+27,2,zviCQXNM4xWoYTmoY,D,Q5Bs5Daz3vBi66sSW,speaker,6,priest,no_rotate,5,3,NA,"[{""span"": ""priest"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 6]]","""priest"" METAPHOR HOLISTIC"
+22,1,MDLyuv29jevaGLSeT,D,X8fyxirwxbpnvRKyy,speaker,6,standing up straight facing left with hands out,6_thin,5,10,6,"[{""span"":""standing up straight"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""with hands out"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,20],[21,32],[33,47]]","""standing up straight"" METAPHOR HOLISTIC  
+""facing left"" LITERAL PART  
+""with hands out"" LITERAL PART"
+59,4,MEJ8y7jRW4947MPrH,C,2ooABLMjEkBCftsH6,speaker,6,celeb,full_feedback,5,11,NA,"[{""span"": ""celeb"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 5]]","""celeb"" METAPHOR HOLISTIC"
+37,3,zviCQXNM4xWoYTmoY,B,Q5Bs5Daz3vBi66sSW,speaker,6,dog,no_rotate,5,1,NA,"[{""span"": ""dog"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 3]]","""dog"" METAPHOR HOLISTIC"
+43,3,Z2WAkYpWiXwuGcdME,H,R3cRgh4HmEtRsmQyp,speaker,2,limbless,2_thick,1,7,2,"[{""span"":""limbless"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,8]]","""limbless"" METAPHOR HOLISTIC"
+37,3,GWCD2NGoiA2n5Wh2i,D,3J4RLFqgNJW7BsT9G,listener,6,Bugs Bunny =p,6_thick,5,1,6,"[{""span"": ""Bugs Bunny"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 10]]","""Bugs Bunny"" METAPHOR HOLISTIC"
+37,3,GWCD2NGoiA2n5Wh2i,D,Z6TmKzSh7SAQns8Sg,speaker,6,podium man!,6_thick,5,1,6,"[{""span"": ""podium man"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 10]]","""podium man"" METAPHOR HOLISTIC"
+28,2,BTbGhXZvjdSFubTBg,F,WXmyGwByDtSr3gTyk,speaker,6,slouchy guy,6_thick,5,4,6,"[{""span"": ""slouchy guy"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 11]]","""slouchy guy"" METAPHOR HOLISTIC"
+28,2,BTbGhXZvjdSFubTBg,F,teS8cAZWPXbdKTZP4,listener,6,bean bag sloucher,6_thick,5,4,6,"[{""span"":""bean bag"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""sloucher"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,8],[9,17]]","""bean bag"" METAPHOR HOLISTIC  
+""sloucher"" METAPHOR PART"
+28,2,BTbGhXZvjdSFubTBg,F,j9qfbLnF9TpFABZaJ,listener,6,bean bag,6_thick,5,4,6,"[{""span"": ""bean bag"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 8]]","""bean bag"" METAPHOR HOLISTIC"
+33,2,MDLyuv29jevaGLSeT,D,9SydRxgkpDiJakuxY,speaker,6,standing up straight facing left,6_thin,5,9,6,"[{""span"":""standing up straight"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,20],[21,32]]","""standing up straight"" METAPHOR PART
+""facing left"" LITERAL PART"
+67,5,MDLyuv29jevaGLSeT,K,MKCTjgM8AFzBJaAuA,speaker,6,Praying kneeling facing right,6_thin,3,7,4,"[{""span"":""Praying"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""kneeling"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,7],[8,16],[17,29]]","""Praying"" METAPHOR HOLISTIC
+""kneeling"" METAPHOR PART
+""facing right"" LITERAL PART"
+63,5,Z2WAkYpWiXwuGcdME,J,R3cRgh4HmEtRsmQyp,speaker,2,rectangle,2_thick,1,3,2,"[{""span"": ""rectangle"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}]","[[0, 9]]","""rectangle"" LITERAL PART"
+70,5,GWCD2NGoiA2n5Wh2i,D,3J4RLFqgNJW7BsT9G,listener,6,Sitting man,6_thick,5,10,6,"[{""span"": ""Sitting man"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 11]]","""Sitting man"" METAPHOR HOLISTIC"
+70,5,GWCD2NGoiA2n5Wh2i,D,Z6TmKzSh7SAQns8Sg,speaker,6,podium guy this time!,6_thick,5,10,6,"[{""span"": ""podium guy"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 10]]","""podium guy"" METAPHOR HOLISTIC"
+56,4,LzNv7CD7gRuxpk7cQ,B,MrNX5Si499ovSY845,speaker,3,angel,3_rotate,2,8,NA,"[{""span"": ""angel"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 5]]","""angel"" METAPHOR HOLISTIC"
+30,2,22dyGMRgestp8u5Lc,F,aSeEmufWmsbLn7YEQ,speaker,2,guy relaxing in park facing left arms not visible,2_thin,1,6,2,"[{""span"":""facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""arms not visible"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""guy relaxing in park"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[21,32],[33,49],[0,20]]","""guy"" METAPHOR HOLISTIC  
+""relaxing"" METAPHOR HOLISTIC  
+""in park"" LITERAL PART  
+""facing left"" LITERAL PART  
+""arms not visible"" LITERAL PART"
+59,4,22dyGMRgestp8u5Lc,K,aSeEmufWmsbLn7YEQ,speaker,2,kneeling with Bible facing right,2_thin,1,11,2,"[{""span"":""kneeling"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""Bible"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""facing right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,8],[14,19],[20,32]]","""kneeling"" METAPHOR PART  
+""with""  
+""Bible"" LITERAL PART  
+""facing"" LITERAL PART  
+""right"" LITERAL PART"
+61,5,MDLyuv29jevaGLSeT,C,MKCTjgM8AFzBJaAuA,speaker,6,flying facing left,6_thin,3,1,4,"[{""span"":""flying"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,6],[7,18]]","""flying"" METAPHOR HOLISTIC  
+""facing left"" LITERAL PART"
+21,1,22dyGMRgestp8u5Lc,B,zbNWfn7CxR9SSytWA,speaker,2,"baby looking up with arms out, bow on back of head",2_thin,1,9,2,"[{""span"":""arms out"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""bow on back of head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""baby looking up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[21,29],[31,50],[0,15]]","""looking up"" METAPHOR PART  
+""arms out"" METAPHOR PART  
+""bow on back of head"" METAPHOR PART"
+22,1,BTbGhXZvjdSFubTBg,C,WXmyGwByDtSr3gTyk,speaker,6,flying person,6_thick,5,10,6,"[{""span"": ""flying person"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 13]]","""flying person"" METAPHOR HOLISTIC"
+22,1,BTbGhXZvjdSFubTBg,C,teS8cAZWPXbdKTZP4,listener,6,Raver guy,6_thick,5,10,6,"[{""span"": ""Raver guy"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 9]]","""Raver guy"" METAPHOR HOLISTIC"
+22,1,BTbGhXZvjdSFubTBg,C,EnZxY9HcC4c6WuCd8,listener,6,Like a ghost,6_thick,5,10,6,"[{""span"": ""Like a ghost"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 12]]","""Like a ghost"" METAPHOR HOLISTIC"
+22,1,BTbGhXZvjdSFubTBg,C,YZav64FB85yPmwMCq,listener,6,No legs,6_thick,5,10,6,"[{""span"": ""No legs"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 7]]","""No legs"" METAPHOR PART"
+22,1,BTbGhXZvjdSFubTBg,C,WXmyGwByDtSr3gTyk,speaker,6,no legs flat body,6_thick,5,10,6,"[{""span"":""no legs"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""flat"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""body"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,7],[8,12],[13,17]]","I'm sorry, but I need the exact message to label. Please provide the full text so I can analyze and label the meaningful phrases according to your guidelines."
+22,1,BTbGhXZvjdSFubTBg,C,EnZxY9HcC4c6WuCd8,listener,6,Ghost meme,6_thick,5,10,6,"[{""span"": ""Ghost meme"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 10]]","""Ghost meme"" METAPHOR HOLISTIC"
+22,1,BTbGhXZvjdSFubTBg,C,teS8cAZWPXbdKTZP4,listener,6,Arms out in the air or no arms,6_thick,5,10,6,"[{""span"": ""Arms out"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}, {""span"": ""no arms"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 8], [23, 30]]","""Arms out"" METAPHOR PART  
+""no arms"" METAPHOR PART"
+22,1,BTbGhXZvjdSFubTBg,C,WXmyGwByDtSr3gTyk,speaker,6,both arms in air,6_thick,5,10,6,"[{""span"":""both arms in air"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,16]]","""both arms in air"" METAPHOR HOLISTIC"
+22,1,BTbGhXZvjdSFubTBg,C,teS8cAZWPXbdKTZP4,listener,6,Raver guy,6_thick,5,10,6,"[{""span"": ""Raver guy"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 9]]","""Raver guy"" METAPHOR HOLISTIC"
+12,1,MEJ8y7jRW4947MPrH,K,o6obBbzzSPJE34pKb,speaker,6,kneeling down arms pointed to the right legs behind body facing left and flicking up to the ceiling,full_feedback,5,0,NA,"[{""span"":""kneeling down"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""legs behind"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""flicking up to the ceiling"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""arms pointed to the right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,13],[40,51],[57,68],[73,99],[14,39]]","""kneeling down"" METAPHOR PART  
+""arms"" METAPHOR PART  
+""pointed to the right"" METAPHOR PART  
+""legs behind"" METAPHOR PART  
+""body"" LITERAL PART  
+""facing left"" METAPHOR PART  
+""flicking up to the ceiling"" METAPHOR PART"
+12,1,MEJ8y7jRW4947MPrH,K,JgAvTcZ3mLH7Ex3pZ,listener,6,like holding a serving tray to the right,full_feedback,5,0,NA,"[{""span"":""holding a serving tray to the right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[5,40]]","""holding a serving tray"" METAPHOR PART  
+""to the right"" LITERAL PART"
+12,1,MEJ8y7jRW4947MPrH,K,o6obBbzzSPJE34pKb,speaker,6,diamond head,full_feedback,5,0,NA,"[{""span"":""diamond"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,7],[8,12]]","""diamond head"" METAPHOR PART"
+12,1,MEJ8y7jRW4947MPrH,K,2ooABLMjEkBCftsH6,listener,6,bending knees or kneeling on them,full_feedback,5,0,NA,"[{""span"":""bending knees"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""kneeling on them"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,13],[17,33]]","""bending knees"" METAPHOR PART  
+""kneeling on them"" METAPHOR PART"
+12,1,MEJ8y7jRW4947MPrH,K,o6obBbzzSPJE34pKb,speaker,6,kneeling on them and his feet behind him flicking up to the sky,full_feedback,5,0,NA,"[{""span"":""kneeling on them"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""his feet behind him flicking up to the sky"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,16],[21,63]]","""kneeling"" METAPHOR PART  
+""on them"" LITERAL PART  
+""feet"" METAPHOR PART  
+""behind him"" LITERAL PART  
+""flicking"" METAPHOR PART  
+""up to the sky"" LITERAL PART"
+12,1,MEJ8y7jRW4947MPrH,K,o6obBbzzSPJE34pKb,speaker,6,his shoulders also look like the start of another diamond,full_feedback,5,0,NA,"[{""span"":""his shoulders "",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""the start of another diamond"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[0,14],[29,57]]","""shoulders also look like the start of another diamond"" METAPHOR HOLISTIC"
+0,0,BTbGhXZvjdSFubTBg,E,WXmyGwByDtSr3gTyk,speaker,6,The person sitting down with its arms above its head,6_thick,3,0,6,"[{""span"":""The person"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""sitting down"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""with its arms"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""above its head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,10],[11,23],[24,37],[38,52]]","""The person"" METAPHOR HOLISTIC  
+""sitting down"" METAPHOR PART  
+""with its arms"" METAPHOR PART  
+""above its head"" METAPHOR PART"
+0,0,GWCD2NGoiA2n5Wh2i,G,Z6TmKzSh7SAQns8Sg,speaker,6,"looks like a person leaning back, with head forward",6_thick,0,0,6,"[{""span"":""head forward"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""a person leaning back"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[39,51],[11,32]]","""looks like a person"" METAPHOR HOLISTIC  
+""leaning back"" METAPHOR PART  
+""head forward"" METAPHOR PART"
+0,0,GWCD2NGoiA2n5Wh2i,G,Z6TmKzSh7SAQns8Sg,speaker,6,except there is a small triangle in the back,6_thick,0,0,6,"[{""span"":""small triangle"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""in the back"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[18,32],[33,44]]","""small triangle"" LITERAL PART  
+""back"" PART"
+0,0,GWCD2NGoiA2n5Wh2i,G,9QmKZcuPiHgYsxSQX,listener,6,are the legs showing,6_thick,0,0,6,"[{""span"": ""the legs"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[4, 12]]","""the legs"" METAPHOR PART"
+0,0,GWCD2NGoiA2n5Wh2i,G,Z6TmKzSh7SAQns8Sg,speaker,6,"not the one that clearly looks like a person, sorry! no legs",6_thick,0,0,6,"[{""span"": ""clearly looks like a person"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}, {""span"": ""no legs"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[17, 44], [53, 60]]","""clearly looks like a person"" METAPHOR HOLISTIC  
+""no legs"" METAPHOR PART"
+0,0,GWCD2NGoiA2n5Wh2i,G,7CNcmu99Gs4McbRom,listener,6,"Facing which direction, left or right",6_thick,0,0,6,"[{""span"":""Facing which direction, left or right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,37]]","Facing which direction LITERAL HOLISTIC
+left or right LITERAL PART"
+0,0,GWCD2NGoiA2n5Wh2i,G,Z6TmKzSh7SAQns8Sg,speaker,6,left,6_thick,0,0,6,"[{""span"":""left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,4]]","""left"" PART"
+0,0,GWCD2NGoiA2n5Wh2i,G,7CNcmu99Gs4McbRom,listener,6,"is the head at the very top of the tangram, or lower down",6_thick,0,0,6,"[{""span"":""the head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""the very top of the tangram"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""lower down"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[3,11],[15,42],[47,57]]","""is the head"" METAPHOR PART  
+""the head"" METAPHOR PART  
+""at the very top"" LITERAL PART  
+""of the tangram"" LITERAL PART  
+""or lower down"" LITERAL PART"
+0,0,GWCD2NGoiA2n5Wh2i,G,Z6TmKzSh7SAQns8Sg,speaker,6,"hmm, top i'd say, though leaning forward",6_thick,0,0,6,"[{""span"":""top"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""leaning forward"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[5,8],[25,40]]","""top"" METAPHOR HOLISTIC  
+""leaning forward"" METAPHOR PART"
+29,2,LzNv7CD7gRuxpk7cQ,D,5beKfX6iGcYFWgGg5,speaker,3,reading a book facing left,3_rotate,1,5,NA,"[{""span"":""reading a book"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,14],[15,26]]","""reading a book"" METAPHOR HOLISTIC  
+""facing left"" LITERAL PART"
+70,5,22dyGMRgestp8u5Lc,H,zbNWfn7CxR9SSytWA,speaker,2,no arms or legs,2_thin,1,10,2,"[{""span"": ""no arms"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}, {""span"": ""legs"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 7], [11, 15]]","""no arms"" METAPHOR PART  
+""or""  
+""legs"" METAPHOR PART"
+61,5,LzNv7CD7gRuxpk7cQ,L,5beKfX6iGcYFWgGg5,speaker,3,on parallelogram,3_rotate,2,1,NA,"[{""span"": ""on parallelogram"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}]","[[0, 16]]","""on parallelogram"" LITERAL PART"
+70,5,BTbGhXZvjdSFubTBg,J,WXmyGwByDtSr3gTyk,speaker,6,square shape body guy,6_thick,5,10,6,"[{""span"":""square shape"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""body"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""guy"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,12],[13,17],[18,21]]","""square shape"" LITERAL PART  
+""body guy"" METAPHOR HOLISTIC"
+24,2,MDLyuv29jevaGLSeT,L,9SydRxgkpDiJakuxY,speaker,6,squated facing right,6_thin,5,0,6,"[{""span"":""squated"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,7],[8,20]]","""squated"" METAPHOR PART  
+""facing right"" LITERAL PART"
+7,0,zviCQXNM4xWoYTmoY,A,Q5Bs5Daz3vBi66sSW,speaker,6,"like a person walking lifting one foot up, leaning head back a bit, holding a cloth in front of them",no_rotate,4,7,NA,"[{""span"":""lifting one foot up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""leaning head back a bit"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""holding a cloth in front of them"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""a person walking"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[22,41],[43,66],[68,100],[5,21]]","""like a person"" METAPHOR HOLISTIC  
+""walking"" METAPHOR PART  
+""lifting one foot up"" LITERAL PART  
+""leaning head back a bit"" METAPHOR PART  
+""holding a cloth in front of them"" METAPHOR PART"
+7,0,zviCQXNM4xWoYTmoY,A,XBjhcfLtesgASpEW2,listener,6,square on their back,no_rotate,4,7,NA,"[{""span"":""square"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":"" on their back"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,6],[6,20]]","""square on their back"" METAPHOR PART"
+7,0,zviCQXNM4xWoYTmoY,A,Q5Bs5Daz3vBi66sSW,speaker,6,lifting the foot up in front of them not behind,no_rotate,4,7,NA,"[{""span"":""lifting the foot up in front of them not behind"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,47]]","lifting the foot  METAPHOR  PART  
+up  LITERAL  PART  
+in front of them  LITERAL  PART  
+not  PART  (excluded per instructions)  
+behind  LITERAL  PART"
+7,0,zviCQXNM4xWoYTmoY,A,5J7qybS6Kinu3Cgrf,listener,6,foot lifting up to the left,no_rotate,4,7,NA,"[{""span"":""foot lifting up to the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,27]]","""foot lifting up"" METAPHOR PART
+""to the left"" LITERAL PART"
+49,4,BTbGhXZvjdSFubTBg,G,WXmyGwByDtSr3gTyk,speaker,6,kung fu yoga guy again,6_thick,5,1,6,"[{""span"": ""kung fu yoga guy"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 16]]","""kung fu yoga guy"" METAPHOR HOLISTIC"
+65,5,MEJ8y7jRW4947MPrH,F,sLmWkpuX6yKjgpnPQ,speaker,6,wall boy,full_feedback,5,5,NA,"[{""span"": ""wall boy"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 8]]","""wall boy"" METAPHOR HOLISTIC"
+65,5,rSMFkjhskBteiyQMB,J,ZvhRyXkvKz6ES5HwX,speaker,4,horizontal line man,4_rotate,3,5,NA,"[{""span"":""horizontal line"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""man"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,15],[16,19]]","""horizontal line"" LITERAL PART
+""man"" METAPHOR PART"
+69,5,GWCD2NGoiA2n5Wh2i,F,3J4RLFqgNJW7BsT9G,listener,6,kneeling man right side,6_thick,5,9,6,"[{""span"": ""kneeling man"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}, {""span"": ""right side"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}]","[[0, 12], [13, 23]]","""kneeling man"" METAPHOR HOLISTIC  
+""right side"" LITERAL PART"
+69,5,GWCD2NGoiA2n5Wh2i,F,Z6TmKzSh7SAQns8Sg,speaker,6,"sitting guy, facing left this round!",6_thick,5,9,6,"[{""span"":""sitting guy"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,11],[13,24]]","""sitting guy"" METAPHOR HOLISTIC  
+""facing left"" LITERAL PART"
+67,5,zviCQXNM4xWoYTmoY,J,Q5Bs5Daz3vBi66sSW,speaker,6,candle,no_rotate,5,7,NA,"[{""span"": ""candle"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 6]]","""candle"" METAPHOR HOLISTIC"
+0,0,Z2WAkYpWiXwuGcdME,F,R3cRgh4HmEtRsmQyp,speaker,2,looks like a person sat down facing the left,2_thick,1,0,2,"[{""span"":""looks like a person"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""sat down"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,19],[20,28],[29,44]]","""looks like a person"" METAPHOR HOLISTIC  
+""sat down"" METAPHOR PART  
+""facing the left"" LITERAL PART"
+9,0,22dyGMRgestp8u5Lc,I,aSeEmufWmsbLn7YEQ,speaker,2,"standing, but falling forward left leg on ground right foot in air arms out to catch himself",2_thin,1,9,2,"[{""span"":""standing"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""falling forward"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""left leg on ground"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""right foot in air"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""arms out to catch himself"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,8],[14,29],[30,48],[49,66],[67,92]]","""standing"" METAPHOR HOLISTIC  
+""falling forward"" METAPHOR HOLISTIC  
+""left leg on ground"" LITERAL PART  
+""right foot in air"" LITERAL PART  
+""arms out to catch himself"" METAPHOR HOLISTIC"
+9,0,22dyGMRgestp8u5Lc,I,aSeEmufWmsbLn7YEQ,speaker,2,face left,2_thin,1,9,2,"[{""span"": ""face left"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 9]]","""face left"" METAPHOR HOLISTIC"
+63,5,MDLyuv29jevaGLSeT,L,MKCTjgM8AFzBJaAuA,speaker,6,squatting facing right,6_thin,3,3,4,"[{""span"":""squatting"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,9],[10,22]]","""squatting"" METAPHOR HOLISTIC  
+""facing right"" LITERAL PART"
+15,1,rSMFkjhskBteiyQMB,G,ZvhRyXkvKz6ES5HwX,speaker,4,"looks like a dog, at the top there's a square at the left and a triangle on the right they are connected to another triangle",4_rotate,3,3,NA,"[{""span"":""a dog"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""at the top there's a square at the left"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""a triangle on the right"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""they are connected to another triangle"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[11,16],[18,57],[62,85],[86,124]]","looks like a dog"" METAPHOR HOLISTIC  
+top"" LITERAL PART  
+there's a square"" LITERAL PART  
+square at the left"" LITERAL PART  
+a triangle on the right"" LITERAL PART  
+they are connected"" LITERAL PART  
+to another triangle"" LITERAL PART"
+15,1,rSMFkjhskBteiyQMB,G,ZvhRyXkvKz6ES5HwX,speaker,4,"the 3 shapes are connected to a rectangle, connecting to the triangle and a parallelogram",4_rotate,3,3,NA,"[{""span"":""connected to a rectangle"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""connecting to the triangle"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""a parallelogram"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""the 3 shapes"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[17,41],[43,69],[74,89],[0,12]]","""the 3 shapes"" HOLISTIC PART  
+""connected to a rectangle"" LITERAL PART  
+""connecting to the triangle"" LITERAL PART  
+""a parallelogram"" LITERAL PART"
+50,4,MDLyuv29jevaGLSeT,G,dMTmPKoiHFiaLLkez,speaker,6,lying down head leaning to the left,6_thin,3,2,4,"[{""span"":""lying down"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""head leaning to the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,10],[11,35]]","""lying down"" METAPHOR HOLISTIC  
+""head"" METAPHOR PART  
+""leaning"" METAPHOR PART  
+""to the left"" LITERAL PART"
+25,2,zviCQXNM4xWoYTmoY,G,Q5Bs5Daz3vBi66sSW,speaker,6,weird shapes one with small triangle bottom right and flat base,no_rotate,5,1,NA,"[{""span"":""flat base"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""weird shapes"",""literal_metaphor"":""literal"",""part_holistic"":""holistic""},{""span"":""small triangle bottom right"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[54,63],[0,12],[22,49]]","""weird shapes"" HOLISTIC PART  
+""small triangle"" LITERAL PART  
+""bottom right"" LITERAL PART  
+""flat base"" LITERAL PART"
+25,2,zviCQXNM4xWoYTmoY,G,Q5Bs5Daz3vBi66sSW,speaker,6,diamond top left,no_rotate,5,1,NA,"[{""span"":""diamond top left"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[0,16]]","""diamond top"" LITERAL PART  
+""top left"" LITERAL PART"
+48,4,zviCQXNM4xWoYTmoY,C,Q5Bs5Daz3vBi66sSW,speaker,6,leaning back arms up,no_rotate,5,0,NA,"[{""span"":""leaning back"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""arms up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,12],[13,20]]","""leaning back"" METAPHOR PART  
+""arms up"" METAPHOR PART"
+62,5,MEJ8y7jRW4947MPrH,K,sLmWkpuX6yKjgpnPQ,speaker,6,kneeling server,full_feedback,5,2,NA,"[{""span"":""kneeling server"",""literal_metaphor"":""literal"",""part_holistic"":""holistic""}]","[[0,15]]","""kneeling"" METAPHOR PART"
+62,5,MEJ8y7jRW4947MPrH,K,JgAvTcZ3mLH7Ex3pZ,listener,6,feet point up,full_feedback,5,2,NA,"[{""span"":""feet point up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,13]]","""feet point up"" METAPHOR HOLISTIC"
+62,5,MEJ8y7jRW4947MPrH,K,XNra8yzmu6p3Xw6m5,listener,6,not server girll,full_feedback,5,2,NA,"[{""span"":""not server girll"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,16]]",not METAPHOR PART
+62,5,MEJ8y7jRW4947MPrH,K,sLmWkpuX6yKjgpnPQ,speaker,6,NOT SQUAT GUY,full_feedback,5,2,NA,"[{""span"":""NOT SQUAT GUY"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,13]]",NOT SQUAT GUY METAPHOR HOLISTIC
+62,5,MEJ8y7jRW4947MPrH,K,JgAvTcZ3mLH7Ex3pZ,listener,6,server girl,full_feedback,5,2,NA,"[{""span"": ""server girl"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 11]]","""server girl"" METAPHOR HOLISTIC"
+59,4,zviCQXNM4xWoYTmoY,J,Q5Bs5Daz3vBi66sSW,speaker,6,candle,no_rotate,5,11,NA,"[{""span"": ""candle"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 6]]","""candle"" METAPHOR HOLISTIC"
+57,4,BTbGhXZvjdSFubTBg,J,WXmyGwByDtSr3gTyk,speaker,6,square shape body guy,6_thick,5,9,6,"[{""span"":""square shape"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""body"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":"" guy"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,12],[13,17],[17,21]]","""square shape"" LITERAL PART  
+""body guy"" METAPHOR HOLISTIC"
+61,5,22dyGMRgestp8u5Lc,C,zbNWfn7CxR9SSytWA,speaker,2,"jumping off building, arms out",2_thin,1,1,2,"[{""span"":""jumping off building"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""arms out"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,20],[22,30]]","""jumping off building"" METAPHOR HOLISTIC
+""arms out"" LITERAL PART"
+15,1,22dyGMRgestp8u5Lc,D,zbNWfn7CxR9SSytWA,speaker,2,Priest standing with bible Facing to the left,2_thin,1,3,2,"[{""span"":""Priest standing"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""with bible"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""Facing to the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,15],[16,26],[27,45]]","""Priest standing"" METAPHOR HOLISTIC  
+""standing"" METAPHOR PART  
+""with bible"" LITERAL PART  
+""bible"" LITERAL PART  
+""Facing to the left"" LITERAL PART  
+""to the left"" LITERAL PART"
+9,0,zviCQXNM4xWoYTmoY,D,Q5Bs5Daz3vBi66sSW,speaker,6,like a priest holding hands out little feet sticking out at the bottom,no_rotate,5,9,NA,"[{""span"":""like a priest"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""holding hands"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""little feet sticking out at the bottom"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,13],[14,27],[32,70]]","""like a priest"" METAPHOR HOLISTIC  
+""holding hands"" LITERAL PART  
+""little feet"" METAPHOR PART  
+""sticking out"" LITERAL PART  
+""at the bottom"" LITERAL PART"
+9,0,zviCQXNM4xWoYTmoY,D,SNKZcpXznSxMQbtXL,listener,6,To the left,no_rotate,5,9,NA,"[{""span"":""To the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,11]]","""To the left"" LITERAL PART"
+9,0,zviCQXNM4xWoYTmoY,D,xzEFcLxSaz7ZmqRw6,listener,6,hands out to the left,no_rotate,5,9,NA,"[{""span"":""hands out to the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,21]]","""hands out to the left"" METAPHOR HOLISTIC"
+9,0,zviCQXNM4xWoYTmoY,D,Q5Bs5Daz3vBi66sSW,speaker,6,yeah facing left,no_rotate,5,9,NA,"[{""span"":""facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[5,16]]","""facing left"" METAPHOR PART"
+50,4,rSMFkjhskBteiyQMB,L,PzsrjpFbCRkuAMq8B,speaker,4,bent speaker,4_rotate,3,2,NA,"[{""span"": ""bent speaker"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 12]]","""bent speaker"" METAPHOR HOLISTIC"
+57,4,x8BXJBHh3RxchPoHv,F,7Z4SwRXiCpQkW2LA2,speaker,5,facing left knees up,5_rotate,4,9,NA,"[{""span"":""facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""knees up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,11],[12,20]]","""facing left"" METAPHOR PART
+""knees up"" METAPHOR PART"
+11,0,MDLyuv29jevaGLSeT,L,MKCTjgM8AFzBJaAuA,speaker,6,This person seems to be bending their knees and facing the right They seem to have their arms extended to the right in front of them It's NOT the one that looks like a nun This one looks more like a man hahah,6_thin,5,11,6,"[{""span"":""person"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""bending their knees "",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""facing the right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""their arms extended to the right in front of them"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""NOT the one that looks like a nun"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""looks more like a man"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[5,11],[24,44],[48,64],[83,132],[138,171],[181,202]]","""This person"" METAPHOR HOLISTIC  
+""seems to be bending"" METAPHOR PART  
+""their knees"" METAPHOR PART  
+""and facing"" LITERAL PART  
+""the right"" LITERAL PART  
+""They"" METAPHOR HOLISTIC  
+""seem to have"" METAPHOR PART  
+""their arms"" METAPHOR PART  
+""extended"" LITERAL PART  
+""to the right"" LITERAL PART  
+""in front of"" LITERAL PART  
+""it's NOT the one"" METAPHOR HOLISTIC  
+""that looks like"" METAPHOR PART  
+""a nun"" LITERAL PART  
+""This one"" METAPHOR HOLISTIC  
+""looks more like"" METAPHOR PART  
+""a man"" METAPHOR LITERAL  
+""hahah"""
+58,4,Z2WAkYpWiXwuGcdME,G,R3cRgh4HmEtRsmQyp,speaker,2,square bunny,2_thick,1,10,2,"[{""span"":""square"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""bunny"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,6],[7,12]]","""square"" LITERAL PART  
+""bunny"" METAPHOR PART"
+6,0,rSMFkjhskBteiyQMB,B,PzsrjpFbCRkuAMq8B,speaker,4,"Rotated square at the top, a triangle is touching it's point They are touching another triangle",4_rotate,3,6,NA,"[{""span"":""Rotated square at the top"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""a triangle is touching it's point "",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""They are touching another triangle"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[0,25],[27,61],[61,95]]","""Rotated square"" LITERAL PART  
+""at the top"" LITERAL PART  
+""a triangle"" METAPHOR PART  
+""is touching"" LITERAL PART  
+""it's point"" LITERAL PART  
+""They"" HOLISTIC PART  
+""are touching"" LITERAL PART  
+""another triangle"" METAPHOR PART"
+6,0,rSMFkjhskBteiyQMB,B,PzsrjpFbCRkuAMq8B,speaker,4,this picture looks like an animal sat down,4_rotate,3,6,NA,"[{""span"":""an animal sat down"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[24,42]]","""looks like an animal"" METAPHOR HOLISTIC  
+""sat down"" METAPHOR PART"
+6,0,rSMFkjhskBteiyQMB,B,o7s7B6kZLqvaG62N4,listener,4,do the two triangles kind look like wings,4_rotate,3,6,NA,"[{""span"":""the two triangles"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""wings"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[3,20],[36,41]]","""the two triangles"" METAPHOR HOLISTIC  
+""look like"" METAPHOR  
+""wings"" METAPHOR HOLISTIC"
+57,4,LzNv7CD7gRuxpk7cQ,L,MrNX5Si499ovSY845,speaker,3,man on parallelogram,3_rotate,2,9,NA,"[{""span"": ""man on"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}, {""span"": ""parallelogram"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}]","[[0, 6], [7, 20]]","""man on"" METAPHOR HOLISTIC  
+""parallelogram"" LITERAL PART"
+42,3,BTbGhXZvjdSFubTBg,A,WXmyGwByDtSr3gTyk,speaker,6,zombie,6_thick,5,6,6,"[{""span"": ""zombie"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 6]]","""zombie"" METAPHOR HOLISTIC"
+16,1,GWCD2NGoiA2n5Wh2i,F,Z6TmKzSh7SAQns8Sg,speaker,6,"guy sitting', facing the left, legs out, head tilted a bit forward",6_thick,4,4,6,"[{""span"":""sitting"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""legs out"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""head tilted a bit forward"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[4,11],[14,29],[31,39],[41,66]]","""sitting"" METAPHOR PART  
+""facing the left"" LITERAL PART  
+""legs out"" LITERAL PART  
+""head tilted a bit forward"" METAPHOR PART"
+16,1,LzNv7CD7gRuxpk7cQ,H,MrNX5Si499ovSY845,speaker,3,Man sitting on knees facing right,3_rotate,2,4,NA,"[{""span"":""on knees"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""sitting"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[12,20],[4,11],[21,33]]","""on knees"" METAPHOR PART  
+""sitting"" METAPHOR PART  
+""facing right"" LITERAL PART"
+16,1,LzNv7CD7gRuxpk7cQ,H,MrNX5Si499ovSY845,speaker,3,No arms,3_rotate,2,4,NA,"[{""span"": ""No arms"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 7]]","""No arms"" METAPHOR PART"
+16,1,LzNv7CD7gRuxpk7cQ,H,5beKfX6iGcYFWgGg5,listener,3,like a gravestone,3_rotate,2,4,NA,"[{""span"": ""like a gravestone"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 17]]","""like a gravestone"" METAPHOR HOLISTIC"
+18,1,LzNv7CD7gRuxpk7cQ,D,MrNX5Si499ovSY845,speaker,3,Man facing left,3_rotate,2,6,NA,"[{""span"":""Man facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,15]]","""Man"" METAPHOR HOLISTIC  
+""facing"" METAPHOR PART  
+""left"" LITERAL PART"
+18,1,LzNv7CD7gRuxpk7cQ,D,MrNX5Si499ovSY845,speaker,3,Could be holding a book,3_rotate,2,6,NA,"[{""span"":""holding a book"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[9,23]]","""holding a book"" METAPHOR HOLISTIC"
+27,2,22dyGMRgestp8u5Lc,E,aSeEmufWmsbLn7YEQ,speaker,2,kid sitting with bunny ears,2_thin,1,3,2,"[{""span"":""kid"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""sitting"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""bunny ears"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,3],[4,11],[17,27]]","""kid"" METAPHOR HOLISTIC  
+""sitting"" METAPHOR PART  
+""with"" PART  
+""bunny ears"" METAPHOR PART"
+48,4,x8BXJBHh3RxchPoHv,L,7Z4SwRXiCpQkW2LA2,speaker,5,crouching,5_rotate,4,0,NA,"[{""span"": ""crouching"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 9]]","""crouching"" METAPHOR HOLISTIC"
+36,3,Z2WAkYpWiXwuGcdME,E,R3cRgh4HmEtRsmQyp,speaker,2,triangle bunny,2_thick,1,0,2,"[{""span"":""triangle"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""bunny"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,8],[9,14]]","""triangle"" LITERAL PART  
+""bunny"" METAPHOR PART"
+25,2,LzNv7CD7gRuxpk7cQ,C,5beKfX6iGcYFWgGg5,speaker,3,ghost,3_rotate,2,1,NA,"[{""span"": ""ghost"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 5]]","""ghost"" METAPHOR HOLISTIC"
+59,4,Z2WAkYpWiXwuGcdME,B,R3cRgh4HmEtRsmQyp,speaker,2,arm air kneeling,2_thick,1,11,2,"[{""span"":""arm"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""air"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""kneeling"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,3],[4,7],[8,16]]","""arm"" METAPHOR PART  
+""air"" LITERAL PART  
+""kneeling"" METAPHOR PART"
+3,0,MEJ8y7jRW4947MPrH,H,2ooABLMjEkBCftsH6,listener,6,how many components on the shape,full_feedback,5,3,NA,"[{""span"":""how many components on the shape"",""literal_metaphor"":""literal"",""part_holistic"":""holistic""}]","[[0,32]]","""shape"" LITERAL PART"
+3,0,MEJ8y7jRW4947MPrH,H,2h6bskoni4WchAmPK,speaker,6,least resembling human - closest to arrow pointing upwards,full_feedback,5,3,NA,"[{""span"":""least resembling human"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""closest to arrow pointing upwards"",""literal_metaphor"":""literal"",""part_holistic"":""holistic""}]","[[0,22],[25,58]]","""least resembling human"" METAPHOR HOLISTIC  
+""closest to arrow pointing upwards"" LITERAL PART"
+3,0,MEJ8y7jRW4947MPrH,H,XNra8yzmu6p3Xw6m5,listener,6,how many components on the shape - good question,full_feedback,5,3,NA,"[{""span"":""how many components on the shape "",""literal_metaphor"":""literal"",""part_holistic"":""holistic""}]","[[0,33]]","""how many components"" LITERAL PART  
+""on the shape"" LITERAL PART  
+""good question"" HOLISTIC PART"
+3,0,MEJ8y7jRW4947MPrH,H,o6obBbzzSPJE34pKb,listener,6,is it the one that looks like a block with triangles on top for a head,full_feedback,5,3,NA,"[{""span"":""a block"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""with triangles on top"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""for a head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[30,37],[38,59],[60,70]]","""is it the one"" HOLISTIC PART  
+""that looks like"" METAPHOR HOLISTIC  
+""a block"" LITERAL PART  
+""with triangles on top"" LITERAL PART  
+""for a head"" METAPHOR PART"
+3,0,MEJ8y7jRW4947MPrH,H,2h6bskoni4WchAmPK,speaker,6,"lowest component slightly tilting to right, middle in shape of arrow pointing upwards, top diamond as head",full_feedback,5,3,NA,"[{""span"":""head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""top diamond "",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""middle in shape of arrow pointing upwards"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""lowest component slightly tilting to right"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[102,106],[87,99],[44,85],[0,42]]","""lowest component"" LITERAL PART  
+""slightly tilting to right"" LITERAL PART  
+""middle in shape of arrow"" LITERAL PART  
+""pointing upwards"" LITERAL PART  
+""top diamond"" LITERAL PART  
+""head"" METAPHOR PART"
+56,4,Z2WAkYpWiXwuGcdME,F,R3cRgh4HmEtRsmQyp,speaker,2,sad,2_thick,1,8,2,"[{""span"": ""sad"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 3]]","""sad"" METAPHOR HOLISTIC"
+12,1,BTbGhXZvjdSFubTBg,A,WXmyGwByDtSr3gTyk,speaker,6,head looking the other way one leg down one leg up,6_thick,5,0,6,"[{""span"":""one leg down"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""one leg up"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""head looking the other way"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[27,39],[40,50],[0,26]]","""head"" METAPHOR PART  
+""looking the other way"" METAPHOR PART  
+""one leg down"" LITERAL PART  
+""one leg up"" LITERAL PART"
+12,1,BTbGhXZvjdSFubTBg,A,WXmyGwByDtSr3gTyk,speaker,6,upright,6_thick,5,0,6,"[{""span"":""upright"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,7]]","""upright"" METAPHOR PART"
+12,1,BTbGhXZvjdSFubTBg,A,teS8cAZWPXbdKTZP4,listener,6,Zombie guy,6_thick,5,0,6,"[{""span"": ""Zombie guy"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 10]]","""Zombie guy"" METAPHOR HOLISTIC"
+12,1,BTbGhXZvjdSFubTBg,A,9nyyLZ9PJhX7LnAx7,listener,6,the zombie walk one or the yoga one,6_thick,5,0,6,"[{""span"":""the zombie walk one"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""the yoga one"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,19],[23,35]]","""the zombie walk"" METAPHOR HOLISTIC  
+""one or the yoga one"" LITERAL PART"
+12,1,BTbGhXZvjdSFubTBg,A,YZav64FB85yPmwMCq,listener,6,Is this the ice skating one again,6_thick,5,0,6,"[{""span"": ""ice skating one"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[12, 27]]","""ice skating one"" METAPHOR HOLISTIC"
+12,1,BTbGhXZvjdSFubTBg,A,WXmyGwByDtSr3gTyk,speaker,6,zombie,6_thick,5,0,6,"[{""span"": ""zombie"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 6]]","""zombie"" METAPHOR HOLISTIC"
+12,1,BTbGhXZvjdSFubTBg,A,WXmyGwByDtSr3gTyk,speaker,6,not the ice skating one,6_thick,5,0,6,"[{""span"":"" the ice skating one"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[3,23]]",not the  ice skating one  METAPHOR HOLISTIC
+40,3,GWCD2NGoiA2n5Wh2i,C,3J4RLFqgNJW7BsT9G,listener,6,Mr Bean,6_thick,5,4,6,"[{""span"":""Mr Bean"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,7]]",Mr Bean METAPHOR HOLISTIC
+40,3,GWCD2NGoiA2n5Wh2i,C,Z6TmKzSh7SAQns8Sg,speaker,6,flying guy!,6_thick,5,4,6,"[{""span"": ""flying guy"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 10]]","""flying guy"" METAPHOR HOLISTIC"
+60,5,Z2WAkYpWiXwuGcdME,B,R3cRgh4HmEtRsmQyp,speaker,2,arm air kneel,2_thick,1,0,2,"[{""span"":""arm"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""air"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""kneel"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,3],[4,7],[8,13]]","""arm"" METAPHOR PART  
+""air"" LITERAL PART  
+""kneel"" METAPHOR PART"
+58,4,zviCQXNM4xWoYTmoY,K,Q5Bs5Daz3vBi66sSW,speaker,6,"kneeling on floor, feet sticking up behind arms out",no_rotate,5,10,NA,"[{""span"":""kneeling on floor"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""feet sticking up behind"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""arms out"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,17],[19,42],[43,51]]","""kneeling"" METAPHOR PART  
+""on floor"" LITERAL PART  
+""feet sticking up"" METAPHOR PART  
+""behind arms out"" LITERAL PART"
+18,1,MEJ8y7jRW4947MPrH,G,o6obBbzzSPJE34pKb,speaker,6,I think this one looks like a dancer,full_feedback,5,6,NA,"[{""span"": ""looks like a dancer"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[17, 36]]","""looks like a dancer"" METAPHOR HOLISTIC"
+18,1,MEJ8y7jRW4947MPrH,G,2ooABLMjEkBCftsH6,listener,6,2 arms to left,full_feedback,5,6,NA,"[{""span"":""2 arms to left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,14]]","""2 arms to left"" METAPHOR HOLISTIC"
+18,1,MEJ8y7jRW4947MPrH,G,o6obBbzzSPJE34pKb,speaker,6,two triangles for arms but one arm is near the head and the other is almost touching the ground,full_feedback,5,6,NA,"[{""span"":""two triangles"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""for arms"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""one arm is near the head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""the other is almost touching the ground"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,13],[14,22],[27,51],[56,95]]","""two triangles for arms"" LITERAL PART  
+""one arm"" METAPHOR PART  
+""near the head"" METAPHOR PART  
+""the other"" (too short, ignore)  
+""almost touching the ground"" LITERAL PART"
+18,1,MEJ8y7jRW4947MPrH,G,o6obBbzzSPJE34pKb,speaker,6,body trailing really far back to the left,full_feedback,5,6,NA,"[{""span"":""body trailing really far back to the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,41]]","""trailing really far back to the left"" METAPHOR HOLISTIC"
+18,1,MEJ8y7jRW4947MPrH,G,JgAvTcZ3mLH7Ex3pZ,listener,6,arms out front on one leg one leg behind,full_feedback,5,6,NA,"[{""span"":""arms out front"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""one leg behind"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":"" on one leg "",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,14],[26,40],[14,26]]","""arms out front"" METAPHOR PART  
+""one leg"" LITERAL PART  
+""one leg behind"" LITERAL PART"
+18,1,MEJ8y7jRW4947MPrH,G,o6obBbzzSPJE34pKb,speaker,6,looks like a backwards L,full_feedback,5,6,NA,"[{""span"": ""looks like a backwards L"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 24]]","""looks like a backwards L"" METAPHOR HOLISTIC"
+18,1,MEJ8y7jRW4947MPrH,G,o6obBbzzSPJE34pKb,speaker,6,diamond head hanging to the left,full_feedback,5,6,NA,"[{""span"":"" head hanging to the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""diamond"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[7,32],[0,7]]","""diamond head"" METAPHOR PART  
+""head hanging"" METAPHOR PART  
+""hanging to the left"" LITERAL PART"
+18,1,MEJ8y7jRW4947MPrH,G,o6obBbzzSPJE34pKb,speaker,6,i guess the bottom triangle is a leg actually,full_feedback,5,6,NA,"[{""span"": ""bottom triangle"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}, {""span"": ""leg"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[12, 27], [33, 36]]","""bottom triangle"" LITERAL PART  
+""leg"" METAPHOR PART"
+18,1,MEJ8y7jRW4947MPrH,G,sLmWkpuX6yKjgpnPQ,listener,6,i thought it was sleepwalking,full_feedback,5,6,NA,"[{""span"":""sleepwalking"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[17,29]]","""thought it was"" METAPHOR HOLISTIC  
+""sleepwalking"" METAPHOR HOLISTIC"
+18,1,MEJ8y7jRW4947MPrH,G,XNra8yzmu6p3Xw6m5,listener,6,kinda looks like their legs are being dragged along the ground,full_feedback,5,6,NA,"[{""span"":""their legs are being dragged along the ground"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[17,62]]","""looks like their legs"" METAPHOR HOLISTIC  
+""legs are being dragged"" METAPHOR PART  
+""along the ground"" LITERAL PART"
+18,1,MEJ8y7jRW4947MPrH,G,JgAvTcZ3mLH7Ex3pZ,listener,6,dragging legs on ground behind him on the left,full_feedback,5,6,NA,"[{""span"":""dragging legs on ground behind him on the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,46]]","""dragging legs"" METAPHOR PART  
+""ground"" LITERAL PART  
+""behind him"" METAPHOR PART  
+""on the left"" LITERAL PART"
+18,1,MEJ8y7jRW4947MPrH,G,o6obBbzzSPJE34pKb,speaker,6,yeah legs dragged kinda,full_feedback,5,6,NA,"[{""span"":"" legs dragged"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[4,17]]",legs dragged  METAPHOR  PART
+24,2,x8BXJBHh3RxchPoHv,C,uGga7SS34TCLMT65N,speaker,5,ghost leaning left,5_rotate,4,0,NA,"[{""span"":""ghost leaning left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,18]]","""ghost"" METAPHOR PART  
+""leaning"" METAPHOR PART  
+""left"" LITERAL PART"
+39,3,GWCD2NGoiA2n5Wh2i,H,3J4RLFqgNJW7BsT9G,listener,6,kneeling man right side,6_thick,5,3,6,"[{""span"": ""kneeling man"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}, {""span"": ""right side"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}]","[[0, 12], [13, 23]]","""kneeling man"" METAPHOR HOLISTIC  
+""right side"" LITERAL PART"
+39,3,GWCD2NGoiA2n5Wh2i,H,Z6TmKzSh7SAQns8Sg,speaker,6,bean body!,6_thick,5,3,6,"[{""span"":""bean body!"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,10]]",bean body! METAPHOR HOLISTIC
+10,0,22dyGMRgestp8u5Lc,E,aSeEmufWmsbLn7YEQ,speaker,2,kid facing right sitting on butt knees up slightly wearing bunny ears,2_thin,1,10,2,"[{""span"":""kid"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""sitting on butt"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""knees up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""wearing bunny ears"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,3],[4,16],[17,32],[33,41],[51,69]]","""kid"" METAPHOR HOLISTIC  
+""facing right"" LITERAL PART  
+""sitting on butt"" METAPHOR PART  
+""knees up"" LITERAL PART  
+""slightly"" PART  
+""wearing bunny ears"" METAPHOR PART"
+9,0,x8BXJBHh3RxchPoHv,D,po2Kc9pGb6B3wwFAh,speaker,5,facing to the left,5_rotate,4,9,NA,"[{""span"": ""facing to the left"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 18]]","""facing to the left"" METAPHOR HOLISTIC"
+9,0,x8BXJBHh3RxchPoHv,D,po2Kc9pGb6B3wwFAh,speaker,5,holding a book or something like that,5_rotate,4,9,NA,"[{""span"":""holding a book"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,14]]","""holding a book"" METAPHOR PART
+""something like that"" METAPHOR HOLISTIC"
+9,0,x8BXJBHh3RxchPoHv,D,sbbZjCbgL3mgcxuGG,listener,5,do they have a wizards sleeve,5_rotate,4,9,NA,"[{""span"":""a wizards sleeve"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[13,29]]","""do they have"" METAPHOR PART  
+""a wizards sleeve"" LITERAL PART"
+9,0,x8BXJBHh3RxchPoHv,D,po2Kc9pGb6B3wwFAh,speaker,5,sort of reminds me of someone giving a sermon,5_rotate,4,9,NA,"[{""span"": ""reminds me of someone giving a sermon"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[8, 45]]","""reminds me of someone giving a sermon"" METAPHOR HOLISTIC"
+38,3,GWCD2NGoiA2n5Wh2i,L,3J4RLFqgNJW7BsT9G,listener,6,Podium You guys don't need me anymore,6_thick,5,2,6,"[{""span"":""Podium"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,6]]","""Podium"" LITERAL PART  
+""You guys"" METAPHOR HOLISTIC  
+""don't need me"" LITERAL PART  
+""anymore"" LITERAL PART"
+38,3,GWCD2NGoiA2n5Wh2i,L,Z6TmKzSh7SAQns8Sg,speaker,6,"kneeling man in a robe, facing right",6_thick,5,2,6,"[{""span"":""kneeling man"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""in a robe"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""facing right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,12],[13,22],[24,36]]","""kneeling man"" METAPHOR PART  
+""man"" METAPHOR PART  
+""in a robe"" LITERAL PART  
+""robe"" LITERAL PART  
+""facing right"" LITERAL PART  
+""right"" LITERAL PART"
+38,3,GWCD2NGoiA2n5Wh2i,L,Z6TmKzSh7SAQns8Sg,speaker,6,"keep it up repi, i think it helps as long as you go first!",6_thick,5,2,6,[],[],"""keep it up"" METAPHOR HOLISTIC  
+""repi"" N/A  
+""i think"" N/A  
+""it helps"" LITERAL PART  
+""as long as"" LITERAL PART  
+""you go first"" LITERAL PART"
+15,1,LzNv7CD7gRuxpk7cQ,C,MrNX5Si499ovSY845,speaker,3,The one that looked like a ghost,3_rotate,2,3,NA,"[{""span"": ""looked like a ghost"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[13, 32]]","""looked like a ghost"" METAPHOR HOLISTIC"
+61,5,GWCD2NGoiA2n5Wh2i,A,3J4RLFqgNJW7BsT9G,listener,6,I'd be depressed if I had a triangle on my butt too,6_thick,5,1,6,"[{""span"":""a triangle"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""on my butt"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[26,36],[37,47]]","""I'd be depressed"" METAPHOR HOLISTIC  
+""if I had"" PART  
+""a triangle"" LITERAL PART  
+""on my butt"" METAPHOR PART"
+61,5,GWCD2NGoiA2n5Wh2i,A,7CNcmu99Gs4McbRom,listener,6,"I now know which one 'bummed man' is, but I really don't see 'bummed man' when I see that",6_thick,5,1,6,"[{""span"":""'bummed man'"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[61,73]]","""I now know which one 'bummed man'"" METAPHOR HOLISTIC  
+""'bummed man'"" METAPHOR PART  
+""but I really don't see 'bummed man'"" METAPHOR HOLISTIC  
+""'bummed man'"" METAPHOR PART"
+61,5,GWCD2NGoiA2n5Wh2i,A,Z6TmKzSh7SAQns8Sg,speaker,6,dancing man for this one!,6_thick,5,1,6,"[{""span"": ""dancing man"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 11]]","""dancing man"" METAPHOR HOLISTIC"
+21,1,GWCD2NGoiA2n5Wh2i,K,Z6TmKzSh7SAQns8Sg,speaker,6,"double diamond, the second directly beneath the head",6_thick,4,9,6,"[{""span"":""double diamond"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""the second directly beneath the head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,14],[16,52]]","""double diamond"" METAPHOR PART  
+""the second directly beneath the head"" LITERAL PART"
+21,1,GWCD2NGoiA2n5Wh2i,K,Z6TmKzSh7SAQns8Sg,speaker,6,triangle on left pointing up,6_thick,4,9,6,"[{""span"": ""triangle on left pointing up"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}]","[[0, 28]]","""triangle on left pointing up"" LITERAL PART"
+5,0,BTbGhXZvjdSFubTBg,J,WXmyGwByDtSr3gTyk,speaker,6,upright with a square back,6_thick,3,5,6,"[{""span"":""upright"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""with a square"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":"" back"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,7],[8,21],[21,26]]","""upright"" METAPHOR PART  
+""square back"" LITERAL PART"
+5,0,BTbGhXZvjdSFubTBg,J,YZav64FB85yPmwMCq,listener,6,Are they holding a tray,6_thick,3,5,6,"[{""span"": ""holding a tray"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[9, 23]]","""holding a tray"" METAPHOR PART"
+5,0,BTbGhXZvjdSFubTBg,J,EnZxY9HcC4c6WuCd8,listener,6,"Sitting, standing, kneeling",6_thick,3,5,6,"[{""span"":""Sitting"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""standing"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""kneeling"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,7],[9,17],[19,27]]","""Sitting"" METAPHOR PART  
+""standing"" METAPHOR PART  
+""kneeling"" METAPHOR PART"
+5,0,BTbGhXZvjdSFubTBg,J,teS8cAZWPXbdKTZP4,listener,6,Are they holding a top hat upside down,6_thick,3,5,6,"[{""span"":""holding a top hat upside down"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[9,38]]","""holding a top hat"" METAPHOR PART  
+""upside down"" LITERAL PART"
+5,0,BTbGhXZvjdSFubTBg,J,WXmyGwByDtSr3gTyk,speaker,6,standing,6_thick,3,5,6,"[{""span"":""standing"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,8]]","""standing"" METAPHOR PART"
+5,0,BTbGhXZvjdSFubTBg,J,YZav64FB85yPmwMCq,listener,6,Do they have a wide body that isn't symmetrical,6_thick,3,5,6,"[{""span"":""symmetrical"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""wide"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":"" body"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[36,47],[15,19],[19,24]]","""Do they have"" METAPHOR HOLISTIC  
+""wide body"" METAPHOR PART  
+""that isn't"" LITERAL PART  
+""symmetrical"" LITERAL PART"
+34,2,LzNv7CD7gRuxpk7cQ,E,5beKfX6iGcYFWgGg5,speaker,3,indian,3_rotate,2,10,NA,"[{""span"": ""indian"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 6]]","""indian"" METAPHOR HOLISTIC"
+26,2,MEJ8y7jRW4947MPrH,J,JgAvTcZ3mLH7Ex3pZ,speaker,6,block guy arm and leg to the right diamond head,full_feedback,5,2,NA,"[{""span"":""block"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""guy"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""arm and leg to the right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""diamond"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,5],[6,9],[10,34],[35,42],[43,47]]","""block guy"" METAPHOR HOLISTIC  
+""arm"" METAPHOR PART  
+""leg"" METAPHOR PART  
+""to the right"" LITERAL PART  
+""head"" METAPHOR PART"
+26,2,MEJ8y7jRW4947MPrH,J,JgAvTcZ3mLH7Ex3pZ,speaker,6,left side straight line,full_feedback,5,2,NA,"[{""span"": ""left side straight line"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}]","[[0, 23]]","""left side straight line"" LITERAL PART"
+26,2,MEJ8y7jRW4947MPrH,J,XNra8yzmu6p3Xw6m5,listener,6,gets wider as it goes up,full_feedback,5,2,NA,"[{""span"":""wider as it goes up"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[5,24]]","gets wider LITERAL PART
+as it goes up LITERAL PART"
+27,2,MDLyuv29jevaGLSeT,F,9SydRxgkpDiJakuxY,speaker,6,sitting facing left,6_thin,5,3,6,"[{""span"":""sitting"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":"" facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,7],[7,19]]","""sitting"" METAPHOR PART  
+""facing left"" LITERAL PART"
+31,2,Z2WAkYpWiXwuGcdME,J,R3cRgh4HmEtRsmQyp,speaker,2,large rectangular,2_thick,1,7,2,"[{""span"":""large rectangular"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[0,17]]",large rectangular LITERAL PART
+2,0,LzNv7CD7gRuxpk7cQ,L,ePuHpSEgEgZdLy5Hp,speaker,3,looks like a person bending their knees,3_rotate,2,2,NA,"[{""span"": ""looks like a person"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}, {""span"": ""bending their knees"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 19], [20, 39]]","""looks like a person"" METAPHOR HOLISTIC  
+""bending their knees"" METAPHOR PART"
+2,0,LzNv7CD7gRuxpk7cQ,L,ePuHpSEgEgZdLy5Hp,speaker,3,stood with knees bent,3_rotate,2,2,NA,"[{""span"":""stood"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""with knees bent"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,5],[6,21]]","""stood with knees bent"" METAPHOR HOLISTIC"
+2,0,LzNv7CD7gRuxpk7cQ,L,MrNX5Si499ovSY845,listener,3,what direction do they face,3_rotate,2,2,NA,"[{""span"":""what direction do they face"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,27]]","what direction  METAPHOR  HOLISTIC  
+they face  METAPHOR  PART"
+2,0,LzNv7CD7gRuxpk7cQ,L,ePuHpSEgEgZdLy5Hp,speaker,3,centre,3_rotate,2,2,NA,"[{""span"":""centre"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,6]]","""centre"" METAPHOR PART"
+2,0,LzNv7CD7gRuxpk7cQ,L,ePuHpSEgEgZdLy5Hp,speaker,3,right,3_rotate,2,2,NA,"[{""span"":""right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,5]]","""right"" METAPHOR PART"
+2,0,LzNv7CD7gRuxpk7cQ,L,5beKfX6iGcYFWgGg5,listener,3,arms to the right,3_rotate,2,2,NA,"[{""span"": ""arms to the right"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 17]]","""arms to the right"" METAPHOR PART"
+2,0,LzNv7CD7gRuxpk7cQ,L,MrNX5Si499ovSY845,listener,3,Does it look like they could be holding a book,3_rotate,2,2,NA,"[{""span"":""they could be holding a book"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[18,46]]","""look like they could be holding"" METAPHOR HOLISTIC  
+""book"" LITERAL PART"
+2,0,LzNv7CD7gRuxpk7cQ,L,ePuHpSEgEgZdLy5Hp,speaker,3,knees bent to the right,3_rotate,2,2,NA,"[{""span"": ""knees bent to the right"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 23]]","""knees bent to the right"" METAPHOR PART"
+2,0,LzNv7CD7gRuxpk7cQ,L,5beKfX6iGcYFWgGg5,listener,3,back legs up in the air,3_rotate,2,2,NA,"[{""span"":""back legs up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""in the air"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,12],[13,23]]","""back legs up"" METAPHOR PART
+""in the air"" LITERAL PART"
+2,0,LzNv7CD7gRuxpk7cQ,L,ePuHpSEgEgZdLy5Hp,speaker,3,no back legs not up,3_rotate,2,2,NA,"[{""span"":""back legs not up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[3,19]]","""back legs"" METAPHOR PART
+""not up"" LITERAL PART"
+25,2,GWCD2NGoiA2n5Wh2i,I,7CNcmu99Gs4McbRom,listener,6,"I have no idea what Minnesota looks like, but now I will always assume it looks like a blob with a diamond head",6_thick,4,1,6,"[{""span"":""what Minnesota looks like"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""like a blob "",""literal_metaphor"":""literal"",""part_holistic"":""holistic""},{""span"":""with a diamond"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[15,40],[80,92],[92,106],[107,111]]","""I have no idea what Minnesota looks like"" METAPHOR HOLISTIC  
+""but now I will always assume it looks like"" METAPHOR HOLISTIC  
+""a blob with a diamond head"" METAPHOR HOLISTIC"
+25,2,GWCD2NGoiA2n5Wh2i,I,Z6TmKzSh7SAQns8Sg,speaker,6,"ice skater once more! one leg on the ground, with a foot pointing to the left one leg in the air, on the right, foot pointing out",6_thick,4,1,6,"[{""span"":""ice skater"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""one leg on the ground"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""with a foot pointing to the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""one leg in the air"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""foot pointing out"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,10],[22,43],[45,77],[78,96],[112,129]]","""ice skater"" METAPHOR HOLISTIC  
+""once more"" LITERAL HOLISTIC  
+""one leg on the ground"" LITERAL PART  
+""with a foot pointing to the left"" LITERAL PART  
+""one leg in the air"" LITERAL PART  
+""on the right"" LITERAL PART  
+""foot pointing out"" LITERAL PART"
+22,1,LzNv7CD7gRuxpk7cQ,F,MrNX5Si499ovSY845,speaker,3,Person sitting down facing left,3_rotate,2,10,NA,"[{""span"":""Person"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""sitting down"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,6],[7,19],[20,31]]","""Person"" METAPHOR HOLISTIC  
+""sitting down"" METAPHOR PART  
+""facing left"" LITERAL PART"
+22,1,LzNv7CD7gRuxpk7cQ,F,MrNX5Si499ovSY845,speaker,3,you can see his knee,3_rotate,2,10,NA,"[{""span"": ""his knee"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[12, 20]]","""his knee"" METAPHOR PART"
+42,3,LzNv7CD7gRuxpk7cQ,E,ePuHpSEgEgZdLy5Hp,speaker,3,indian,3_rotate,2,6,NA,"[{""span"":""indian"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,6]]",No meaningful phrase to label.
+24,2,MEJ8y7jRW4947MPrH,L,JgAvTcZ3mLH7Ex3pZ,speaker,6,diamond head arms left knees bent,full_feedback,5,0,NA,"[{""span"":""diamond "",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":"" head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""arms left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""knees bent"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,8],[7,12],[13,22],[23,33]]","""diamond head"" METAPHOR PART  
+""diamond arms"" METAPHOR PART  
+""diamond left"" LITERAL PART  
+""diamond knees bent"" METAPHOR PART"
+24,2,MEJ8y7jRW4947MPrH,L,JgAvTcZ3mLH7Ex3pZ,speaker,6,arms right sorry,full_feedback,5,0,NA,"[{""span"":""arms right"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,10]]","""arms right"" METAPHOR PART  
+""sorry"" METAPHOR PART"
+24,2,MEJ8y7jRW4947MPrH,L,o6obBbzzSPJE34pKb,listener,6,are his legs facing the ceiling or flat,full_feedback,5,0,NA,"[{""span"":""legs facing the ceiling"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""flat"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[8,31],[35,39]]","""legs facing the ceiling"" METAPHOR HOLISTIC  
+""flat"" LITERAL PART"
+24,2,MEJ8y7jRW4947MPrH,L,2h6bskoni4WchAmPK,listener,6,feet up or no,full_feedback,5,0,NA,"[{""span"": ""feet up"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 7]]","""feet up"" METAPHOR PART"
+24,2,MEJ8y7jRW4947MPrH,L,XNra8yzmu6p3Xw6m5,listener,6,it looks like they're doing a squat while holding a tray,full_feedback,5,0,NA,"[{""span"":""doing a squat"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""holding a tray"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[22,35],[42,56]]","""looks like they're doing a squat"" METAPHOR HOLISTIC  
+""doing a squat"" METAPHOR PART  
+""squat"" METAPHOR PART  
+""holding a tray"" LITERAL PART  
+""tray"" PART"
+24,2,MEJ8y7jRW4947MPrH,L,JgAvTcZ3mLH7Ex3pZ,speaker,6,knees bent to right under knees,full_feedback,5,0,NA,"[{""span"":""knees bent"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""under knees"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,10],[20,31]]","""knees bent"" METAPHOR PART  
+""to right"" LITERAL PART  
+""under knees"" METAPHOR PART"
+24,2,MEJ8y7jRW4947MPrH,L,XNra8yzmu6p3Xw6m5,listener,6,*tray,full_feedback,5,0,NA,"[{""span"":""tray"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[1,5]]","""tray"" NEITHER"
+24,2,MEJ8y7jRW4947MPrH,L,JgAvTcZ3mLH7Ex3pZ,speaker,6,yes squat with the tray guy,full_feedback,5,0,NA,"[{""span"":""squat"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""with the tray"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""guy"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[4,9],[10,23],[24,27]]","""squat"" METAPHOR PART  
+""tray guy"" METAPHOR HOLISTIC"
+24,2,MEJ8y7jRW4947MPrH,L,sLmWkpuX6yKjgpnPQ,listener,6,squat guy,full_feedback,5,0,NA,"[{""span"": ""squat guy"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 9]]","""squat guy"" METAPHOR HOLISTIC"
+24,2,MEJ8y7jRW4947MPrH,L,o6obBbzzSPJE34pKb,listener,6,squat is a good one,full_feedback,5,0,NA,"[{""span"":""squat"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,5]]","""squat"" METAPHOR PART"
+24,2,MEJ8y7jRW4947MPrH,L,o6obBbzzSPJE34pKb,listener,6,squat guy,full_feedback,5,0,NA,"[{""span"": ""squat guy"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 9]]","""squat guy"" METAPHOR HOLISTIC"
+18,1,GWCD2NGoiA2n5Wh2i,A,Z6TmKzSh7SAQns8Sg,speaker,6,dancing guy again!,6_thick,5,6,6,"[{""span"": ""dancing guy"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 11]]","""dancing guy"" METAPHOR HOLISTIC  
+""again!"" PART"
+18,1,GWCD2NGoiA2n5Wh2i,A,Z6TmKzSh7SAQns8Sg,speaker,6,legs facing left,6_thick,5,6,6,"[{""span"": ""legs facing left"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 16]]","""legs facing left"" METAPHOR PART"
+18,1,GWCD2NGoiA2n5Wh2i,A,7CNcmu99Gs4McbRom,listener,6,hmm ice skater on one leg,6_thick,5,6,6,"[{""span"":""ice skater"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""on one leg"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[4,14],[15,25]]","""ice skater"" METAPHOR HOLISTIC  
+""on one leg"" LITERAL PART"
+18,1,GWCD2NGoiA2n5Wh2i,A,Z6TmKzSh7SAQns8Sg,speaker,6,"one up, one on floor not the ice skater",6_thick,5,6,6,"[{""span"":""one on floor"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""the ice skater"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""one up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[8,20],[25,39],[0,6]]","one up"" LITERAL PART  
+""one on floor"" LITERAL PART  
+""the ice skater"" METAPHOR HOLISTIC"
+1,0,MEJ8y7jRW4947MPrH,A,2h6bskoni4WchAmPK,speaker,6,Person facing left in process of walking (taking step),full_feedback,5,1,NA,"[{""span"":""Person facing left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""walking"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""taking step"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,18],[33,40],[42,53]]","""Person facing left"" METAPHOR HOLISTIC  
+""walking"" LITERAL PART  
+""taking step"" LITERAL PART"
+1,0,MEJ8y7jRW4947MPrH,A,XNra8yzmu6p3Xw6m5,listener,6,What direction is their head facing,full_feedback,5,1,NA,"[{""span"":""What direction is their head facing"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,35]]","""What direction"" LITERAL PART  
+""their head"" METAPHOR PART"
+1,0,MEJ8y7jRW4947MPrH,A,XNra8yzmu6p3Xw6m5,listener,6,is it at an angle or straight,full_feedback,5,1,NA,"[{""span"": ""is it at an angle"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}, {""span"": ""or straight"", ""literal_metaphor"": ""literal"", ""part_holistic"": ""part_based""}]","[[0, 17], [18, 29]]","""is it at an angle"" LITERAL PART  
+""or straight"" LITERAL PART"
+1,0,MEJ8y7jRW4947MPrH,A,o6obBbzzSPJE34pKb,listener,6,is one of his legs really far back,full_feedback,5,1,NA,"[{""span"":""is one of his legs really far back"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,34]]","""one of his legs"" METAPHOR PART  
+""far back"" METAPHOR PART"
+1,0,MEJ8y7jRW4947MPrH,A,sLmWkpuX6yKjgpnPQ,listener,6,stepping left right,full_feedback,5,1,NA,"[{""span"":""stepping left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,13]]","""stepping left"" LITERAL PART  
+""right"" LITERAL PART"
+1,0,MEJ8y7jRW4947MPrH,A,2h6bskoni4WchAmPK,speaker,6,head' towards back,full_feedback,5,1,NA,"[{""span"":""head' towards back"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,18]]",head' towards back' METAPHOR HOLISTIC
+1,0,MEJ8y7jRW4947MPrH,A,2ooABLMjEkBCftsH6,listener,6,are they about to fall to their left,full_feedback,5,1,NA,"[{""span"":""about to fall to their left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[9,36]]","""about to fall"" METAPHOR HOLISTIC  
+""to their left"" LITERAL PART"
+1,0,MEJ8y7jRW4947MPrH,A,JgAvTcZ3mLH7Ex3pZ,listener,6,I right leg up in air,full_feedback,5,1,NA,"[{""span"":""right leg up in air"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[2,21]]","""I right leg up"" METAPHOR PART  
+""leg up"" METAPHOR PART"
+1,0,MEJ8y7jRW4947MPrH,A,2h6bskoni4WchAmPK,speaker,6,stepping left,full_feedback,5,1,NA,"[{""span"": ""stepping left"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 13]]","""stepping left"" METAPHOR PART"
+1,0,MEJ8y7jRW4947MPrH,A,2h6bskoni4WchAmPK,speaker,6,right leg in air,full_feedback,5,1,NA,"[{""span"": ""right leg in air"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 16]]","""right leg in air"" METAPHOR PART"
+11,0,LzNv7CD7gRuxpk7cQ,C,ePuHpSEgEgZdLy5Hp,speaker,3,both arms up in the arm,3_rotate,2,11,NA,"[{""span"":""both arms up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""in the arm"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,12],[13,23]]","""both arms up"" METAPHOR PART  
+""in the arm"" LITERAL PART"
+11,0,LzNv7CD7gRuxpk7cQ,C,ePuHpSEgEgZdLy5Hp,speaker,3,no legs,3_rotate,2,11,NA,"[{""span"": ""no legs"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 7]]","""no legs"" METAPHOR PART"
+11,0,LzNv7CD7gRuxpk7cQ,C,ePuHpSEgEgZdLy5Hp,speaker,3,head between arms,3_rotate,2,11,NA,"[{""span"": ""head between arms"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 17]]","""head between arms"" METAPHOR PART"
+11,0,LzNv7CD7gRuxpk7cQ,C,5beKfX6iGcYFWgGg5,listener,3,like a ghost,3_rotate,2,11,NA,"[{""span"": ""like a ghost"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 12]]","""like a ghost"" METAPHOR HOLISTIC"
+36,3,MDLyuv29jevaGLSeT,G,EGR4mR2YTj3pX8C3s,speaker,6,Dude looks like the bunny but facing the left,6_thin,2,0,6,"[{""span"":""bunny"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""facing the left"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[20,25],[30,45]]","""looks like the bunny"" METAPHOR HOLISTIC  
+""bunny"" METAPHOR PART  
+""but"" PART  
+""facing the left"" LITERAL PART"
+36,3,MDLyuv29jevaGLSeT,G,EGR4mR2YTj3pX8C3s,speaker,6,Lying down,6_thin,2,0,6,"[{""span"": ""Lying down"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 10]]","""Lying down"" METAPHOR HOLISTIC"
+47,3,zviCQXNM4xWoYTmoY,H,Q5Bs5Daz3vBi66sSW,speaker,6,not the candle,no_rotate,5,11,NA,"[{""span"":""not the candle"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,14]]","""not the candle"" HOLISTIC PART"
+60,5,MEJ8y7jRW4947MPrH,A,sLmWkpuX6yKjgpnPQ,speaker,6,Frank,full_feedback,5,0,NA,"[{""span"":""Frank"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,5]]","""Frank"" HOLISTIC PART"
+6,0,BTbGhXZvjdSFubTBg,D,WXmyGwByDtSr3gTyk,speaker,6,"a person standing holding out their hands,",6_thick,5,6,6,"[{""span"":""a person"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""standing"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""holding out their hands"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,8],[9,17],[18,41]]","""a person"" METAPHOR HOLISTIC  
+""standing"" METAPHOR PART  
+""holding out"" METAPHOR PART  
+""their hands"" METAPHOR PART"
+6,0,BTbGhXZvjdSFubTBg,D,9nyyLZ9PJhX7LnAx7,listener,6,Both feet on the ground,6_thick,5,6,6,"[{""span"":""Both feet on the ground"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,23]]","""Both feet on the ground"" LITERAL PART"
+6,0,BTbGhXZvjdSFubTBg,D,EnZxY9HcC4c6WuCd8,listener,6,Inverted top hat in hands,6_thick,5,6,6,"[{""span"":""Inverted top hat in hands"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,25]]","""Inverted top hat"" METAPHOR PART"
+6,0,BTbGhXZvjdSFubTBg,D,YZav64FB85yPmwMCq,listener,6,Are they side on,6_thick,5,6,6,"[{""span"":""side on"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[9,16]]","""side on"" LITERAL PART"
+6,0,BTbGhXZvjdSFubTBg,D,9nyyLZ9PJhX7LnAx7,listener,6,"Wait, holding OUT their hands, or holding UP their hands",6_thick,5,6,6,"[{""span"": ""holding OUT their hands"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}, {""span"": ""holding UP their hands"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[6, 29], [34, 56]]","""holding OUT their hands"" METAPHOR PART
+""holding UP their hands"" METAPHOR PART"
+6,0,BTbGhXZvjdSFubTBg,D,WXmyGwByDtSr3gTyk,speaker,6,yes inverted top hat,6_thick,5,6,6,"[{""span"":"" inverted top hat"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[3,20]]",yes inverted top hat LITERAL HOLISTIC
+6,0,BTbGhXZvjdSFubTBg,D,j9qfbLnF9TpFABZaJ,listener,6,lol top hat,6_thick,5,6,6,"[{""span"":""top hat"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[4,11]]","""top hat"" METAPHOR HOLISTIC"
+47,3,rSMFkjhskBteiyQMB,D,o7s7B6kZLqvaG62N4,speaker,4,"man giving a sermon speaking, straight legs",4_rotate,3,11,NA,"[{""span"":""man giving a sermon"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""speaking"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""straight"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""legs"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[0,19],[20,28],[30,38],[39,43]]","""man giving a sermon"" METAPHOR HOLISTIC  
+""speaking"" LITERAL PART  
+""straight legs"" LITERAL PART"
+0,0,zviCQXNM4xWoYTmoY,K,Q5Bs5Daz3vBi66sSW,speaker,6,"the picture looks like someone kneeling down on the floor and holding their hands out in front of them, feet sticking up behind them, elbows sticking out slightly behind their back",no_rotate,5,0,NA,"[{""span"":""holding their hands out in front of them"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""feet sticking up behind them"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""elbows sticking out slightly behind their back"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":"" someone kneeling down on the floor "",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[62,102],[104,132],[134,180],[22,58]]","""the picture"" HOLISTIC PART  
+""looks like"" METAPHOR HOLISTIC  
+""someone"" METAPHOR PART  
+""kneeling down"" METAPHOR PART  
+""on the floor"" LITERAL PART  
+""and holding"" LITERAL PART  
+""their hands"" METAPHOR PART  
+""out in front of them"" LITERAL PART  
+""feet sticking up"" METAPHOR PART  
+""behind them"" LITERAL PART  
+""elbows sticking out"" METAPHOR PART  
+""slightly behind their back"" LITERAL PART"
+0,0,zviCQXNM4xWoYTmoY,K,XBjhcfLtesgASpEW2,listener,6,which way is the square on their head,no_rotate,5,0,NA,"[{""span"":""the square"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""on their head"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[13,23],[24,37]]","""square on their head"" METAPHOR HOLISTIC"
+0,0,zviCQXNM4xWoYTmoY,K,XBjhcfLtesgASpEW2,listener,6,is it a diamond,no_rotate,5,0,NA,"[{""span"":""diamond"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[8,15]]","""is it a"" METAPHOR PART  
+""diamond"" LITERAL PART"
+0,0,zviCQXNM4xWoYTmoY,K,Q5Bs5Daz3vBi66sSW,speaker,6,yeah like a diamond,no_rotate,5,0,NA,"[{""span"":""like a diamond"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""}]","[[5,19]]","""like a diamond"" METAPHOR HOLISTIC"
+69,5,MEJ8y7jRW4947MPrH,B,sLmWkpuX6yKjgpnPQ,speaker,6,wings boy,full_feedback,5,9,NA,"[{""span"":""wings"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""boy"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,5],[6,9]]","""wings"" METAPHOR PART  
+""boy"" METAPHOR PART"
+27,2,LzNv7CD7gRuxpk7cQ,G,5beKfX6iGcYFWgGg5,speaker,3,long dress tango,3_rotate,2,3,NA,"[{""span"":""long dress"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""tango"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[0,10],[11,16]]","""long dress"" METAPHOR HOLISTIC  
+""tango"" LITERAL PART"
+2,0,BTbGhXZvjdSFubTBg,A,WXmyGwByDtSr3gTyk,speaker,6,The person with one leg up and the head tilted back,6_thick,5,2,6,"[{""span"":""head tilted back"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""},{""span"":""The person"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""},{""span"":""one leg up"",""literal_metaphor"":""metaphorical"",""part_holistic"":""part_based""}]","[[35,51],[0,10],[16,26]]","""person with one leg up"" METAPHOR HOLISTIC  
+""head tilted back"" METAPHOR PART"
+2,0,BTbGhXZvjdSFubTBg,A,j9qfbLnF9TpFABZaJ,listener,6,reminds me of a zombie,6_thick,5,2,6,"[{""span"":""a zombie"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[14,22]]","""reminds me of"" METAPHOR HOLISTIC  
+""a zombie"" METAPHOR PART"
+46,3,LzNv7CD7gRuxpk7cQ,B,ePuHpSEgEgZdLy5Hp,speaker,3,person kneeling with arms out,3_rotate,2,10,NA,"[{""span"": ""person kneeling"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}, {""span"": ""arms out"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""part_based""}]","[[0, 15], [21, 29]]","""person kneeling"" METAPHOR HOLISTIC  
+""arms out"" METAPHOR PART"
+46,3,LzNv7CD7gRuxpk7cQ,B,ePuHpSEgEgZdLy5Hp,speaker,3,angle,3_rotate,2,10,NA,[],[],"""angle"" LITERAL PART"
+46,3,LzNv7CD7gRuxpk7cQ,B,ePuHpSEgEgZdLy5Hp,speaker,3,angel,3_rotate,2,10,NA,"[{""span"": ""angel"", ""literal_metaphor"": ""metaphorical"", ""part_holistic"": ""holistic""}]","[[0, 5]]","""angel"" METAPHOR HOLISTIC"
+54,4,Z2WAkYpWiXwuGcdME,L,R3cRgh4HmEtRsmQyp,speaker,2,beg no triangle,2_thick,1,6,2,"[{""span"":""triangle"",""literal_metaphor"":""literal"",""part_holistic"":""part_based""},{""span"":""beg"",""literal_metaphor"":""metaphorical"",""part_holistic"":""holistic""}]","[[7,15],[0,3]]","""beg"" neither  
+""no"" neither  
+""triangle"" LITERAL PART"
