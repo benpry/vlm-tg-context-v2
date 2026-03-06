@@ -11,52 +11,27 @@ import cairosvg
 from PIL import Image, ImageDraw, ImageFont
 from pyprojroot import here
 
-IMAGE_SIZE = 200
-CONTENT_MARGIN = 0
-
-
-def get_content_bbox(img):
-    """Find content bounds from transparency only."""
-    rgba = img.convert("RGBA")
-    alpha = rgba.split()[3]
-    return alpha.getbbox()
-
 
 def svg_to_pil(svg_path):
     """Convert SVG file to PIL Image with proper background handling."""
     try:
-        # Convert SVG to PNG bytes. Keep alpha so we can trim accurately.
+        # Convert SVG to PNG bytes with white background
         png_bytes = cairosvg.svg2png(
             url=svg_path,
-            output_width=IMAGE_SIZE,
-            output_height=IMAGE_SIZE,
+            background_color="white",
+            output_width=200,  # Set a consistent width
+            output_height=200,  # Set a consistent height
         )
         # Create PIL Image from bytes
         img = Image.open(BytesIO(png_bytes))
-        if img.mode != "RGBA":
-            img = img.convert("RGBA")
-
-        bbox = get_content_bbox(img)
-        if bbox:
-            img = img.crop(bbox)
-
-        max_content_size = max(1, IMAGE_SIZE - 2 * CONTENT_MARGIN)
-        # Scale content to fill the available area (up or down), preserving aspect ratio.
-        scale = min(max_content_size / img.width, max_content_size / img.height)
-        new_width = max(1, int(round(img.width * scale)))
-        new_height = max(1, int(round(img.height * scale)))
-        img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
-
-        # Place trimmed content on a consistent white tile.
-        output = Image.new("RGB", (IMAGE_SIZE, IMAGE_SIZE), "white")
-        paste_x = (IMAGE_SIZE - img.width) // 2
-        paste_y = (IMAGE_SIZE - img.height) // 2
-        output.paste(img, (paste_x, paste_y), img)
-        return output
+        # Convert to RGB if necessary (removes alpha channel)
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+        return img
     except Exception as e:
         print(f"Error converting {svg_path}: {e}")
         # Return a placeholder image if conversion fails
-        placeholder = Image.new("RGB", (IMAGE_SIZE, IMAGE_SIZE), "lightgray")
+        placeholder = Image.new("RGB", (200, 200), "lightgray")
         draw = ImageDraw.Draw(placeholder)
         draw.text((50, 90), "Error", fill="black")
         return placeholder
