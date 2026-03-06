@@ -85,7 +85,20 @@ def create_image_grid():
     composite = Image.new("RGB", (total_width, total_height), "#f0f0f0")
     draw = ImageDraw.Draw(composite)
 
-    font = ImageFont.truetype("arial.ttf", size=32)
+    # Try common system fonts first, then fall back to PIL's default font.
+    font = None
+    for font_path in (
+        "arial.ttf",
+        "/System/Library/Fonts/Supplemental/Arial.ttf",
+        "/System/Library/Fonts/Supplemental/Helvetica.ttc",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    ):
+        try:
+            font = ImageFont.truetype(font_path, size=36)
+            print(f"Using font {font_path}")
+            break
+        except OSError:
+            continue
 
     # Place images and labels in grid
     for i, (img, label) in enumerate(zip(images, labels)):

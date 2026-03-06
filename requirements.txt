@@ -13,6 +13,7 @@ blessed==1.25.0
 blobfile==3.0.0
 cachetools==6.2.2
 cbor2==5.7.1
+cairosvg==2.8.2
 certifi==2025.11.12
 cffi==1.17.1
 charset-normalizer==3.4.4
