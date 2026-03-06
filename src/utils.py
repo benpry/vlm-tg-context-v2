@@ -165,10 +165,16 @@ def encode_image(image):
 
 
 def get_openai_messages(
-    system_prompt, chat_prompt, include_image, grid_image, model_name=""
+    system_prompt,
+    chat_prompt,
+    include_image,
+    grid_image,
+    model_name="",
+    use_responses_api=False,
 ):
     # Copy chat_prompt to avoid mutating original
     chat_messages = [msg.copy() for msg in chat_prompt]
+    text_block_type = "input_text" if use_responses_api else "text"
 
     # Molmo2 models don't support a system role, so we prepend the system
     # instruction to the first user message instead.
@@ -182,7 +188,7 @@ def get_openai_messages(
                 elif isinstance(msg["content"], list):
                     # If content is already a list, prepend system prompt as text
                     chat_messages[i]["content"] = [
-                        {"type": "text", "text": system_prompt},
+                        {"type": text_block_type, "text": system_prompt},
                         *msg["content"],
                     ]
                 break
@@ -200,25 +206,22 @@ def get_openai_messages(
         if first_user_idx != -1:
             content = chat_messages[first_user_idx]["content"]
             base64_image = encode_image(grid_image)
+            image_data_url = f"data:image/png;base64,{base64_image}"
 
             if isinstance(content, list):
                 # Content is already a list (e.g. system prompt was prepended);
                 # insert the image at the beginning.
-                new_content = [
-                    {
-                        "type": "image_url",
-                        "image_url": {"url": f"data:image/png;base64,{base64_image}"},
-                    },
-                    *content,
-                ]
+                if use_responses_api:
+                    image_part = {"type": "input_image", "image_url": image_data_url}
+                else:
+                    image_part = {"type": "image_url", "image_url": {"url": image_data_url}}
+                new_content = [image_part, *content]
             else:
-                new_content = [
-                    {
-                        "type": "image_url",
-                        "image_url": {"url": f"data:image/png;base64,{base64_image}"},
-                    },
-                    {"type": "text", "text": content},
-                ]
+                if use_responses_api:
+                    image_part = {"type": "input_image", "image_url": image_data_url}
+                else:
+                    image_part = {"type": "image_url", "image_url": {"url": image_data_url}}
+                new_content = [image_part, {"type": text_block_type, "text": content}]
             chat_messages[first_user_idx]["content"] = new_content
 
     messages.extend(chat_messages)

@@ -214,3 +214,4 @@ slurm-output/
 notebooks/
 .vscode/
 data/logprobs/
+data/raw_responses/

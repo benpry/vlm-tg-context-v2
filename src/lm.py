@@ -2,8 +2,10 @@
 Code for calling the language model to get choice logits
 """
 
+import ast
 import json
 import math
+import os
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
@@ -67,21 +69,24 @@ def _convert_to_anthropic_format(messages):
         elif isinstance(content, list):
             new_blocks = []
             for block in content:
-                if block.get("type") == "image_url":
+                if block.get("type") in {"image_url", "input_image"}:
                     # Convert OpenAI image_url to Anthropic image format
-                    url = block["image_url"]["url"]
+                    image_url = block["image_url"]
+                    url = image_url["url"] if isinstance(image_url, dict) else image_url
                     # Extract base64 data from data URL
                     base64_data = url.split("base64,", 1)[1]
-                    new_blocks.append({
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": "image/png",
-                            "data": base64_data,
-                        },
-                    })
-                elif block.get("type") == "text":
-                    new_blocks.append(block)
+                    new_blocks.append(
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/png",
+                                "data": base64_data,
+                            },
+                        }
+                    )
+                elif block.get("type") in {"text", "input_text"}:
+                    new_blocks.append({"type": "text", "text": block["text"]})
                 else:
                     new_blocks.append(block)
             converted["content"] = new_blocks
@@ -93,7 +98,11 @@ def _convert_to_anthropic_format(messages):
 
 @retry(wait=wait_exponential(multiplier=1, min=4, max=60), stop=stop_after_attempt(10))
 def get_completion_with_backoff(
-    client, model, messages, use_logprobs=True, use_responses_api=False,
+    client,
+    model,
+    messages,
+    use_logprobs=True,
+    use_responses_api=False,
     use_anthropic_api=False,
 ):
     if "gemini" in model.lower():
@@ -104,7 +113,7 @@ def get_completion_with_backoff(
             contents=genai_messages,
             config=types.GenerateContentConfig(
                 system_instruction=system_instruction,
-                thinking_config=types.ThinkingConfig(thinking_level="medium"),
+                thinking_config=types.ThinkingConfig(thinking_level="minimal"),
             ),
         )
     elif use_anthropic_api:
@@ -129,6 +138,7 @@ def get_completion_with_backoff(
             system=system_prompt,
             messages=anthropic_messages,
             max_tokens=max_tokens,
+            output_config={"effort": "low"},
         )
     elif use_responses_api:
         # use the OpenAI Responses API
@@ -136,6 +146,7 @@ def get_completion_with_backoff(
             return client.responses.create(
                 model=model,
                 input=messages,
+                reasoning={"effort": "none"},
                 max_output_tokens=1,
                 temperature=1,
                 top_logprobs=1000,
@@ -145,6 +156,7 @@ def get_completion_with_backoff(
             return client.responses.create(
                 model=model,
                 input=messages,
+                reasoning={"effort": "none"},
                 max_output_tokens=256,
             )
     else:
@@ -193,7 +205,10 @@ def _get_single_sample(
 ):
     """Make a single API call and return (raw_text, extracted_choice)."""
     response = get_completion_with_backoff(
-        client, model_name, messages, use_logprobs=False,
+        client,
+        model_name,
+        messages,
+        use_logprobs=False,
         use_responses_api=use_responses_api,
         use_anthropic_api=use_anthropic_api,
     )
@@ -214,7 +229,11 @@ def _counts_to_logprobs(counts, n_samples):
 
 
 def get_samples_single_row(
-    client, model_name, messages, n_samples, use_responses_api=False,
+    client,
+    model_name,
+    messages,
+    n_samples,
+    use_responses_api=False,
     use_anthropic_api=False,
 ):
     """Resample n_samples times and return (logprobs_dict, raw_responses)."""
@@ -239,6 +258,53 @@ REQUIRED_COLUMNS = [
 ]
 
 
+def _save_batch_checkpoint(df: pd.DataFrame, checkpoint_path: str, completed_indices: list):
+    """Save checkpoint for batch mode with list of completed row indices."""
+    df.to_csv(checkpoint_path, index=False)
+    meta_path = checkpoint_path.replace(".checkpoint", ".checkpoint_meta.json")
+    with open(meta_path, "w") as f:
+        json.dump({"completed_indices": completed_indices}, f)
+    print(f"Checkpoint saved ({len(completed_indices)}/{len(df)} rows completed)")
+
+
+def _load_batch_checkpoint(checkpoint_path: str):
+    """Load batch checkpoint. Returns (df, completed_indices) or None."""
+    meta_path = checkpoint_path.replace(".checkpoint", ".checkpoint_meta.json")
+    if not os.path.exists(checkpoint_path) or not os.path.exists(meta_path):
+        return None
+    with open(meta_path) as f:
+        meta = json.load(f)
+    df = pd.read_csv(checkpoint_path)
+    # Restore list columns from string representations
+    for col in ["selection_history", "correctness_history", "target_history", "message_history"]:
+        if col in df.columns:
+            df[col] = df[col].apply(
+                lambda x: json.loads(x) if isinstance(x, str) else x
+            )
+    if "model_logprobs" in df.columns:
+        def _parse_logprobs(x):
+            if not isinstance(x, str) or x in ("", "nan"):
+                return x
+            try:
+                return ast.literal_eval(x)
+            except (ValueError, SyntaxError):
+                return x
+        df["model_logprobs"] = df["model_logprobs"].apply(_parse_logprobs)
+        df["model_logprobs"] = df["model_logprobs"].astype(object)
+    return df, meta["completed_indices"]
+
+
+def _cleanup_batch_checkpoint(checkpoint_path: str):
+    """Remove batch checkpoint files."""
+    for suffix in [".checkpoint", ".checkpoint_meta.json"]:
+        path = checkpoint_path.replace(".checkpoint", suffix)
+        if os.path.exists(path):
+            os.remove(path)
+
+
+BATCH_CHECKPOINT_INTERVAL = 100
+
+
 def get_logits(
     df: pd.DataFrame,
     model_name: str,
@@ -250,6 +316,7 @@ def get_logits(
     raw_responses_path: Optional[str] = None,
     use_responses_api: bool = False,
     use_anthropic_api: bool = False,
+    checkpoint_path: Optional[str] = None,
 ) -> pd.DataFrame:
     # Validate required columns exist
     missing_columns = [col for col in REQUIRED_COLUMNS if col not in df.columns]
@@ -263,14 +330,42 @@ def get_logits(
     if n_trials is not None:
         df = df.sample(n_trials)
 
+    # Try to resume from checkpoint
+    completed_indices = set()
+    if checkpoint_path:
+        loaded = _load_batch_checkpoint(checkpoint_path)
+        if loaded is not None:
+            df, completed_idx_list = loaded
+            completed_indices = set(completed_idx_list)
+            print(
+                f"Resuming from checkpoint ({len(completed_indices)}/{len(df)} rows already completed)"
+            )
+
+    if "model_logprobs" not in df.columns:
+        df["model_logprobs"] = None
+        df["model_logprobs"] = df["model_logprobs"].astype(object)
+
     df["chat_prompt"] = df.apply(preprocess_messages, axis=1)
 
-    print("Preparing messages...")
-    all_messages = [
+    # Determine which rows still need processing
+    remaining_mask = ~df.index.isin(completed_indices)
+    remaining_indices = df.index[remaining_mask].tolist()
+
+    if not remaining_indices:
+        print("All rows already completed from checkpoint.")
+        return df.drop(columns=["chat_prompt"])
+
+    print(f"Preparing messages for {len(remaining_indices)} remaining rows...")
+    remaining_messages = [
         get_openai_messages(
-            SYSTEM_PROMPT, chat_prompt, include_image, grid_image, model_name
+            SYSTEM_PROMPT,
+            df.loc[idx, "chat_prompt"],
+            include_image,
+            grid_image,
+            model_name,
+            use_responses_api=use_responses_api,
         )
-        for chat_prompt in df["chat_prompt"]
+        for idx in remaining_indices
     ]
 
     print("Doing inference...")
@@ -279,24 +374,13 @@ def get_logits(
 
         def row_fn(msgs):
             return get_samples_single_row(
-                client, model_name, msgs, n_samples, use_responses_api,
+                client,
+                model_name,
+                msgs,
+                n_samples,
+                use_responses_api,
                 use_anthropic_api,
             )
-
-        with ThreadPoolExecutor(max_workers=20) as executor:
-            results = list(
-                tqdm(
-                    executor.map(row_fn, all_messages),
-                    total=len(all_messages),
-                )
-            )
-
-        df["model_logprobs"] = [logprobs for logprobs, _ in results]
-        if raw_responses_path:
-            raw_responses = [raw for _, raw in results]
-            with open(raw_responses_path, "w") as f:
-                json.dump(raw_responses, f, indent=2)
-            print(f"Raw responses saved to {raw_responses_path}")
     else:
 
         def row_fn(msgs):
@@ -304,15 +388,43 @@ def get_logits(
                 client, model_name, msgs, use_responses_api, use_anthropic_api
             )
 
+    # Process in chunks for checkpointing
+    all_raw_responses = []
+    for chunk_start in range(0, len(remaining_indices), BATCH_CHECKPOINT_INTERVAL):
+        chunk_end = min(chunk_start + BATCH_CHECKPOINT_INTERVAL, len(remaining_indices))
+        chunk_indices = remaining_indices[chunk_start:chunk_end]
+        chunk_messages = remaining_messages[chunk_start:chunk_end]
+
         with ThreadPoolExecutor(max_workers=20) as executor:
-            all_choice_logprobs = list(
+            results = list(
                 tqdm(
-                    executor.map(row_fn, all_messages),
-                    total=len(all_messages),
+                    executor.map(row_fn, chunk_messages),
+                    total=len(chunk_messages),
+                    desc=f"Rows {chunk_start}-{chunk_end}",
                 )
             )
 
-        df["model_logprobs"] = all_choice_logprobs
+        if n_samples:
+            for idx, (logprobs, raw) in zip(chunk_indices, results):
+                df.at[idx, "model_logprobs"] = logprobs
+                all_raw_responses.append(raw)
+        else:
+            for idx, logprobs in zip(chunk_indices, results):
+                df.at[idx, "model_logprobs"] = logprobs
+
+        completed_indices.update(chunk_indices)
+
+        if checkpoint_path:
+            _save_batch_checkpoint(df, checkpoint_path, list(completed_indices))
+
+    if n_samples and raw_responses_path:
+        with open(raw_responses_path, "w") as f:
+            json.dump(all_raw_responses, f, indent=2)
+        print(f"Raw responses saved to {raw_responses_path}")
+
+    # Clean up checkpoint after successful completion
+    if checkpoint_path:
+        _cleanup_batch_checkpoint(checkpoint_path)
 
     return df.drop(columns=["chat_prompt"])
 
@@ -335,6 +447,8 @@ def _count_message_tokens(messages: list, encoding) -> int:
         elif isinstance(content, list):
             for part in content:
                 if part.get("type") == "text":
+                    total += len(encoding.encode(part["text"]))
+                elif part.get("type") == "input_text":
                     total += len(encoding.encode(part["text"]))
                 # image_url parts are counted separately
     return total
