@@ -179,6 +179,7 @@ def _load_interactive_checkpoint(checkpoint_path: str):
             )
     # Restore model_logprobs dict column
     if "model_logprobs" in df.columns:
+
         def _parse_logprobs(x):
             if not isinstance(x, str) or x in ("", "nan"):
                 return x
@@ -186,6 +187,7 @@ def _load_interactive_checkpoint(checkpoint_path: str):
                 return ast.literal_eval(x)
             except (ValueError, SyntaxError):
                 return x
+
         df["model_logprobs"] = df["model_logprobs"].apply(_parse_logprobs)
         df["model_logprobs"] = df["model_logprobs"].astype(object)
     raw_responses = None

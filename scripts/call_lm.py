@@ -83,7 +83,7 @@ if __name__ == "__main__":
     if args.dry_run:
         client = None
     elif "google" in args.api_base:
-        client = genai.Client(vertexai=True, project="hs-llmevals")
+        client = genai.Client(api_key=os.getenv("LANGCOG_GEMINI_API_KEY"))
     elif "anthropic" in args.api_base:
         client = anthropic.Anthropic()
         use_anthropic_api = True
@@ -110,6 +110,10 @@ if __name__ == "__main__":
             ".csv",
             f"_{args.model_name.split('/')[-1]}_logprobs{'_no_image' if args.no_image else ''}.csv",
         ).replace("context_prep", "data/logprobs")
+        if args.interactive:
+            output_path = output_path.replace("human_history", "interactive")
+        elif args.yoked:
+            output_path = output_path.replace("human_history", "human_yoked")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         checkpoint_path = output_path + ".checkpoint"
         if args.overwrite:

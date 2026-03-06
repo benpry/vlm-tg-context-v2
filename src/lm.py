@@ -213,7 +213,7 @@ def _get_single_sample(
         use_anthropic_api=use_anthropic_api,
     )
     if "gemini" in model_name.lower():
-        raw = response.text.strip()
+        raw = (response.text or "").strip()
     elif use_responses_api:
         raw = response.output_text.strip()
     elif use_anthropic_api:
