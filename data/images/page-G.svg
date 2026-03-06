@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg viewBox="0 0 185 142" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="-25 -25 220 220" xmlns="http://www.w3.org/2000/svg">
   <polygon fill="black" id="1" points="63.364 23.608 87.364 -0.392 111.364 23.608 87.364 47.608" stroke="black" stroke-width="2" transform="matrix(0.882947, 0.469472, -0.469472, 0.882947, 21.309471, -38.25156)"/>
   <polygon fill="black" id="2" points="24.751 155.072 24.751 105.073 49.751 80.073 49.751 130.073" stroke="black" stroke-width="2" transform="matrix(0.707107, 0.707107, -0.707107, 0.707107, 94.046883, 8.095754)"/>
   <polygon fill="black" id="3" points="144.035 61.572 81.035 61.572 112.535 30.072" stroke="black" stroke-width="2" transform="matrix(0, -1, 1, 0, 66.713005, 158.35701)"/>
