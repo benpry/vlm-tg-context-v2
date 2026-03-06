@@ -61,7 +61,11 @@ if __name__ == "__main__":
     else:
         data_dir = "full_feedback"
 
-    data_dirs = ["practice", data_dir]
+    if args.interactive:
+        data_dirs = ["practice", data_dir]
+    else:
+        data_dirs = [data_dir]
+
     data_filepaths = []
     for d in data_dirs:
         data_filepaths.extend(glob(str(here(f"context_prep/{d}/*.csv"))))
@@ -95,7 +99,7 @@ if __name__ == "__main__":
     }
 
     for filepath, df in zip(data_filepaths, dfs):
-        # only run yoked evaluations if we're not using a local model
+        # only run limited feedback yoked if we're not using a local model
         if (
             "localhost" not in args.api_base
             and "limited_feedback_yoked" not in filepath
@@ -106,12 +110,19 @@ if __name__ == "__main__":
             ".csv",
             f"_{args.model_name.split('/')[-1]}_logprobs{'_no_image' if args.no_image else ''}.csv",
         ).replace("context_prep", "data/logprobs")
-        if args.interactive:
-            for d in data_dirs:
-                output_path = output_path.replace(d, "interactive")
-        elif args.yoked:
-            for d in data_dirs:
-                output_path = output_path.replace(d, "human_yoked")
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        checkpoint_path = output_path + ".checkpoint"
+        if args.overwrite:
+            # Clean up any stale checkpoint files when overwriting
+            for suffix in [
+                ".checkpoint",
+                ".checkpoint_meta.json",
+                ".checkpoint_raw.json",
+            ]:
+                p = output_path + suffix
+                if os.path.exists(p):
+                    os.remove(p)
+
         if not args.dry_run and os.path.exists(output_path) and not args.overwrite:
             print(f"Skipping {filepath} as output file already exists.")
             continue
@@ -166,6 +177,7 @@ if __name__ == "__main__":
                 raw_responses_path=raw_responses_path,
                 use_responses_api=use_responses_api,
                 use_anthropic_api=use_anthropic_api,
+                checkpoint_path=checkpoint_path,
             )
             print(f"Saving {output_path}...")
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -189,6 +201,7 @@ if __name__ == "__main__":
                 raw_responses_path=raw_responses_path,
                 use_responses_api=use_responses_api,
                 use_anthropic_api=use_anthropic_api,
+                checkpoint_path=checkpoint_path,
             )
             print(f"Saving {output_path}...")
             os.makedirs(os.path.dirname(output_path), exist_ok=True)

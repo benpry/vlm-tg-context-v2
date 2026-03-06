@@ -9,6 +9,7 @@ from io import BytesIO
 
 import cairosvg
 from PIL import Image, ImageDraw, ImageFont
+from pyprojroot import here
 
 
 def svg_to_pil(svg_path):
@@ -41,12 +42,11 @@ def create_image_grid():
     # Configuration
     grid_cols = 4
     grid_rows = 3
-    label_height = 50
+    label_height = 60
     padding = 20
 
     # Get the directory containing the images
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    images_dir = os.path.join(script_dir, "images")
+    images_dir = here("data/images")
 
     # Load all images
     images = []
@@ -73,9 +73,11 @@ def create_image_grid():
     img_width, img_height = images[0].size
     print(f"Image dimensions: {img_width}x{img_height}")
 
-    # Calculate grid dimensions
-    total_width = grid_cols * img_width + (grid_cols - 1) * padding
-    total_height = grid_rows * (img_height + label_height) + (grid_rows - 1) * padding
+    # Calculate cell and grid dimensions
+    cell_width = img_width + padding
+    cell_height = img_height + label_height
+    total_width = grid_cols * cell_width + (grid_cols + 1) * padding
+    total_height = grid_rows * cell_height + (grid_rows + 1) * padding
 
     print(f"Grid dimensions: {total_width}x{total_height}")
 
@@ -83,69 +85,40 @@ def create_image_grid():
     composite = Image.new("RGB", (total_width, total_height), "#f0f0f0")
     draw = ImageDraw.Draw(composite)
 
-    # Try to load a font, fall back to default if not available
-    try:
-        font = ImageFont.truetype(
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 24
-        )
-    except:
-        try:
-            font = ImageFont.truetype("arial.ttf", 24)
-        except:
-            font = ImageFont.load_default()
+    font = ImageFont.truetype("arial.ttf", size=32)
 
     # Place images and labels in grid
     for i, (img, label) in enumerate(zip(images, labels)):
         row = i // grid_cols
         col = i % grid_cols
 
-        # Calculate position
-        x = col * (img_width + padding)
-        y = row * (img_height + label_height + padding)
+        # Calculate cell position (with gutter padding around all edges)
+        cell_x = padding + col * (cell_width + padding)
+        cell_y = padding + row * (cell_height + padding)
 
-        # Add a white border around each image
-        border_padding = 2
+        # Draw white card background for the entire cell
         draw.rectangle(
-            [
-                x - border_padding,
-                y - border_padding,
-                x + img_width + border_padding,
-                y + img_height + border_padding,
-            ],
+            [cell_x, cell_y, cell_x + cell_width, cell_y + cell_height],
             fill="white",
-            outline="gray",
         )
 
-        # Paste the image
-        composite.paste(img, (x, y))
+        # Paste the image centered horizontally in the cell
+        img_x = cell_x + (cell_width - img_width) // 2
+        img_y = cell_y + padding // 2
+        composite.paste(img, (img_x, img_y))
 
-        # Add the label below the image
-        label_y = y + img_height + 8
-
-        # Get text bounding box for centering
+        # Add the label centered below the image
+        label_y = img_y + img_height + 12
         bbox = draw.textbbox((0, 0), label, font=font)
         text_width = bbox[2] - bbox[0]
-        text_x = x + (img_width - text_width) // 2
+        text_x = cell_x + (cell_width - text_width) // 2
 
-        # Add a white background for the text
-        text_bg_padding = 4
-        draw.rectangle(
-            [
-                text_x - text_bg_padding,
-                label_y - text_bg_padding,
-                text_x + text_width + text_bg_padding,
-                label_y + bbox[3] - bbox[1] + text_bg_padding,
-            ],
-            fill="white",
-            outline="gray",
-        )
+        draw.text((text_x, label_y), label, fill="red", font=font)
 
-        draw.text((text_x, label_y), label, fill="black", font=font)
-
-        print(f"Placed image {label} at position ({x}, {y})")
+        print(f"Placed image {label} at position ({cell_x}, {cell_y})")
 
     # Save the composite image
-    output_path = os.path.join(script_dir, "compiled_grid.png")
+    output_path = here("data/compiled_grid.png")
     composite.save(output_path, quality=95)
     print(f"Grid saved as {output_path}")
 
