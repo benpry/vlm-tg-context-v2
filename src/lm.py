@@ -114,6 +114,10 @@ def get_completion_with_backoff(
             config=types.GenerateContentConfig(
                 system_instruction=system_instruction,
                 thinking_config=types.ThinkingConfig(thinking_level="minimal"),
+                tools=[],
+                tool_config=types.ToolConfig(
+                    function_calling_config=types.FunctionCallingConfig(mode="NONE")
+                ),
             ),
         )
     elif use_anthropic_api:
@@ -258,7 +262,9 @@ REQUIRED_COLUMNS = [
 ]
 
 
-def _save_batch_checkpoint(df: pd.DataFrame, checkpoint_path: str, completed_indices: list):
+def _save_batch_checkpoint(
+    df: pd.DataFrame, checkpoint_path: str, completed_indices: list
+):
     """Save checkpoint for batch mode with list of completed row indices."""
     df.to_csv(checkpoint_path, index=False)
     meta_path = checkpoint_path.replace(".checkpoint", ".checkpoint_meta.json")
@@ -276,12 +282,18 @@ def _load_batch_checkpoint(checkpoint_path: str):
         meta = json.load(f)
     df = pd.read_csv(checkpoint_path)
     # Restore list columns from string representations
-    for col in ["selection_history", "correctness_history", "target_history", "message_history"]:
+    for col in [
+        "selection_history",
+        "correctness_history",
+        "target_history",
+        "message_history",
+    ]:
         if col in df.columns:
             df[col] = df[col].apply(
                 lambda x: json.loads(x) if isinstance(x, str) else x
             )
     if "model_logprobs" in df.columns:
+
         def _parse_logprobs(x):
             if not isinstance(x, str) or x in ("", "nan"):
                 return x
@@ -289,6 +301,7 @@ def _load_batch_checkpoint(checkpoint_path: str):
                 return ast.literal_eval(x)
             except (ValueError, SyntaxError):
                 return x
+
         df["model_logprobs"] = df["model_logprobs"].apply(_parse_logprobs)
         df["model_logprobs"] = df["model_logprobs"].astype(object)
     return df, meta["completed_indices"]

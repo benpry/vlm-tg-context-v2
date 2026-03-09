@@ -174,9 +174,16 @@ def _load_interactive_checkpoint(checkpoint_path: str):
     # Restore list columns from their string representations
     for col in ["selection_history", "correctness_history", "target_history"]:
         if col in df.columns:
-            df[col] = df[col].apply(
-                lambda x: json.loads(x) if isinstance(x, str) else x
-            )
+
+            def _parse_list(x):
+                if not isinstance(x, str) or x in ("", "nan"):
+                    return x
+                try:
+                    return json.loads(x)
+                except (json.JSONDecodeError, ValueError):
+                    return x
+
+            df[col] = df[col].apply(_parse_list)
     # Restore model_logprobs dict column
     if "model_logprobs" in df.columns:
 

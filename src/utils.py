@@ -214,13 +214,19 @@ def get_openai_messages(
                 if use_responses_api:
                     image_part = {"type": "input_image", "image_url": image_data_url}
                 else:
-                    image_part = {"type": "image_url", "image_url": {"url": image_data_url}}
+                    image_part = {
+                        "type": "image_url",
+                        "image_url": {"url": image_data_url},
+                    }
                 new_content = [image_part, *content]
             else:
                 if use_responses_api:
                     image_part = {"type": "input_image", "image_url": image_data_url}
                 else:
-                    image_part = {"type": "image_url", "image_url": {"url": image_data_url}}
+                    image_part = {
+                        "type": "image_url",
+                        "image_url": {"url": image_data_url},
+                    }
                 new_content = [image_part, {"type": text_block_type, "text": content}]
             chat_messages[first_user_idx]["content"] = new_content
 
@@ -284,6 +290,8 @@ def get_logprobs_from_responses_api(response, choice_tokens):
 
 def get_logprobs_from_genai_response(response, choice_tokens):
     candidates = response.candidates
+    print("Gemini response parts:")
+    print(response.candidates[0].content.parts)
     if not candidates or not candidates[0].logprobs_result:
         return {}
     top_candidates = candidates[0].logprobs_result.top_candidates

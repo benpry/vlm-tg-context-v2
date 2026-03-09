@@ -103,6 +103,7 @@ if __name__ == "__main__":
         if (
             "localhost" not in args.api_base
             and "limited_feedback_yoked" not in filepath
+            and "no_context" not in filepath
         ):
             continue
 
@@ -162,7 +163,7 @@ if __name__ == "__main__":
             print(f"  Total output tokens: {token_summary['total_output_tokens']}")
             grand_totals["total_input_tokens"] += token_summary["total_input_tokens"]
             grand_totals["total_output_tokens"] += token_summary["total_output_tokens"]
-        elif args.n_samples is not None:
+        elif args.interactive:
             raw_responses_path = None
             if args.n_samples:
                 raw_responses_path = output_path.replace(
