@@ -1,0 +1,351 @@
+---
+title: "01 Data Processing"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(here)
+library(glue)
+library(jsonlite)
+
+source(here("analysis_scripts", "logprobs.R"))
+
+OUTPUT_LOC <- here("outputs")
+```
+
+# Load human data
+
+Exp 3 data
+```{r}
+human_data <- read_csv(url("https://raw.githubusercontent.com/vboyce/tg-matcher/refs/heads/main/data/tgmatcheryoked-trials.csv"))
+
+human_selections <- human_data |>
+  filter(!is.na(correct_tangram)) |>
+  filter(type == "selection") |>
+  select(
+    workerid, correct, correct_tangram, condition,
+    gameId, selected, trial_index, type, orig_trialNum, orig_repNum
+  ) |>
+  mutate(workerid = as.factor(workerid),
+         matcher_trialNum = (trial_index - 3) %/% 3,
+         matcher_repNum = matcher_trialNum %/% 12,
+         # somehow two participants were assigned to 3157/139 -- but each set looks complete?
+         workerid = ifelse(workerid == "3157" & condition == "yoked", "3157a", workerid),
+         workerid = ifelse(workerid == "139" & gameId == "Z2WAkYpWiXwuGcdME", "139a", workerid)) |> 
+  filter(workerid != "141", workerid != "35") |> # exclude two participants who didn't finish
+  select(-trial_index)
+```
+
+Exp 5 data
+```{r}
+human_data_new <- read_csv(url("https://raw.githubusercontent.com/vboyce/tg-matcher/refs/heads/main/data/tgmatcher5.csv"))
+
+human_selections_new <- human_data_new |>
+  filter(!is.na(correct_tangram),
+         type == "selection") |>
+  select(
+    workerid, correct, correct_tangram, condition,
+    gameId, selected, trial_index, type, orig_trialNum, orig_repNum
+  ) |>
+  mutate(workerid = as.factor(workerid),
+         matcher_trialNum = (trial_index - 3) %/% 3,
+         matcher_repNum = matcher_trialNum %/% 12,
+         workerid = case_when( # some error in id assignment so that two prolific id got the same assigment
+           workerid == 4969 & row_number() > 5000 ~ "4969a",
+           workerid == 5003 & row_number() > 10000 ~ "5003a",
+           T ~ as.character(workerid)
+         )) |> 
+  filter(workerid != "4957") |> # exclude participant who didn't finish
+  select(-trial_index)
+```
+
+```{r}
+all_human <- bind_rows(human_selections, human_selections_new |> 
+                         mutate(condition = ifelse(condition == "backwards", 
+                                                   "backward", condition)))
+saveRDS(all_human, here(OUTPUT_LOC, "all_human.rds"))
+```
+
+Original data
+```{r}
+choose <- c(
+  "Z2WAkYpWiXwuGcdME", "GWCD2NGoiA2n5Wh2i", "zviCQXNM4xWoYTmoY", "MEJ8y7jRW4947MPrH",
+  "x8BXJBHh3RxchPoHv", "rSMFkjhskBteiyQMB", "LzNv7CD7gRuxpk7cQ", "MDLyuv29jevaGLSeT",
+  "BTbGhXZvjdSFubTBg", "22dyGMRgestp8u5Lc"
+)
+
+original_chat <- read_csv(url("https://raw.githubusercontent.com/vboyce/tg-matcher/refs/heads/main/expt_prep_code/combined_chat.csv")) |> 
+  filter(gameId %in% choose)
+```
+
+## Reshape human data
+```{r}
+human_orig <- original_chat |>
+  mutate(
+    role = case_when(
+      role == "speaker" ~ "describer",
+      role == "listener" ~ "matcher"
+    ),
+    playerCount = coalesce(activePlayerCount, numPlayers),
+    accuracy = realCorrect / (playerCount - 1)
+  ) |>
+  mutate(
+    matcher_trialNum = trialNum,
+    matcher_repNum = repNum,
+    type = "human_original",
+    condition = "yoked"
+  ) |>
+  select(gameId, condition, orig_trialNum = trialNum, orig_repNum = repNum, 
+         matcher_trialNum, matcher_repNum, target = tangram, accuracy, type) |>
+  distinct()
+```
+
+```{r}
+yoked_human <- human_selections |> 
+  filter(condition == "yoked") |>
+  group_by(gameId, condition, orig_trialNum, orig_repNum, 
+           matcher_trialNum, matcher_repNum, target = correct_tangram) |>
+  summarise(accuracy = mean(correct),
+            .groups = "drop") |> 
+  mutate(type = "human_naive")
+
+shuffled_human <- human_selections |> 
+  filter(condition == "shuffled") |>
+  group_by(gameId, condition, orig_trialNum, orig_repNum, 
+           matcher_trialNum, matcher_repNum, target = correct_tangram) |>
+  summarise(accuracy = mean(correct),
+            .groups = "drop") |> 
+  mutate(type = "human_naive")
+```
+
+```{r}
+backward_human <- human_selections_new |> 
+  filter(condition == "backwards") |>
+  group_by(gameId, condition, orig_trialNum, orig_repNum, 
+           matcher_trialNum, matcher_repNum, target = correct_tangram) |>
+  summarise(accuracy = mean(correct),
+            .groups = "drop") |> 
+  mutate(type = "human_naive",
+         condition = "backward")
+
+random_human <- human_selections_new |> 
+  filter(condition == "random") |>
+  group_by(gameId, condition, orig_trialNum, orig_repNum, 
+           matcher_trialNum, matcher_repNum, target = correct_tangram) |>
+  summarise(accuracy = mean(correct),
+            .groups = "drop") |> 
+  mutate(type = "human_naive")
+```
+
+# Load model data
+```{r eval=F}
+logprob_files <- list.files(here("data", "logprobs"), recursive = TRUE)
+
+full_logprobs <- map(logprob_files, load_logprobs) |> list_rbind()
+
+saveRDS(full_logprobs, here(OUTPUT_LOC, "full_logprobs.rds"))
+```
+
+```{r}
+full_logprobs <- readRDS(here(OUTPUT_LOC, "full_logprobs.rds"))
+
+logprobs_base <- full_logprobs |> 
+  filter_logprobs() |> 
+  filter(!str_detect(model_name, "Qwen2.5"))
+```
+
+# Fix message lengths
+```{r}
+human_orig_fixed <- human_orig |> 
+  cbind(logprobs_base |> 
+          filter(type == "model_gemma",
+                 feedback == "full",
+                 condition == "yoked",
+                 image == "image") |> 
+          select(message_length, context_length)) |> 
+  mutate(runId = "1")
+yoked_human_fixed <- yoked_human |> 
+  cbind(logprobs_base |> 
+          filter(type == "model_gemma",
+                 feedback == "full",
+                 condition == "yoked",
+                 image == "image") |> 
+          select(message_length, context_length)) |> 
+  mutate(runId = "1")
+shuffled_human_fixed <- human_selections |> 
+  filter(condition == "shuffled") |> 
+  cbind(logprobs_base |> 
+          filter(type == "model_gemma",
+                 feedback == "full",
+                 condition == "shuffled",
+                 image == "image") |> 
+          select(message_length, context_length)) |> 
+  mutate(runId = as.character(workerid)) |>
+  group_by(gameId, runId, condition, orig_trialNum, orig_repNum, 
+           matcher_trialNum, matcher_repNum, target = correct_tangram) |>
+  summarise(accuracy = mean(correct),
+            message_length = mean(message_length),
+            context_length = mean(context_length),
+            .groups = "drop") |> 
+  mutate(type = "human_naive")
+```
+
+```{r}
+backward_human_fixed <- backward_human |> 
+  cbind(logprobs_base |> 
+          filter(type == "model_gemma",
+                 feedback == "full",
+                 condition == "backward",
+                 image == "image") |> 
+          select(message_length, context_length)) |> 
+  mutate(runId = "1")
+random_msgs <- read_csv(here("context_prep", "full_feedback", "random.csv")) |> 
+  mutate(message = map(message, fromJSON),
+         message_history = message_history |>
+           replace_na("[]") |>
+           map(fromJSON),
+         message_len = map_int(message, \(m) {
+           m$text |>
+             replace_na("") |>
+             str_c(collapse = " ") |>
+             str_count("\\S+")
+         }),
+         context_len = map_int(message_history, \(m) {
+           if (length(m) == 0) {
+             return(0L)
+           }
+           m |>
+             list_rbind() |>
+             pull(text) |>
+             replace_na("") |>
+             str_c(collapse = " ") |>
+             str_count("\\S+")
+         }))
+random_human_fixed <- human_selections_new |> 
+  filter(condition == "random") |> 
+  left_join(random_msgs |> 
+              select(workerid, matcher_trialNum, matcher_repNum, 
+                     message_length = message_len, context_length = context_len),
+            by = join_by(workerid, matcher_trialNum, matcher_repNum)) |> 
+  mutate(runId = as.character(workerid)) |>
+  group_by(runId, condition, matcher_trialNum, matcher_repNum, 
+           orig_trialNum, orig_repNum, gameId, target = correct_tangram) |>
+  summarise(accuracy = mean(correct),
+            message_length = mean(message_length),
+            context_length = mean(context_length),
+            .groups = "drop") |> 
+  mutate(type = "human_naive")
+```
+
+# Combine all
+```{r}
+full_combined <- bind_rows(
+  human_orig_fixed,
+  yoked_human_fixed,
+  shuffled_human_fixed,
+  backward_human_fixed,
+  random_human_fixed,
+  logprobs_base
+) |> 
+  mutate(type = factor(type, levels = c("human_original", "human_naive", "model_qwen", "model_gemma", 
+                                      "model_llama", "model_molmo", "model_kimi",
+                                      "model_gemini", "model_gpt", "model_claude")),
+         condition = factor(condition, levels = c("yoked", "backward", "shuffled", "ablated", 
+                                                  "other-within", "other-across", "random", "no context",
+                                                  "r1_practice", "r6_practice"))) |> 
+  arrange(type, condition, runId, matcher_trialNum, feedback, image) |>
+  group_by(type, condition, runId, target, feedback, image) |>
+  mutate(matcher_repNum = ifelse(condition %in% c("shuffled", "random"), 0:5, matcher_repNum)) |> 
+  ungroup()
+```
+
+```{r}
+saveRDS(full_combined, here(OUTPUT_LOC, "full_combined.rds"))
+```
+
+# Learning
+```{r}
+accs_full <- full_logprobs |> 
+  filter(feedback == "limited interactive" | is.na(feedback),
+         image == "image" | is.na(image),
+         condition %in% c("yoked", "backward", "shuffled", "random")) |> 
+  calculate_accuracies()
+
+orig_acc <- human_orig |> 
+  mutate(runId = as.character(1),
+         orig_accuracy = accuracy,
+         accuracy = as.numeric(accuracy > 0),
+         target_repNum = matcher_repNum) |> 
+  calculate_accuracies(join_only = TRUE) |> 
+  mutate(accuracy = orig_accuracy) |> 
+  select(-orig_accuracy)
+
+naive_acc <- human_selections |> 
+  bind_rows(human_selections_new) |> 
+  mutate(type = "human_naive",
+         runId = as.character(workerid), 
+         accuracy = as.numeric(correct),
+         condition = ifelse(condition == "backwards", "backward", condition)) |> 
+  cast_random() |> 
+  rename(target = correct_tangram) |> 
+  select(type, condition, gameId, runId, orig_trialNum, orig_repNum,
+         matcher_trialNum, matcher_repNum, target, accuracy) |> 
+  arrange(type, condition, gameId, runId, matcher_trialNum) |>
+  group_by(type, condition, gameId, runId, target) |>
+  mutate(target_repNum = ifelse(condition %in% c("shuffled", "random"), 0:5, matcher_repNum)) |> 
+  calculate_accuracies(join_only = TRUE)
+
+all_acc <- bind_rows(
+  bind_rows(accs_full), orig_acc, naive_acc
+) |> 
+  mutate(
+    type = factor(type, 
+                  levels = c("human_original", "human_naive", "model_qwen", "model_gemma", 
+                             "model_llama", "model_molmo", "model_kimi")),
+    condition = factor(condition, 
+                       levels = c("yoked", "backward", "shuffled", "random", 
+                                  "other-within", "other-across", "ablated", "no context"))
+  )
+
+saveRDS(all_acc, here(OUTPUT_LOC, "all_acc.rds"))
+```
+
+# Confusion matrices
+```{r}
+mat_conf <- full_logprobs |> 
+  filter(feedback == "full" | is.na(feedback),
+         image == "image" | is.na(image)) |> 
+  group_by(type, condition, target, selection) |>
+  summarise(
+    prob = mean(prob, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+```{r}
+mat_conf_wide <- mat_conf |> 
+  pivot_wider(names_from = condition,
+              values_from = prob)
+mat_conf_rsa <- mat_conf_wide |> 
+  select(-target, -selection) |> 
+  nest(data = -type) |> 
+  mutate(correl = map(data, \(d) cor(d |> as.matrix()) |> list()))
+```
+
+```{r}
+mat_conf_rsa_long <- mat_conf_rsa |> 
+  select(-data) |> 
+  mutate(correl = map(correl, \(c) as_tibble(c[[1]], rownames = "condition1"))) |> 
+  unnest(correl) |> 
+  pivot_longer(cols = -c(type, condition1),
+               names_to = "condition2",
+               values_to = "cor") |> 
+  mutate(across(starts_with("condition"), 
+                \(c) c |> str_to_sentence() |> 
+                  factor(levels = c("Yoked", "Backward", "Shuffled", "Random", 
+                                    "Other-within", "Other-across", "Ablated", "No context"))))
+
+saveRDS(mat_conf_rsa_long, here(OUTPUT_LOC, "rsa_long.rds"))
+```
+

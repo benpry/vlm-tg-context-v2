@@ -1,0 +1,255 @@
+---
+title: "03 Error Analysis"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(here)
+library(glue)
+library(jsonlite)
+library(patchwork)
+library(ggview)
+library(lme4)
+library(broom)
+library(irr)
+library(emmeans)
+
+source(here("analysis_scripts", "plot_helpers.R"))
+
+OUTPUT_LOC <- here("outputs")
+FIG_LOC <- here("figs")
+```
+
+```{r}
+full_combined <- readRDS(here(OUTPUT_LOC, "full_combined.rds"))
+```
+
+# Span annotation
+```{r}
+summarise_spans <- function(spans) {
+  spans |> 
+    select(-raw_spans) |> 
+    mutate(n_literal = str_count(spans, "\"literal\""),
+           n_metaphorical = str_count(spans, "\"metaphorical\""),
+           n_partbased = str_count(spans, "\"part_based\""),
+           n_holistic = str_count(spans, "\"holistic\""),
+           n_spans = str_count(spans, "\"span\"")) |> 
+    group_by(gameId, trialNum, repNum) |> 
+    summarise(across(starts_with("n_"), sum),
+              .groups = "drop") |> 
+    mutate(prop_metaphorical = n_metaphorical / n_spans,
+           prop_holistic = n_holistic / n_spans)
+}
+```
+
+```{r}
+spans <- read_csv(here("data", "original_chat_spans.csv"))
+
+spans_cleaned <- spans |> 
+  summarise_spans()
+```
+
+```{r}
+spans_irr <- read_csv(here("data", "original_chat_spans_irr.csv"))
+
+spans_irr_cleaned <- spans_irr |> 
+  summarise_spans() |> 
+  select(gameId, trialNum, repNum, 
+         prop_metaphorical_recode = prop_metaphorical, 
+         prop_holistic_recode = prop_holistic) |> 
+  left_join(spans_cleaned |> 
+              select(gameId, trialNum, repNum, 
+                     prop_metaphorical_orig = prop_metaphorical, 
+                     prop_holistic_orig = prop_holistic),
+            by = join_by(gameId, trialNum, repNum))
+```
+
+```{r}
+icc(spans_irr_cleaned |> select(prop_metaphorical_orig, prop_metaphorical_recode),
+    model = "twoway", type = "agreement", unit = "single")
+icc(spans_irr_cleaned |> select(prop_holistic_orig, prop_holistic_recode),
+    model = "twoway", type = "agreement", unit = "single")
+```
+
+```{r}
+random_values <- full_combined |> 
+  filter(feedback == "limited interactive" | is.na(feedback),
+         image == "image" | is.na(image),
+         condition == "random",
+         type != "human_original") |> 
+  mutate(type = ifelse(type == "human_naive", "human", "model")) |> 
+  left_join(spans_cleaned |> select(-starts_with("n_")), 
+            join_by(gameId, orig_trialNum == trialNum, orig_repNum == repNum))
+
+mod_spans <- glm(accuracy ~ prop_metaphorical * prop_holistic * type,
+    data = random_values,
+    family = "quasibinomial")
+
+mod_spans |> 
+  tidy(conf.int = TRUE)
+
+emtrends(mod_spans, ~ type, var = "prop_metaphorical")-
+```
+
+```{r}
+random_summary <- random_values |> 
+  group_by(gameId, orig_trialNum, orig_repNum, target, type, 
+           prop_metaphorical, prop_holistic) |> 
+  summarise(accuracy = mean(accuracy),
+            .groups = "drop")
+
+p_metaphorical <- random_summary |> 
+  ggplot(aes(x = prop_metaphorical, y = accuracy, col = type)) +
+  geom_point(alpha = .1, position = position_jitter(height = 0, width = .02)) +
+  geom_smooth(method = "glm", method.args = list(family = "quasibinomial")) +
+  labs(x = "Prop metaphorical spans", y = "Accuracy", col = "Matcher type")
+
+p_holistic <- random_summary |> 
+  ggplot(aes(x = prop_holistic, y = accuracy, col = type)) +
+  geom_point(alpha = .1, position = position_jitter(height = 0, width = .02)) +
+  geom_smooth(method = "glm", method.args = list(family = "quasibinomial")) +
+  labs(x = "Prop holistic spans", y = "Accuracy", col = "Matcher type")
+
+p_spans <- (p_metaphorical | p_holistic) +
+  plot_annotation(tag_levels = "A",
+                  title = "Interactive limited feedback",
+                  theme = theme(plot.title = 
+                                  element_text(size = 13, face = "italic"))) +
+  plot_layout(guides = "collect") &
+  scale_colour_manual(values = c(
+    "human" = "#e89f46",
+    "model" = "#119e92"
+  ),
+  labels = c(
+    "human" = "Human",
+    "model" = "Model"
+  )) &
+  theme(legend.position = "bottom")
+
+(p_spans + 
+  canvas(width = 500, height = 280, 
+         scale = 4, units = "px")) |> 
+  save_ggplot(here(FIG_LOC, "spans.png"))
+```
+
+# Lemma analysis
+```{r}
+# reload texts
+game_texts <- spans |>
+  mutate(
+    role = case_when(
+      role == "speaker" ~ "describer",
+      role == "listener" ~ "matcher"
+    )) |> 
+  rename(orig_trialNum = trialNum,
+         orig_repNum = repNum) |> 
+  select(gameId, orig_trialNum, orig_repNum, role, text, condition) |> 
+  mutate(role_text = glue("{role}: {text}")) |>
+  group_by(gameId, orig_trialNum, orig_repNum, condition) |> 
+  summarise(role_text = str_c(role_text, collapse = "\n"),
+            text = str_c(text, collapse = " "),
+            .groups = "drop")
+
+# lemmatise
+ud_model <- udpipe_load_model(here("resources", "english-ewt-ud-2.5-191206.udpipe"))
+game_texts_lemmas <- game_texts |> 
+  mutate(ud = map(text, \(t) udpipe_annotate(ud_model, x = str_to_lower(t)) |> 
+                    as_tibble() |> select(lemma) |> 
+                    # manual corrections
+                    mutate(lemma = case_when(
+                      lemma == "triangles" ~ "triangle", 
+                      lemma == "ears" ~ "ear",
+                      lemma == "backwards" ~ "backward",
+                      lemma == "forwards" ~ "forward",
+                      lemma == "kneeling" ~ "kneel",
+                      lemma == "leaning" ~ "lean",
+                      lemma == "shapes" ~ "shape",
+                      lemma == "shoulders" ~ "shoulder",
+                      lemma == "sitting" ~ "sit",
+                      lemma == "towards" ~ "toward",
+                      lemma == "upwards" ~ "upward",
+                      lemma == "walking" ~ "walk",
+                      .default = lemma)) |> 
+                    distinct())) |> 
+  unnest(ud)
+```
+
+```{r}
+random_combined <- full_combined |> 
+  filter(feedback == "limited interactive" | is.na(feedback),
+         image == "image" | is.na(image),
+         condition == "random",
+         type != "human_original") |> 
+  group_by(type, gameId, orig_trialNum, orig_repNum, target) |>
+  summarise(accuracy = mean(accuracy),
+            .groups = "drop")
+```
+
+```{r}
+error_analysis <- random_combined |> 
+  mutate(type = ifelse(str_starts(type, "model_"), "model", "human_naive")) |> 
+  group_by(type, gameId, orig_trialNum, orig_repNum, target) |>
+  summarise(accuracy = mean(accuracy),
+            .groups = "drop") |> 
+  pivot_wider(names_from = type, values_from = accuracy) |> 
+  mutate(diff = model - human_naive) |> 
+  left_join(game_texts, by = join_by(gameId, orig_trialNum, orig_repNum))
+```
+
+```{r}
+error_analysis_lemmas <- error_analysis |> 
+  left_join(game_texts_lemmas, by = join_by(gameId, orig_trialNum, orig_repNum)) |> 
+  group_by(lemma) |> 
+  summarise(
+    n = n(),
+    n_games = n_distinct(gameId),
+    mean_diff = mean(diff, na.rm = TRUE),
+    sd_diff = sd(diff, na.rm = TRUE),
+    se_diff = sd_diff / sqrt(n),
+    ci_lower = mean_diff - qt(0.975, n - 1) * se_diff,
+    ci_upper = mean_diff + qt(0.975, n - 1) * se_diff,
+    .groups = "drop"
+  ) |> 
+  filter(n > 1) |> 
+  mutate(diff_vs_grand_mean = mean_diff - mean(error_analysis$diff, na.rm = TRUE),
+         ci_lower_vs_grand_mean = ci_lower - mean(error_analysis$diff, na.rm = TRUE),
+         ci_upper_vs_grand_mean = ci_upper - mean(error_analysis$diff, na.rm = TRUE),
+         ci_vs_grand_mean = case_when(
+           ci_lower > mean(error_analysis$diff, na.rm = TRUE) ~ "above",
+           ci_upper < mean(error_analysis$diff, na.rm = TRUE) ~ "below",
+           TRUE ~ "includes"
+         ))
+
+# error_analysis_lemmas |> 
+#   filter(n > 10) |> 
+#   write_csv("mean_diff_by_lemma.csv")
+```
+
+Plot
+```{r}
+lemmas_annotated <- read_csv(here("resources", "lemmas_annotated.csv"))
+
+error_analysis_lemmas_annotated <- error_analysis_lemmas |> 
+  left_join(lemmas_annotated, by = join_by(lemma)) |> 
+  filter(!is.na(category)) |> 
+  mutate(category = fct_reorder(category, diff_vs_grand_mean),
+         lemma = fct_reorder(lemma, diff_vs_grand_mean, .desc = TRUE))
+
+p_lemmas <- error_analysis_lemmas_annotated |> 
+  mutate(signif = ifelse(ci_vs_grand_mean == "includes", "no", "yes")) |>
+  ggplot(aes(x = diff_vs_grand_mean, y = lemma, col = category)) +
+  geom_vline(xintercept = 0, lty = "dashed") +
+  geom_errorbarh(aes(xmin = ci_lower_vs_grand_mean, xmax = ci_upper_vs_grand_mean),
+                 height = .4) +
+  geom_point(aes(shape = signif), size = 2) +
+  facet_grid(category ~ ., scales = "free_y", space = "free_y") +
+  scale_shape_manual(values = c(1, 16)) +
+  labs(x = "Centred discrepancy (model – human)", y = "Lemma") +
+  theme(legend.position = "none")
+
+(p_lemmas + 
+  canvas(width = 300, height = 520, 
+         scale = 4, units = "px")) |> 
+  save_ggplot(here(FIG_LOC, "lemmas.png"))
+```

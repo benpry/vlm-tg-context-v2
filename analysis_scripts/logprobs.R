@@ -47,20 +47,15 @@ logprobs_to_long <- function(logprobs) {
     })
 
   logprobs_res <- logprobs_cleaned$model_logprobs |>
-    map(\(l) {
-      l |>
-        t() |>
-        as_tibble()
-    }) |>
+    map(as_tibble_row) |>
     list_rbind() |>
-    unnest(cols = everything()) |>
     select(A, B, C, D, E, `F`, G, H, I, J, K, L)
   logprobs_res_out <- logprobs_res |>
-    select(order(colnames(logprobs_res))) |>
     rowwise() |>
     mutate(
       across(everything(), exp),
-      across(everything(), \(x) x / sum(c_across(everything())))
+      across(everything(), \(x) x / sum(c_across(everything()), na.rm = TRUE)),
+      across(everything(), \(x) replace_na(x, 0))
     )
 
   if ("gameId.y" %in% colnames(logprobs_cleaned)) {
@@ -101,17 +96,20 @@ logprobs_to_long <- function(logprobs) {
 }
 
 load_logprobs <- function(file_name) {
-  logprobs <- read_csv(here(OUTPUT_LOC, file_name), show_col_types = FALSE) |>
+  logprobs <- read_csv(here("data", "logprobs", file_name), show_col_types = FALSE) |>
     logprobs_to_long()
 
   condition_name <- file_name |>
     str_replace(".*/", "") |>
     str_replace("limited_feedback_", "") |>
     str_replace("gemma", "Gemma") |>
-    str_extract("^[a-z_]+(?=_)") |>
+    str_extract("^[a-z_]+[16]?(?=_)") |>
     str_replace_all("wrong_", "other-") |>
     str_replace("no_context", "no context") |>
     str_replace("backwards", "backward")
+  if (condition_name %in% c("r1", "r6")) {
+    condition_name <- str_c(condition_name, " practice")
+  }
   if (condition_name == "backward") {
     logprobs <- logprobs |>
       mutate(
@@ -143,52 +141,6 @@ load_logprobs <- function(file_name) {
       condition = condition_name,
       feedback = feedback_type,
       image = image_type
-    )
-}
-
-get_all_logprobs <- function(model_name, no_image = FALSE, float32 = FALSE, prefix = "") {
-  modstr <- if (no_image) "_no_image" else if (float32) "_float32" else ""
-  yoked <- read_csv(here(OUTPUT_LOC, glue("{prefix}yoked_{model_name}_logprobs{modstr}.csv"))) |>
-    logprobs_to_long()
-  shuffled <- read_csv(here(OUTPUT_LOC, glue("{prefix}shuffled_{model_name}_logprobs{modstr}.csv"))) |>
-    logprobs_to_long()
-  backward <- read_csv(here(OUTPUT_LOC, glue("{prefix}backward_{model_name}_logprobs{modstr}.csv"))) |>
-    logprobs_to_long() |>
-    mutate(
-      orig_trialNum = 71 - orig_trialNum,
-      orig_repNum = 5 - orig_repNum
-    )
-  ablated <- read_csv(here(OUTPUT_LOC, glue("{prefix}ablated_{model_name}_logprobs{modstr}.csv"))) |>
-    logprobs_to_long()
-  other_within <- read_csv(here(OUTPUT_LOC, glue("{prefix}wrong_within_{model_name}_logprobs{modstr}.csv"))) |>
-    logprobs_to_long() |>
-    mutate(condition = "other-within")
-  other_across <- read_csv(here(OUTPUT_LOC, glue("{prefix}wrong_across_{model_name}_logprobs{modstr}.csv"))) |>
-    logprobs_to_long() |>
-    mutate(condition = "other-across")
-  random <- read_csv(here(OUTPUT_LOC, glue("{prefix}random_{model_name}_logprobs{modstr}.csv"))) |>
-    logprobs_to_long() |>
-    mutate(condition = "random")
-  no_context <- read_csv(here(OUTPUT_LOC, glue("{prefix}no_context_{model_name}_logprobs{modstr}.csv"))) |>
-    logprobs_to_long() |>
-    mutate(condition = "no context")
-
-  bind_rows(
-    yoked,
-    shuffled,
-    backward,
-    ablated,
-    other_within,
-    other_across,
-    random,
-    no_context
-  ) |>
-    mutate(
-      type = glue("model_{model_name |> str_to_lower() |> str_extract('^[a-z]+')}"),
-      condition = factor(condition, levels = c(
-        "yoked", "shuffled", "backward", "ablated",
-        "other-within", "other-across", "random", "no context"
-      ))
     )
 }
 
