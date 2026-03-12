@@ -142,7 +142,8 @@ random_human <- human_selections_new |>
 ```{r eval=F}
 logprob_files <- list.files(here("data", "logprobs"), recursive = TRUE)
 
-full_logprobs <- map(logprob_files, load_logprobs) |> list_rbind()
+full_logprobs <- map(logprob_files, load_logprobs, .progress = TRUE) |> 
+  list_rbind()
 
 saveRDS(full_logprobs, here(OUTPUT_LOC, "full_logprobs.rds"))
 ```
@@ -253,7 +254,7 @@ full_combined <- bind_rows(
                                       "model_gemini", "model_gpt", "model_claude")),
          condition = factor(condition, levels = c("yoked", "backward", "shuffled", "ablated", 
                                                   "other-within", "other-across", "random", "no context",
-                                                  "r1_practice", "r6_practice"))) |> 
+                                                  "r1 practice", "r6 practice"))) |> 
   arrange(type, condition, runId, matcher_trialNum, feedback, image) |>
   group_by(type, condition, runId, target, feedback, image) |>
   mutate(matcher_repNum = ifelse(condition %in% c("shuffled", "random"), 0:5, matcher_repNum)) |> 
@@ -310,6 +311,31 @@ all_acc <- bind_rows(
 
 saveRDS(all_acc, here(OUTPUT_LOC, "all_acc.rds"))
 ```
+
+# Perseveration
+```{r}
+persev <- full_logprobs |> 
+  filter(str_detect(condition, "practice")) |> 
+  group_by(type, condition, gameId, runId, orig_trialNum, orig_repNum,
+           matcher_trialNum, matcher_repNum, target) |> 
+  slice_max(prob)
+
+persev_next <- persev |> mutate(matcher_repNum = matcher_repNum + 1)
+
+persev_full <- persev |> 
+  left_join(persev_next, 
+            by = join_by(type, condition, gameId, runId, matcher_repNum, target),
+            relationship = "many-to-many") |>  # we kept ties in the slice_max
+  filter(matcher_repNum > 0) |> 
+  mutate(is_same = selection.x == selection.y) |> 
+  group_by(type, condition, gameId, runId,
+           matcher_trialNum.x, matcher_repNum, target) |> 
+  summarise(is_same = max(is_same),
+            .groups = "drop")
+
+saveRDS(persev_full, here(OUTPUT_LOC, "persev_full.rds"))
+```
+
 
 # Confusion matrices
 ```{r}

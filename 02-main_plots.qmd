@@ -22,6 +22,7 @@ full_combined <- readRDS(here(OUTPUT_LOC, "full_combined.rds"))
 all_acc <- readRDS(here(OUTPUT_LOC, "all_acc.rds"))
 all_human <- readRDS(here(OUTPUT_LOC, "all_human.rds"))
 mat_conf_rsa_long <- readRDS(here(OUTPUT_LOC, "rsa_long.rds"))
+persev_full <- readRDS(here(OUTPUT_LOC, "persev_full.rds"))
 ```
 
 # Main feedback plot
@@ -83,22 +84,6 @@ p_noncumulative <- full_combined |>
          scale = 4, units = "px")) |> 
   save_ggplot(here(FIG_LOC, "noncumulative.png"))
 ```
-
-# Practice 
-```{r}
-p_practice <- full_combined |> 
-  filter(str_detect(condition, "practice")) |> 
-  make_accuracy_plot() +
-  COL_SCALE_NOLIM +
-  facet_wrap(~ condition, ncol = 2,
-             labeller = as_labeller(str_to_sentence)) +
-  coord_cartesian(ylim = c(0, 1)) +
-  ggtitle("Interactive limited feedback") +
-  guides(col = guide_legend(nrow = 2)) +
-  theme(plot.title = element_text(size = 13, face = "italic"),
-        legend.position = "bottom")
-```
-
 
 # Learning
 ```{r}
@@ -376,7 +361,7 @@ p_frontier <- full_combined |>
   filter(feedback == "frontier" | is.na(feedback),
          image == "image" | is.na(image),
          condition %in% c("yoked", "no context")) |> 
-  make_accuracy_plot() +
+  make_accuracy_plot(repnum_type = "original") +
   COL_SCALE_FRONTIER +
   facet_wrap(~ condition, ncol = 2,
              labeller = as_labeller(str_to_sentence)) +
@@ -463,3 +448,45 @@ p_rsa <- mat_conf_rsa_long |>
          scale = 4, units = "px")) |> 
   save_ggplot(here(FIG_LOC, "rsa.png"))
 ```
+
+# Practice 
+```{r}
+p_practice <- full_combined |> 
+  filter(str_detect(condition, "practice")) |> 
+  make_accuracy_plot() +
+  COL_SCALE_NOLIM +
+  facet_wrap(~ condition, ncol = 2,
+             labeller = as_labeller(str_to_sentence)) +
+  coord_cartesian(ylim = c(0, 1))
+```
+
+```{r}
+p_persev <- persev_full |> 
+  rename(accuracy = is_same,
+         matcher_trialNum = matcher_trialNum.x) |> 
+  mutate(type = factor(type, 
+                       levels = c("model_qwen", "model_gemma", 
+                                  "model_llama", "model_molmo", "model_kimi"))) |> 
+  make_accuracy_plot() +
+  COL_SCALE_NOLIM +
+  facet_wrap(~ condition, ncol = 2,
+             labeller = as_labeller(str_to_sentence)) +
+  coord_cartesian(ylim = c(0, 1),
+                  xlim = c(1, 6)) +
+  labs(y = "Perseveration")
+```
+
+```{r}
+p_prac_pers <- (p_practice / p_persev) +
+  plot_layout(guides = "collect") +
+  plot_annotation(tag_levels = "A",
+                  title = "Interactive limited feedback",
+                  theme = theme(plot.title = 
+                                  element_text(size = 13, face = "italic")))
+
+(p_prac_pers + 
+  canvas(width = 450, height = 400,
+         scale = 4, units = "px")) |> 
+  save_ggplot(here(FIG_LOC, "practice.png"))
+```
+

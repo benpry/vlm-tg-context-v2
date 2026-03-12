@@ -64,6 +64,9 @@ logprobs_to_long <- function(logprobs) {
   } else if ("workerid" %in% colnames(logprobs_cleaned)) {
     logprobs_cleaned <- logprobs_cleaned |>
       mutate(runId = as.character(workerid))
+  } else if ("shuffle_rep" %in% colnames(logprobs_cleaned)) {
+    logprobs_cleaned <- logprobs_cleaned |>
+      mutate(runId = as.character(shuffle_rep))
   } else {
     logprobs_cleaned <- logprobs_cleaned |>
       mutate(runId = "1")

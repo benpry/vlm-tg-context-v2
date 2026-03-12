@@ -14,6 +14,7 @@ library(lme4)
 library(broom)
 library(irr)
 library(emmeans)
+library(udpipe)
 
 source(here("analysis_scripts", "plot_helpers.R"))
 
@@ -89,7 +90,7 @@ mod_spans <- glm(accuracy ~ prop_metaphorical * prop_holistic * type,
 mod_spans |> 
   tidy(conf.int = TRUE)
 
-emtrends(mod_spans, ~ type, var = "prop_metaphorical")-
+emtrends(mod_spans, ~ type, var = "prop_metaphorical")
 ```
 
 ```{r}
