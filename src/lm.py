@@ -11,7 +11,6 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
 import pandas as pd
-import tiktoken
 from google.genai import types
 from openai import OpenAI
 from PIL import Image
@@ -114,6 +113,8 @@ def get_completion_with_backoff(
             config=types.GenerateContentConfig(
                 system_instruction=system_instruction,
                 thinking_config=types.ThinkingConfig(thinking_level="minimal"),
+                response_logprobs=True,
+                logprobs=12,
                 tools=[],
                 tool_config=types.ToolConfig(
                     function_calling_config=types.FunctionCallingConfig(mode="NONE")
@@ -153,7 +154,7 @@ def get_completion_with_backoff(
                 reasoning={"effort": "none"},
                 max_output_tokens=1,
                 temperature=1,
-                top_logprobs=1000,
+                top_logprobs=20,
                 include=["message.output_text.logprobs"],
             )
         else:
@@ -369,6 +370,7 @@ def get_logits(
         return df.drop(columns=["chat_prompt"])
 
     print(f"Preparing messages for {len(remaining_indices)} remaining rows...")
+    base64_image = encode_image(grid_image) if include_image else None
     remaining_messages = [
         get_openai_messages(
             SYSTEM_PROMPT,
@@ -377,6 +379,7 @@ def get_logits(
             grid_image,
             model_name,
             use_responses_api=use_responses_api,
+            base64_image=base64_image,
         )
         for idx in remaining_indices
     ]
@@ -440,97 +443,3 @@ def get_logits(
         _cleanup_batch_checkpoint(checkpoint_path)
 
     return df.drop(columns=["chat_prompt"])
-
-
-def _get_encoding(model_name: str):
-    """Get a tiktoken encoding, falling back to cl100k_base for unknown models."""
-    try:
-        return tiktoken.encoding_for_model(model_name)
-    except KeyError:
-        return tiktoken.get_encoding("cl100k_base")
-
-
-def _count_message_tokens(messages: list, encoding) -> int:
-    """Count text tokens in an OpenAI-style message list (skipping image data)."""
-    total = 0
-    for msg in messages:
-        content = msg.get("content", "")
-        if isinstance(content, str):
-            total += len(encoding.encode(content))
-        elif isinstance(content, list):
-            for part in content:
-                if part.get("type") == "text":
-                    total += len(encoding.encode(part["text"]))
-                elif part.get("type") == "input_text":
-                    total += len(encoding.encode(part["text"]))
-                # image_url parts are counted separately
-    return total
-
-
-def _estimate_image_tokens(grid_image: Image.Image) -> int:
-    """Estimate token count for a base64-encoded PNG image.
-
-    Uses a rough heuristic: base64 bytes * 3/4 (to get raw bytes) / 768 tiles,
-    ~170 tokens per tile. This is approximate and varies by provider.
-    """
-    base64_str = encode_image(grid_image)
-    raw_bytes = len(base64_str) * 3 / 4
-    n_tiles = max(1, raw_bytes / 768)
-    return int(n_tiles * 170)
-
-
-def _count_chat_prompt_tokens(chat_prompt: list, encoding) -> int:
-    """Count text tokens in a preprocessed chat prompt (list of role/content dicts)."""
-    total = 0
-    for msg in chat_prompt:
-        content = msg.get("content", "")
-        if isinstance(content, str):
-            total += len(encoding.encode(content))
-    return total
-
-
-def count_tokens(
-    df: pd.DataFrame,
-    model_name: str,
-    grid_image: Image.Image,
-    include_image: bool = True,
-    n_trials: Optional[int] = None,
-) -> dict:
-    """Count input/output tokens without calling the API.
-
-    Counts tokens directly from preprocessed chat prompts plus the system prompt,
-    avoiding expensive per-row image encoding.
-    """
-    missing_columns = [col for col in REQUIRED_COLUMNS if col not in df.columns]
-    if missing_columns:
-        raise ValueError(f"Missing required columns: {missing_columns}.")
-
-    if n_trials is not None:
-        df = df.head(n_trials)
-
-    encoding = _get_encoding(model_name)
-    system_prompt_tokens = len(encoding.encode(SYSTEM_PROMPT))
-    image_tokens = _estimate_image_tokens(grid_image) if include_image else 0
-
-    df["chat_prompt"] = df.apply(preprocess_messages, axis=1)
-
-    text_token_counts = [
-        system_prompt_tokens + _count_chat_prompt_tokens(chat_prompt, encoding)
-        for chat_prompt in df["chat_prompt"]
-    ]
-
-    n_rows = len(text_token_counts)
-    total_input = sum(text_token_counts) + (image_tokens * n_rows)
-    total_output = n_rows  # max_tokens=1 per row
-
-    return {
-        "n_rows": n_rows,
-        "total_input_tokens": total_input,
-        "total_output_tokens": total_output,
-        "image_tokens_per_row": image_tokens,
-        "text_tokens_per_row": {
-            "min": min(text_token_counts),
-            "max": max(text_token_counts),
-            "mean": sum(text_token_counts) / len(text_token_counts),
-        },
-    }

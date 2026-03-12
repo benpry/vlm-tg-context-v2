@@ -9,8 +9,8 @@ from openai import OpenAI
 from PIL import Image
 from pyprojroot import here
 
-from src.interactive import count_tokens_interactive, run_interactive_evaluation
-from src.lm import count_tokens, get_logits
+from src.interactive import run_interactive_evaluation
+from src.lm import get_logits
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -41,11 +41,6 @@ if __name__ == "__main__":
         help="Run batch evaluation with histories yoked to human selections (limited feedback)",
     )
     parser.add_argument("--api_base", type=str, default=None, help="API Base URL")
-    parser.add_argument(
-        "--dry_run",
-        action="store_true",
-        help="Count tokens without calling any language models (for cost estimation)",
-    )
     parser.add_argument(
         "--n_samples",
         type=int,
@@ -80,9 +75,7 @@ if __name__ == "__main__":
     use_responses_api = False
     use_anthropic_api = False
 
-    if args.dry_run:
-        client = None
-    elif "google" in args.api_base:
+    if "google" in args.api_base:
         client = genai.Client(api_key=os.getenv("LANGCOG_GEMINI_API_KEY"))
     elif "anthropic" in args.api_base:
         client = anthropic.Anthropic()
@@ -93,13 +86,8 @@ if __name__ == "__main__":
         )
         use_responses_api = "openai.com" in args.api_base
 
-    grand_totals = {
-        "total_input_tokens": 0,
-        "total_output_tokens": 0,
-    }
-
     for filepath, df in zip(data_filepaths, dfs):
-        # only run limited feedback yoked if we're not using a local model
+        # only run limited feedback yoked or no context if we're not using a local model
         if (
             "localhost" not in args.api_base
             and "limited_feedback_yoked" not in filepath
@@ -128,42 +116,13 @@ if __name__ == "__main__":
                 if os.path.exists(p):
                     os.remove(p)
 
-        if not args.dry_run and os.path.exists(output_path) and not args.overwrite:
+        if os.path.exists(output_path) and not args.overwrite:
             print(f"Skipping {filepath} as output file already exists.")
             continue
 
         print(f"Processing {filepath}...")
 
-        if args.dry_run:
-            if args.interactive:
-                token_summary = count_tokens_interactive(
-                    df,
-                    args.model_name,
-                    grid_image,
-                    include_image=not args.no_image,
-                    n_trials=args.n_trials,
-                )
-            else:
-                token_summary = count_tokens(
-                    df,
-                    args.model_name,
-                    grid_image,
-                    include_image=not args.no_image,
-                    n_trials=args.n_trials,
-                )
-            print(f"  Rows: {token_summary['n_rows']}")
-            print(
-                f"  Image tokens per row (estimate): {token_summary['image_tokens_per_row']}"
-            )
-            stats = token_summary["text_tokens_per_row"]
-            print(
-                f"  Text tokens per row: min={stats['min']}, max={stats['max']}, mean={stats['mean']:.0f}"
-            )
-            print(f"  Total input tokens: {token_summary['total_input_tokens']}")
-            print(f"  Total output tokens: {token_summary['total_output_tokens']}")
-            grand_totals["total_input_tokens"] += token_summary["total_input_tokens"]
-            grand_totals["total_output_tokens"] += token_summary["total_output_tokens"]
-        elif args.interactive:
+        if args.interactive:
             raw_responses_path = None
             if args.n_samples:
                 raw_responses_path = output_path.replace(
@@ -211,10 +170,3 @@ if __name__ == "__main__":
             print(f"Saving {output_path}...")
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
             df_results.to_csv(here(output_path), index=False)
-
-    if args.dry_run:
-        print("\n=== Dry Run Summary ===")
-        print(f"Model: {args.model_name}")
-        print(f"Total input tokens:  {grand_totals['total_input_tokens']}")
-        print(f"Total output tokens: {grand_totals['total_output_tokens']}")
-        print(f"Total output tokens: {grand_totals['total_output_tokens']}")

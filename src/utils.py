@@ -6,50 +6,6 @@ from io import BytesIO
 import numpy as np
 
 
-def get_messages(system_prompt, chat_prompt, include_image, grid_image, model_name):
-    messages = []
-    if "gemma" in model_name.lower() or "molmo" in model_name.lower():
-        # gemma and molmo models don't have a system role, so we add the instruction to the first user message
-        messages = [*chat_prompt]
-        if include_image:
-            messages[0]["content"] = [
-                {"type": "image", "image": grid_image},
-                {"type": "text", "text": f"{system_prompt}\n{messages[0]['content']}"},
-            ]
-        else:
-            messages[0]["content"] = f"{system_prompt}\n{messages[0]['content']}"
-    elif "llama" in model_name.lower():
-        # llama models don't take images in the system prompt, so we add the image to the first user message
-        messages = [
-            {"role": "system", "content": system_prompt},
-            *chat_prompt,
-        ]
-        if include_image:
-            messages[1]["content"] = [
-                {"type": "image", "image": grid_image},
-                {"type": "text", "text": messages[1]["content"]},
-            ]
-    else:
-        # otherwise the image goes in the system prompt
-        if include_image:
-            system_content = [
-                {"type": "image", "image": grid_image},
-                {"type": "text", "text": system_prompt},
-            ]
-        else:
-            system_content = system_prompt
-
-        messages = [
-            {
-                "role": "system",
-                "content": system_content,
-            },
-            *chat_prompt,
-        ]
-
-    return messages
-
-
 def get_user_message(messages):
     """
     Get the user message from a list of messages.
@@ -133,31 +89,6 @@ def preprocess_messages(row):
     return chat_messages
 
 
-def get_logprobs_from_outputs(outputs, choice_tokens):
-    """
-    Get the log probabilities of the choice tokens from the model outputs.
-    """
-    all_choice_logprobs = []
-    for output in outputs:
-        choice_logprobs = {}
-        all_choice_logprobs.append(choice_logprobs)
-        logprobs = output.outputs[0].logprobs[0].values()
-        for logprob in logprobs:
-            if logprob.decoded_token.strip() in choice_tokens:
-                choice_logprobs[logprob.decoded_token.strip()] = logprob.logprob
-            else:
-                print(
-                    f"Found high-probability non-letter token: {logprob.decoded_token.strip()} with logprob {logprob.logprob}"
-                )
-            if len(choice_logprobs) == len(choice_tokens):
-                break
-
-        if len(choice_logprobs) < len(choice_tokens):
-            warnings.warn("Not all choice tokens found in top logprobs.")
-
-    return all_choice_logprobs
-
-
 def encode_image(image):
     buffered = BytesIO()
     image.save(buffered, format="PNG")
@@ -171,6 +102,7 @@ def get_openai_messages(
     grid_image,
     model_name="",
     use_responses_api=False,
+    base64_image=None,
 ):
     # Copy chat_prompt to avoid mutating original
     chat_messages = [msg.copy() for msg in chat_prompt]
@@ -205,7 +137,8 @@ def get_openai_messages(
 
         if first_user_idx != -1:
             content = chat_messages[first_user_idx]["content"]
-            base64_image = encode_image(grid_image)
+            if base64_image is None:
+                base64_image = encode_image(grid_image)
             image_data_url = f"data:image/png;base64,{base64_image}"
 
             if isinstance(content, list):
@@ -290,8 +223,6 @@ def get_logprobs_from_responses_api(response, choice_tokens):
 
 def get_logprobs_from_genai_response(response, choice_tokens):
     candidates = response.candidates
-    print("Gemini response parts:")
-    print(response.candidates[0].content.parts)
     if not candidates or not candidates[0].logprobs_result:
         return {}
     top_candidates = candidates[0].logprobs_result.top_candidates
