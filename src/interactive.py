@@ -341,4 +341,4 @@ def run_interactive_evaluation(
             json.dump(all_raw_responses, f, indent=2)
         print(f"Raw responses saved to {raw_responses_path}")
 
-    return df.drop(columns=["_session_id"])
+    return df

@@ -18,6 +18,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 from tqdm import tqdm
 
 from src.utils import (
+    convert_to_anthropic_format,
     convert_to_google_genai_style,
     encode_image,
     get_logprobs_from_genai_response,
@@ -31,7 +32,10 @@ CHOICES = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
 
 
 def _extract_choice(text: str) -> str:
-    """Extract a choice letter from potentially longer reasoning output."""
+    """
+    Extract a choice letter from potentially longer reasoning output.
+    We take the last capital letter in the string that would be a valid choice.
+    """
     text = text.strip()
     if text in CHOICES:
         return text
@@ -46,55 +50,6 @@ Please answer with just the letter corresponding to the image you think the desc
 """
 
 
-def _convert_to_anthropic_format(messages):
-    """Convert OpenAI-format messages to Anthropic API format.
-
-    Returns (system_prompt, anthropic_messages) where system_prompt is extracted
-    from the system role message and image content blocks are converted.
-    """
-    system_prompt = ""
-    anthropic_messages = []
-
-    for msg in messages:
-        if msg["role"] == "system":
-            system_prompt = msg["content"]
-            continue
-
-        converted = {"role": msg["role"]}
-        content = msg["content"]
-
-        if isinstance(content, str):
-            converted["content"] = content
-        elif isinstance(content, list):
-            new_blocks = []
-            for block in content:
-                if block.get("type") in {"image_url", "input_image"}:
-                    # Convert OpenAI image_url to Anthropic image format
-                    image_url = block["image_url"]
-                    url = image_url["url"] if isinstance(image_url, dict) else image_url
-                    # Extract base64 data from data URL
-                    base64_data = url.split("base64,", 1)[1]
-                    new_blocks.append(
-                        {
-                            "type": "image",
-                            "source": {
-                                "type": "base64",
-                                "media_type": "image/png",
-                                "data": base64_data,
-                            },
-                        }
-                    )
-                elif block.get("type") in {"text", "input_text"}:
-                    new_blocks.append({"type": "text", "text": block["text"]})
-                else:
-                    new_blocks.append(block)
-            converted["content"] = new_blocks
-
-        anthropic_messages.append(converted)
-
-    return system_prompt, anthropic_messages
-
-
 @retry(wait=wait_exponential(multiplier=1, min=4, max=60), stop=stop_after_attempt(10))
 def get_completion_with_backoff(
     client,
@@ -104,6 +59,7 @@ def get_completion_with_backoff(
     use_responses_api=False,
     use_anthropic_api=False,
 ):
+    """Call a language model, using exponential backoff to get around rate limits."""
     if "gemini" in model.lower():
         # use the google genai client
         genai_messages, system_instruction = convert_to_google_genai_style(messages)
@@ -113,17 +69,16 @@ def get_completion_with_backoff(
             config=types.GenerateContentConfig(
                 system_instruction=system_instruction,
                 thinking_config=types.ThinkingConfig(thinking_level="minimal"),
-                response_logprobs=True,
-                logprobs=12,
                 tools=[],
                 tool_config=types.ToolConfig(
                     function_calling_config=types.FunctionCallingConfig(mode="NONE")
                 ),
+                max_output_tokens=256,
             ),
         )
     elif use_anthropic_api:
         # use the native Anthropic Messages API
-        system_prompt, anthropic_messages = _convert_to_anthropic_format(messages)
+        system_prompt, anthropic_messages = convert_to_anthropic_format(messages)
         # Apply cache_control to the last content block
         last_msg = anthropic_messages[-1]
         if isinstance(last_msg["content"], list):
@@ -190,6 +145,7 @@ def get_logits_single_row(
     use_responses_api: bool = False,
     use_anthropic_api: bool = False,
 ) -> dict:
+    """Get a completion from a model and return the logprobs"""
     response = get_completion_with_backoff(
         client=client,
         model=model_name,
@@ -205,7 +161,7 @@ def get_logits_single_row(
         return get_logprobs_from_openai_choice(response.choices[0], CHOICES)
 
 
-def _get_single_sample(
+def get_single_sample(
     client, model_name, messages, use_responses_api=False, use_anthropic_api=False
 ):
     """Make a single API call and return (raw_text, extracted_choice)."""
@@ -243,7 +199,7 @@ def get_samples_single_row(
 ):
     """Resample n_samples times and return (logprobs_dict, raw_responses)."""
     results = [
-        _get_single_sample(
+        get_single_sample(
             client, model_name, messages, use_responses_api, use_anthropic_api
         )
         for _ in range(n_samples)

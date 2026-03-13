@@ -13,9 +13,6 @@
 source ~/.zshrc
 cd ~/vlm-tg-context
 
-# install conda if needed, create vtc environment if needed, activate vtc
-source scripts/set_up_uv.sh
-
 MODEL_NAME=$1
 shift
 EXTRA_ARGS=("$@")
@@ -24,9 +21,10 @@ echo "model name: $MODEL_NAME"
 echo "extra args: ${EXTRA_ARGS}"
 
 if [[ $MODEL_NAME == "meta-llama/Llama-3.2-11B-Vision-Instruct" ]]; then
-    uv pip install vllm==0.10.1.1 transformers==4.56.2 torch==2.7.1
+    source scripts/set_up_uv_llama.sh
 else
-    uv pip install vllm==0.15.1 transformers==4.57.6 torch==2.9.1
+
+    source scripts/set_up_uv.sh
 fi
 
 # Pick a unique port per job (override with PORT env var if set)

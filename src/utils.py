@@ -302,3 +302,52 @@ def convert_to_google_genai_style(messages):
         contents.append(types.Content(role=role, parts=parts))
 
     return contents, system_instruction
+
+
+def convert_to_anthropic_format(messages):
+    """Convert OpenAI-format messages to Anthropic API format.
+
+    Returns (system_prompt, anthropic_messages) where system_prompt is extracted
+    from the system role message and image content blocks are converted.
+    """
+    system_prompt = ""
+    anthropic_messages = []
+
+    for msg in messages:
+        if msg["role"] == "system":
+            system_prompt = msg["content"]
+            continue
+
+        converted = {"role": msg["role"]}
+        content = msg["content"]
+
+        if isinstance(content, str):
+            converted["content"] = content
+        elif isinstance(content, list):
+            new_blocks = []
+            for block in content:
+                if block.get("type") in {"image_url", "input_image"}:
+                    # Convert OpenAI image_url to Anthropic image format
+                    image_url = block["image_url"]
+                    url = image_url["url"] if isinstance(image_url, dict) else image_url
+                    # Extract base64 data from data URL
+                    base64_data = url.split("base64,", 1)[1]
+                    new_blocks.append(
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/png",
+                                "data": base64_data,
+                            },
+                        }
+                    )
+                elif block.get("type") in {"text", "input_text"}:
+                    new_blocks.append({"type": "text", "text": block["text"]})
+                else:
+                    new_blocks.append(block)
+            converted["content"] = new_blocks
+
+        anthropic_messages.append(converted)
+
+    return system_prompt, anthropic_messages
