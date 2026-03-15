@@ -1,4 +1,5 @@
 import base64
+import json
 import warnings
 from ast import literal_eval
 from io import BytesIO
@@ -37,36 +38,37 @@ def preprocess_messages(row):
     Turn a row of the dataframe into a list of messages for the chat model.
     """
     chat_messages = []
+
+    # parse the message history if it's a string, otherwise make sure it's a list
     message_history = row["message_history"]
     if isinstance(message_history, str):
-        message_history = literal_eval(message_history.replace("nan", "''"))
+        message_history = json.loads(message_history)
     elif not isinstance(message_history, list):
-        warnings.warn(f"Message history is not a list: {message_history}")
-        message_history = []
+        raise ValueError(f"Message history is not a list: {message_history}")
 
+    # parse the selection history if it's a string, otherwise make sure it's a list
     selection_history = row["selection_history"]
     if isinstance(selection_history, str):
-        selection_history = literal_eval(
-            selection_history.replace("null", '"no response"')
-        )
+        selection_history = json.loads(selection_history)
     elif not isinstance(selection_history, list):
-        warnings.warn(f"Selection history is not a list: {selection_history}")
-        selection_history = []
+        raise ValueError(f"Selection history is not a list: {selection_history}")
 
+    # parse the correctness history if it's a string, otherwise make sure it's a list
     correctness_history = row["correctness_history"]
     if isinstance(correctness_history, str):
-        correctness_history = literal_eval(
-            correctness_history.replace("true", "True").replace("false", "False")
+        correctness_history = json.loads(
+            correctness_history.replace("True", "true").replace("False", "false")
         )
     elif not isinstance(correctness_history, list):
-        warnings.warn(f"Correctness history is not a list: {correctness_history}")
-        correctness_history = []
+        raise ValueError(f"Correctness history is not a list: {correctness_history}")
 
+    # make sure the lengths of the histories are the same
     if not (len(message_history) == len(selection_history) == len(correctness_history)):
         warnings.warn(
             f"Length of message_history, selection_history, and correctness_history must be the same. Got {len(message_history)}, {len(selection_history)}, and {len(correctness_history)}. game ID: {row['gameId']}"
         )
 
+    # add the messages, selections, and correctness to the chat messages
     for messages, selection, correctness in zip(
         message_history, selection_history, correctness_history
     ):
@@ -81,7 +83,7 @@ def preprocess_messages(row):
     if not isinstance(this_trial_messages, str):
         chat_messages = add_user_message(chat_messages, "describer: \n")
     else:
-        this_trial_messages = literal_eval(this_trial_messages.replace("nan", "''"))
+        this_trial_messages = literal_eval(this_trial_messages)
         chat_messages = add_user_message(
             chat_messages, get_user_message(this_trial_messages)
         )

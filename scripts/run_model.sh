@@ -50,4 +50,5 @@ sleep 5m
 python scripts/call_lm.py \
     --model_name $MODEL_NAME \
     --api_base $API_BASE \
-    $EXTRA_ARGS 
+    $EXTRA_ARGS \
+    --overwrite

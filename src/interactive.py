@@ -6,6 +6,7 @@ feedback on its own choices rather than human responses.
 import ast
 import json
 import os
+import warnings
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
@@ -129,12 +130,17 @@ def process_interactive_row(
     if choice_logprobs:
         prediction = max(choice_logprobs, key=choice_logprobs.get)
     else:
+        warnings.warn(f"No choice logprobs found for response: {response}")
         if use_responses_api:
             content = response.output_text
         elif use_anthropic_api:
             content = response.content[0].text
         else:
-            content = response.choices[0].message.content
+            try:
+                content = response.choices[0].message.content
+            except Exception as e:
+                warnings.warn(f"Error getting content from response: {e}")
+                content = ""
         prediction = content.strip() if content else ""
 
     return choice_logprobs, prediction, None
