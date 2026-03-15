@@ -15,13 +15,13 @@ from pyprojroot import here
 from src.interactive import _add_session_id
 
 
-def logprob_to_prep_mapping(logprob_file: str):
+def logprob_to_prep_mapping(logprob_file: str, subfolder: str = "human_history"):
     """Turn a logprob filename into the corresponding prep filename.
 
     e.g. limited_feedback_random_Kimi-VL-A3B-Instruct_logprobs.csv -> limited_feedback_random.csv
     """
     filename = re.sub(r"_[^_]+_logprobs(_no_image)?\.csv$", ".csv", logprob_file)
-    return re.sub(r"data/logprobs/[^/]+/", "context_prep/human_history/", filename)
+    return re.sub(r"data/logprobs/[^/]+/", f"context_prep/{subfolder}/", filename)
 
 
 @pytest.fixture
@@ -34,12 +34,20 @@ def yoked_logprob_files():
     return glob(str(here("data/logprobs/human_yoked/*.csv")))
 
 
+@pytest.fixture
+def full_feedback_logprob_files():
+    return glob(str(here("data/logprobs/full_feedback/*.csv")))
+
+
 def trial_shape_util(df_logprobs: pd.DataFrame, df_prep: pd.DataFrame):
     assert df_logprobs["trialNum"].max() == 71
     # make sure there's the same number of rows for each trial number
+    prep_trialnum_col = (
+        "matcher_trialNum" if "matcher_trialNum" in df_prep.columns else "trialNum"
+    )
     assert np.all(
         df_logprobs.groupby("trialNum").count()["gameId"]
-        == df_prep.groupby("matcher_trialNum").count()["gameId"]
+        == df_prep.groupby(prep_trialnum_col).count()["gameId"]
     )
 
 
@@ -124,7 +132,7 @@ def test_interactive_files(interactive_logprob_files):
             else x
         )
 
-        df_prep = pd.read_csv(logprob_to_prep_mapping(f))
+        df_prep = pd.read_csv(logprob_to_prep_mapping(f, "human_history"))
         trial_shape_util(df_logprobs, df_prep)
         interactive_past_selections_util(df_logprobs)
         selection_history_correctness_util(df_logprobs)
@@ -148,6 +156,32 @@ def test_yoked_files(yoked_logprob_files):
 
         df_logprobs["trialNum"] = df_logprobs["matcher_trialNum"]
 
-        df_prep = pd.read_csv(logprob_to_prep_mapping(f))
+        df_prep = pd.read_csv(logprob_to_prep_mapping(f, "human_history"))
         trial_shape_util(df_logprobs, df_prep)
         selection_history_correctness_util(df_logprobs)
+
+
+def test_full_feedback_files(full_feedback_logprob_files):
+    for f in full_feedback_logprob_files:
+        print(f"Testing {f}...")
+        df_logprobs = pd.read_csv(f)
+        df_logprobs["target_history"] = df_logprobs["target_history"].apply(
+            lambda x: json.loads(x.replace("'", '"')) if isinstance(x, str) else x
+        )
+        df_logprobs["selection_history"] = df_logprobs["selection_history"].apply(
+            lambda x: json.loads(x.replace("'", '"')) if isinstance(x, str) else x
+        )
+        df_logprobs["correctness_history"] = df_logprobs["correctness_history"].apply(
+            lambda x: json.loads(x.replace("T", "t").replace("F", "f"))
+            if isinstance(x, str)
+            else x
+        )
+
+        if "matcher_trialNum" in df_logprobs and "trialNum" not in df_logprobs:
+            df_logprobs["trialNum"] = df_logprobs["matcher_trialNum"]
+
+        df_prep = pd.read_csv(logprob_to_prep_mapping(f, "full_feedback"))
+        trial_shape_util(df_logprobs, df_prep)
+        selection_history_correctness_util(df_logprobs)
+        # make sure the correcness histories are all lists containing only True
+        assert np.all(df_logprobs["correctness_history"].apply(lambda x: all(x)))

@@ -81,6 +81,7 @@ def preprocess_messages(row):
 
     this_trial_messages = row["message"]
     if not isinstance(this_trial_messages, str):
+        warnings.warn(f"message is not a string: {this_trial_messages}")
         chat_messages = add_user_message(chat_messages, "describer: \n")
     else:
         this_trial_messages = literal_eval(this_trial_messages)
