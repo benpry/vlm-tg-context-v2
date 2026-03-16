@@ -375,3 +375,22 @@ mat_conf_rsa_long <- mat_conf_rsa |>
 saveRDS(mat_conf_rsa_long, here(OUTPUT_LOC, "rsa_long.rds"))
 ```
 
+# Frontier NA rate
+```{r}
+frontier_files <- list.files(here("data", "logprobs", "frontier"))
+
+frontier_data <- map(frontier_files, 
+                     \(f) load_logprobs(str_c("frontier/", f), normalise = F)) |> 
+  list_rbind()
+
+frontier_summary <- frontier_data |> 
+  group_by(type, condition, gameId, runId, orig_trialNum, orig_repNum, 
+           matcher_trialNum, matcher_repNum, target) |> 
+  summarise(n_valid = round(sum(prob) * 10), # round to avoid some floating point errors
+            n_invalid = 10 - n_valid,
+            .groups = "drop")
+
+saveRDS(frontier_summary, here(OUTPUT_LOC, "frontier_summary.rds"))
+```
+
+

@@ -1,4 +1,4 @@
-logprobs_to_long <- function(logprobs) {
+logprobs_to_long <- function(logprobs, normalise = TRUE) {
   if (!"orig_trialNum" %in% colnames(logprobs)) {
     logprobs <- logprobs |>
       mutate(
@@ -52,11 +52,17 @@ logprobs_to_long <- function(logprobs) {
     select(A, B, C, D, E, `F`, G, H, I, J, K, L)
   logprobs_res_out <- logprobs_res |>
     rowwise() |>
-    mutate(
-      across(everything(), exp),
-      across(everything(), \(x) x / sum(c_across(everything()), na.rm = TRUE)),
-      across(everything(), \(x) replace_na(x, 0))
-    )
+    mutate(across(everything(), exp))
+  
+  if (normalise) {
+    logprobs_res_out <- logprobs_res_out |> 
+      mutate(
+        across(everything(), \(x) x / sum(c_across(everything()), na.rm = TRUE))
+      )
+  }
+  
+  logprobs_res_out <- logprobs_res_out |> 
+    mutate(across(everything(), \(x) replace_na(x, 0)))
 
   if ("gameId.y" %in% colnames(logprobs_cleaned)) {
     logprobs_cleaned <- logprobs_cleaned |>
@@ -98,9 +104,9 @@ logprobs_to_long <- function(logprobs) {
   logprobs_combined
 }
 
-load_logprobs <- function(file_name) {
+load_logprobs <- function(file_name, normalise = TRUE) {
   logprobs <- read_csv(here("data", "logprobs", file_name), show_col_types = FALSE) |>
-    logprobs_to_long()
+    logprobs_to_long(normalise)
 
   condition_name <- file_name |>
     str_replace(".*/", "") |>

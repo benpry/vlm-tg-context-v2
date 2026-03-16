@@ -89,7 +89,9 @@ mod_spans <- glm(accuracy ~ prop_metaphorical * prop_holistic * type,
 
 mod_spans |> 
   tidy(conf.int = TRUE)
+```
 
+```{r}
 emtrends(mod_spans, ~ type, var = "prop_metaphorical")
 ```
 

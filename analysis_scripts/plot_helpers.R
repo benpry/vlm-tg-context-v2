@@ -84,6 +84,23 @@ COL_SCALE_FRONTIER <- scale_color_manual(
   )
 )
 
+COL_SCALE_FRONTIER_NOLIM <- scale_color_manual(
+  values = c(
+    "human_original" = "#f56942",
+    "human_naive" = "#e89f46",
+    "model_gemini" = "#1c818c",
+    "model_gpt" = "#1c478c",
+    "model_claude" = "#5c1c8c"
+  ),
+  labels = c(
+    "human_original" = "Human (original)",
+    "human_naive" = "Human (naïve)",
+    "model_gemini" = "Gemini 3 Flash",
+    "model_gpt" = "GPT 5.2",
+    "model_claude" = "Claude Sonnet 4.6"
+  )
+)
+
 condition_order <- c(
   "yoked", "backward", "shuffled", "random",
   "other-within", "other-across", "ablated", "no context",

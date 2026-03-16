@@ -377,6 +377,27 @@ p_frontier <- full_combined |>
   save_ggplot(here(FIG_LOC, "frontier.png"))
 ```
 
+```{r}
+p_invalid <- frontier_summary |> 
+  mutate(accuracy = n_invalid / 10) |> 
+  make_accuracy_plot(repnum_type = "original", ref_level = -10) +
+  COL_SCALE_FRONTIER_NOLIM +
+  facet_wrap(~ condition, ncol = 2,
+             labeller = as_labeller(str_to_sentence)) +
+  labs(y = "Proportion invalid responses") +
+  ggtitle("Interactive limited feedback") +
+  coord_cartesian(ylim = c(0, 0.15)) +
+  # guides(col = guide_legend(nrow = 2)) +
+  theme(plot.title = element_text(size = 13, face = "italic"),
+        legend.position = "bottom")
+
+(p_invalid + 
+  canvas(width = 450, height = 280,
+         scale = 4, units = "px")) |> 
+  save_ggplot(here(FIG_LOC, "invalid.png"))
+```
+
+
 # Original order
 ```{r}
 p_original <- full_combined |> 
@@ -437,7 +458,7 @@ p_rsa <- mat_conf_rsa_long |>
   ggplot(aes(x = condition2, y = condition1, fill = cor)) +
   geom_tile() +
   facet_grid(~type) +
-  scale_fill_gradient(low = "white", high = "#7212b3", limits = c(0, 1)) +
+  scale_fill_gradient(low = "white", high = "#7212b3", limits = c(-0.02, 1)) +
   labs(x = "", y = "", fill = "Correlation") +
   theme(axis.text.x = element_text(hjust = 1, angle = 45)) +
   ggtitle("Full feedback") +
