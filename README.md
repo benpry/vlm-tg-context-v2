@@ -18,5 +18,5 @@ This repository contains code and materials for the manuscript **"Which one is b
 
 1. `context_prep` contains the script needed to generate trial structures to be used for model evaluation
 2. `src` contains scripts for model evaluation, with tests in `tests` and shell scripts for launching in `scripts`
-3. `data` stores the grid image, the span annotations, and logprobs; logprobs should be downloaded from [OSF](https://osf.io/zk8gq/overview).
+3. `data` stores the grid image, the span annotations, and logprobs; logprobs should be downloaded from [OSF](https://osf.io/zk8gq/overview?view_only=1b0989c8dcbf4e02b2071d327178482c).
 4. `analysis_scripts` contains R scripts for analysis, used in conjunction with the Quarto documents in the root folder.
