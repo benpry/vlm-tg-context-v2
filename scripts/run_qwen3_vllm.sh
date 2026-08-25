@@ -13,7 +13,7 @@
 source ~/.zshrc
 cd ~/vlm-tg-context
 
-# install conda if needed, create vtc environment if needed, activate vtc
+# install uv if needed, create vtc environment if needed, activate vtc
 source scripts/set_up_uv.sh
 
 MODEL_NAME="Qwen/Qwen3-VL-32B-Instruct"
