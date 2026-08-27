@@ -185,7 +185,8 @@ calculate_accuracies <- function(logprobs, join_only = FALSE) {
         type, condition, gameId, runId, orig_trialNum, orig_repNum,
         matcher_trialNum, matcher_repNum, target
       ) |>
-      filter(prob == max(prob, na.rm = TRUE)) |>
+      filter(prob == max(prob, na.rm = TRUE),
+             prob > 0) |>
       summarise(
         accuracy = max(selection == target, na.rm = TRUE),
         .groups = "drop"

@@ -143,7 +143,8 @@ random_human <- human_selections_new |>
 logprob_files <- list.files(here("data", "logprobs"), recursive = TRUE)
 
 full_logprobs <- map(logprob_files, load_logprobs, .progress = TRUE) |> 
-  list_rbind()
+  list_rbind() |> 
+  filter(!str_detect(model_name, "Qwen2.5"))
 
 saveRDS(full_logprobs, here(OUTPUT_LOC, "full_logprobs.rds"))
 ```
@@ -152,8 +153,7 @@ saveRDS(full_logprobs, here(OUTPUT_LOC, "full_logprobs.rds"))
 full_logprobs <- readRDS(here(OUTPUT_LOC, "full_logprobs.rds"))
 
 logprobs_base <- full_logprobs |> 
-  filter_logprobs() |> 
-  filter(!str_detect(model_name, "Qwen2.5"))
+  filter_logprobs()
 ```
 
 # Fix message lengths
