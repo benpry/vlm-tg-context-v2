@@ -96,6 +96,11 @@ emtrends(mod_spans, ~ type, var = "prop_metaphorical")
 ```
 
 ```{r}
+with(random_summary,
+     cor.test(prop_metaphorical, prop_holistic))
+```
+
+```{r}
 random_summary <- random_values |> 
   group_by(gameId, orig_trialNum, orig_repNum, target, type, 
            prop_metaphorical, prop_holistic) |> 
