@@ -215,3 +215,6 @@ notebooks/
 .vscode/
 data/logprobs/
 data/raw_responses/
+
+# Model results live on /juice2 scratch (symlinked here); archived on OSF zk8gq
+data/logprobs
