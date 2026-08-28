@@ -96,17 +96,17 @@ emtrends(mod_spans, ~ type, var = "prop_metaphorical")
 ```
 
 ```{r}
-with(random_summary,
-     cor.test(prop_metaphorical, prop_holistic))
-```
-
-```{r}
 random_summary <- random_values |> 
   group_by(gameId, orig_trialNum, orig_repNum, target, type, 
            prop_metaphorical, prop_holistic) |> 
   summarise(accuracy = mean(accuracy),
             .groups = "drop")
 
+with(random_summary,
+     cor.test(prop_metaphorical, prop_holistic))
+```
+
+```{r}
 p_metaphorical <- random_summary |> 
   ggplot(aes(x = prop_metaphorical, y = accuracy, col = type)) +
   geom_point(alpha = .1, position = position_jitter(height = 0, width = .02)) +
