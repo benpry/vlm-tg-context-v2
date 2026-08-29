@@ -1,0 +1,40 @@
+﻿lemma,category
+bunny,misc
+skater,misc
+rabbit,misc
+ear,body part
+leg,body part
+foot,body part
+hand,body part
+knee,body part
+face,body part
+arm,body part
+head,body part
+body,body part
+stand,stance
+bent,stance
+facing,stance
+lean,stance
+sit,stance
+behind,spatial
+right,spatial
+out,spatial
+straight,spatial
+up,spatial
+in,spatial
+front,spatial
+on,spatial
+down,spatial
+bottom,spatial
+at,spatial
+left,spatial
+back,spatial
+side,spatial
+top,spatial
+person,person
+guy,person
+man,person
+triangle,shape
+diamond,shape
+shape,shape
+square,shape

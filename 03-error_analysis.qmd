@@ -102,6 +102,11 @@ random_summary <- random_values |>
   summarise(accuracy = mean(accuracy),
             .groups = "drop")
 
+with(random_summary,
+     cor.test(prop_metaphorical, prop_holistic))
+```
+
+```{r}
 p_metaphorical <- random_summary |> 
   ggplot(aes(x = prop_metaphorical, y = accuracy, col = type)) +
   geom_point(alpha = .1, position = position_jitter(height = 0, width = .02)) +
@@ -155,6 +160,7 @@ game_texts <- spans |>
             .groups = "drop")
 
 # lemmatise
+udpipe_download_model("english-ewt", model_dir = here("resources"), overwrite = FALSE)
 ud_model <- udpipe_load_model(here("resources", "english-ewt-ud-2.5-191206.udpipe"))
 game_texts_lemmas <- game_texts |> 
   mutate(ud = map(text, \(t) udpipe_annotate(ud_model, x = str_to_lower(t)) |> 
@@ -224,9 +230,10 @@ error_analysis_lemmas <- error_analysis |>
            TRUE ~ "includes"
          ))
 
-# error_analysis_lemmas |> 
-#   filter(n > 10) |> 
-#   write_csv("mean_diff_by_lemma.csv")
+# error_analysis_lemmas |>
+#   filter(n >= 20,
+#          n_games >= 4) |>
+#   write_csv(here("resources", "mean_diff_by_lemma.csv"))
 ```
 
 Plot
