@@ -6,6 +6,10 @@ from io import BytesIO
 
 import numpy as np
 
+# vLLM reports a token masked out by top-k/top-p as -inf and clamps that to
+# -9999.0 in the API; no real logprob comes anywhere near this value.
+MASKED_LOGPROB = -9000.0
+
 
 def get_user_message(messages):
     """
@@ -176,6 +180,15 @@ def get_logprobs_from_openai_choice(choice, choice_tokens):
 
     first_token_logprobs = choice.logprobs.content[0]
     top_logprobs = first_token_logprobs.top_logprobs
+
+    masked = [top_lp.token for top_lp in top_logprobs if top_lp.logprob <= MASKED_LOGPROB]
+    if masked:
+        raise ValueError(
+            f"{len(masked)} of {len(top_logprobs)} top logprobs are masked "
+            f"(<= {MASKED_LOGPROB}; e.g. tokens {masked[:5]!r}). The server applied "
+            "top-k/top-p before computing logprobs, so these are not the model's "
+            "probabilities. Pin top_p=1 and top_k=-1 in the request."
+        )
 
     choice_logprobs = {}
     for top_lp in top_logprobs:

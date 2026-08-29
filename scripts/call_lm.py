@@ -1,16 +1,17 @@
 import os
 from argparse import ArgumentParser
 from glob import glob
+from pathlib import Path
 
-import anthropic
 import pandas as pd
-from google import genai
-from openai import OpenAI
 from PIL import Image
 from pyprojroot import here
 
+from src.clients import setup_client
 from src.interactive import run_interactive_evaluation
 from src.lm import get_logits
+from src.output_paths import raw_responses_path as raw_responses_path_for
+from src.output_paths import results_path as results_path_for
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -47,6 +48,14 @@ if __name__ == "__main__":
         default=None,
         help="Resample N times instead of using logprobs (for frontier models without logprob support)",
     )
+    parser.add_argument(
+        "--output_root",
+        type=str,
+        default="data/logprobs",
+        help="Directory (absolute, or relative to the project root) that receives the result files, "
+        "mirroring context_prep/. Use another directory to rerun a model without touching the "
+        "archived results in data/logprobs.",
+    )
 
     args = parser.parse_args()
 
@@ -74,19 +83,16 @@ if __name__ == "__main__":
 
     grid_image = Image.open(here(args.grid_image_path))
 
-    # set up the client
-    use_responses_api = False
-    use_anthropic_api = False
-    if "google" in args.api_base:
-        client = genai.Client(api_key=os.getenv("LANGCOG_GEMINI_API_KEY"))
-    elif "anthropic" in args.api_base:
-        client = anthropic.Anthropic()
-        use_anthropic_api = True
-    else:
-        client = OpenAI(
-            base_url=args.api_base,
-        )
-        use_responses_api = "openai.com" in args.api_base
+    prep_root = here("context_prep")
+    default_output_root = here("data/logprobs")
+    default_raw_root = here("data/raw_responses")
+    output_root = (
+        Path(args.output_root) if os.path.isabs(args.output_root) else here(args.output_root)
+    )
+    print("output root:", output_root)
+
+    # set up the client (fails loudly if no Gemini key is set)
+    client, use_responses_api, use_anthropic_api = setup_client(args.api_base)
 
     for filepath, df in zip(data_filepaths, dfs):
         # skip if we're not using a local model and we're not using limited feedback yoked or no context
@@ -98,14 +104,17 @@ if __name__ == "__main__":
             continue
 
         # set up paths to write to
-        output_path = filepath.replace(
-            ".csv",
-            f"_{args.model_name.split('/')[-1]}_logprobs{'_no_image' if args.no_image else ''}.csv",
-        ).replace("context_prep", "data/logprobs")
-        if args.interactive:
-            output_path = output_path.replace("human_history", "interactive")
-        elif args.yoked:
-            output_path = output_path.replace("human_history", "human_yoked")
+        output_path = str(
+            results_path_for(
+                filepath,
+                args.model_name,
+                prep_root,
+                output_root,
+                no_image=args.no_image,
+                interactive=args.interactive,
+                yoked=args.yoked,
+            )
+        )
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         checkpoint_path = output_path + ".checkpoint"
 
@@ -129,9 +138,11 @@ if __name__ == "__main__":
         # If we're sampling, set up a path to write raw responses to
         raw_responses_path = None
         if args.n_samples:
-            raw_responses_path = output_path.replace(
-                "data/logprobs", "data/raw_responses"
-            ).replace(".csv", ".json")
+            raw_responses_path = str(
+                raw_responses_path_for(
+                    output_path, output_root, default_output_root, default_raw_root
+                )
+            )
             os.makedirs(os.path.dirname(raw_responses_path), exist_ok=True)
 
         if args.interactive:
@@ -150,7 +161,7 @@ if __name__ == "__main__":
             )
             print(f"Saving {output_path}...")
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
-            df_results.to_csv(here(output_path), index=False)
+            df_results.to_csv(output_path, index=False)
 
         else:
             df_results = get_logits(
@@ -169,4 +180,4 @@ if __name__ == "__main__":
 
         print(f"Saving {output_path}...")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        df_results.to_csv(here(output_path), index=False)
+        df_results.to_csv(output_path, index=False)

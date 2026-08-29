@@ -140,17 +140,33 @@ random_human <- human_selections_new |>
 
 # Load model data
 ```{r eval=F}
-logprob_files <- list.files(here("data", "logprobs"), recursive = TRUE)
+# Only real result files. The pattern excludes the .bak backups and checkpoint
+# files left by the banana rerun, which are valid CSVs and would otherwise be
+# loaded as duplicate (pre-fix) datasets.
+RESULT_FILE_PATTERN <- "_logprobs(_no_image)?\\.csv$"
+logprob_files <- list.files(here("data", "logprobs"), recursive = TRUE,
+                            pattern = RESULT_FILE_PATTERN)
 
-full_logprobs <- map(logprob_files, load_logprobs, .progress = TRUE) |> 
-  list_rbind() |> 
+full_logprobs <- map(logprob_files, load_logprobs, .progress = TRUE) |>
+  list_rbind() |>
   filter(!str_detect(model_name, "Qwen2.5"))
 
 saveRDS(full_logprobs, here(OUTPUT_LOC, "full_logprobs.rds"))
 ```
 
 ```{r}
-full_logprobs <- readRDS(here(OUTPUT_LOC, "full_logprobs.rds"))
+# Refuse to run on a stale cache: the rds must be newer than every logprob file.
+rds_path <- here(OUTPUT_LOC, "full_logprobs.rds")
+result_files <- list.files(here("data", "logprobs"), recursive = TRUE, full.names = TRUE,
+                           pattern = "_logprobs(_no_image)?\\.csv$")
+newer_than_rds <- result_files[file.mtime(result_files) > file.mtime(rds_path)]
+if (length(newer_than_rds) > 0) {
+  stop(length(newer_than_rds), " logprob file(s) are newer than full_logprobs.rds ",
+       "(built ", format(file.mtime(rds_path)), "). Rebuild it with the chunk above. ",
+       "Newest: ", basename(newer_than_rds[which.max(file.mtime(newer_than_rds))]))
+}
+
+full_logprobs <- readRDS(rds_path)
 
 logprobs_base <- full_logprobs |> 
   filter_logprobs()
@@ -377,7 +393,8 @@ saveRDS(mat_conf_rsa_long, here(OUTPUT_LOC, "rsa_long.rds"))
 
 # Frontier NA rate
 ```{r}
-frontier_files <- list.files(here("data", "logprobs", "frontier"))
+frontier_files <- list.files(here("data", "logprobs", "frontier"),
+                             pattern = "_logprobs(_no_image)?\\.csv$")
 
 frontier_data <- map(frontier_files, 
                      \(f) load_logprobs(str_c("frontier/", f), normalise = F)) |> 

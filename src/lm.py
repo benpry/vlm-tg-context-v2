@@ -6,6 +6,7 @@ import ast
 import json
 import math
 import os
+import re
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
@@ -31,18 +32,102 @@ from src.utils import (
 CHOICES = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
 
 
+# Sampled models sometimes keep writing after their answer and hallucinate the
+# next turn of the conversation ("J\nCorrect.", "D\nuser\nIncorrect.\n\ndescriber: ...",
+# "Human: ..."). Nothing from such a marker onwards is part of the answer.
+HALLUCINATED_TURN = re.compile(
+    r"Correct\.|Incorrect\.|\buser\b|describer:|matcher:|Human:"
+)
+
+# Answer first, junk after: a leading choice letter glued to punctuation, an
+# uppercase letter or non-Latin text ("J.", "JCheck", "J探J"), or followed by a
+# dash, bracket, colon or line break and then an explanation ("F - the kneeling
+# one", "J\nB"). A letter followed by a lowercase letter or an apostrophe starts
+# an English word ("Looking", "I'll"), and one followed by a space and a word may
+# be one ("A person", "I think") or refer back ("C was already correct"), so
+# those are left to the later rules.
+ANSWER_FIRST = re.compile(r"^([A-L])(?=$|[^a-z'’\s]|['’](?![A-Za-z]))")
+ANSWER_FIRST_SPACED = re.compile(r"^([A-L])(?:[ \t]*[-–—:(),.\[]|[ \t]*\n)")
+
+# A stated answer: "I think it's F", "the answer is F", "I'll go with F",
+# "Correct Answer: I", "**K**". The last one in the text wins ("...A, oh wait,
+# it's B"). (?-i:...) keeps the letter itself case-sensitive.
+ANSWER_PHRASE = re.compile(
+    r"(?:answer|choice|choose|pick|select|guess|go with|would be|must be|it's|it is|\bis)"
+    r"\s*(?:is|:)?\s*[*\"'“]*\s*(?-i:([A-L]))(?![A-Za-z'’])",
+    re.I,
+)
+BOLD_ANSWER = re.compile(r"\*\*\s*([A-L])\s*\*\*")
+
+# A choice letter standing on its own (not inside a word like "Head" or "Both").
+STANDALONE_LETTER = re.compile(r"(?<![A-Za-z'’])([A-L])(?![A-Za-z'’])")
+
+
+def _is_english_word(text: str, position: int) -> bool:
+    """Is the letter at `position` the pronoun "I" ("I think", "I'll") or the article "A" ("A person")?"""
+    letter = text[position]
+    rest = text[position + 1 :]
+    if letter == "I":
+        return bool(re.match(r"['’]|\s+[a-z]", rest))
+    if letter == "A":
+        return bool(re.match(r"\s+[a-z]", rest))
+    return False
+
+
+def _last_standalone_letter(text: str):
+    letters = [
+        m
+        for m in STANDALONE_LETTER.finditer(text)
+        if not _is_english_word(text, m.start(1))
+    ]
+    return letters[-1].group(1) if letters else None
+
+
+def _last_capital_letter(text: str):
+    """Last-resort scan over characters, still skipping the pronoun I / article A."""
+    for position in range(len(text) - 1, -1, -1):
+        if text[position] in CHOICES and not _is_english_word(text, position):
+            return text[position]
+    return None
+
+
 def _extract_choice(text: str) -> str:
     """
-    Extract a choice letter from potentially longer reasoning output.
-    We take the last capital letter in the string that would be a valid choice.
+    Extract a choice letter from a sampled response.
+
+    1. A bare letter is the answer.
+    2. Anything from a hallucinated next turn (HALLUCINATED_TURN) on is dropped.
+    3. A response that starts with a letter glued to punctuation, an uppercase
+       letter or non-Latin text, or followed by a dash / bracket / line break
+       (ANSWER_FIRST, ANSWER_FIRST_SPACED), is that letter followed by junk or
+       an explanation.
+    4. A stated answer ("I think it's F", "answer: F", "**F**") — the last one.
+    5. Otherwise the last choice letter standing on its own, ignoring the
+       pronoun "I" and the article "A"; failing that, the last capital letter
+       anywhere with the same exclusions.
+
+    A response with no valid letter is returned unchanged; callers treat any
+    return value outside CHOICES as an invalid response. A bare lowercase
+    letter ("f") is deliberately invalid, not read as "F".
     """
     text = text.strip()
     if text in CHOICES:
         return text
-    for ch in reversed(text):
-        if ch in CHOICES:
-            return ch
-    return text
+    turn = HALLUCINATED_TURN.search(text)
+    answer = text[: turn.start()].strip() if turn else text
+    if answer in CHOICES:
+        return answer
+    for pattern in (ANSWER_FIRST, ANSWER_FIRST_SPACED):
+        match = pattern.match(answer)
+        if match:
+            return match.group(1)
+    stated = [m for m in ANSWER_PHRASE.finditer(answer)] + [
+        m for m in BOLD_ANSWER.finditer(answer)
+    ]
+    if stated:
+        return max(stated, key=lambda m: m.start(1)).group(1)
+    letter = _last_standalone_letter(answer) or _last_capital_letter(answer)
+    return letter if letter else text
 
 
 SYSTEM_PROMPT = """You will be presented with a list of messages between people playing a reference game, where the describer has to get the matcher to choose a shape from a set of shapes. Your goal is to guess which of the shapes the describer is trying to get the matcher to choose. The shapes, with their labels, are shown in the image.
@@ -122,11 +207,17 @@ def get_completion_with_backoff(
     else:
         # use the OpenAI Chat Completions API (for local models, etc.)
         if use_logprobs:
+            # vLLM fills any sampling parameter the request leaves unset from the
+            # model's generation_config.json (Llama 3.2: top_p 0.9), and its V0
+            # engine computes the logprobs it returns *after* top-k/top-p masking.
+            # Pin both so the logprobs are the model's full distribution.
             return client.chat.completions.create(
                 model=model,
                 messages=messages,
                 max_completion_tokens=1,
                 temperature=1,
+                top_p=1.0,
+                extra_body={"top_k": -1},
                 logprobs=True,
                 top_logprobs=1000,
             )
@@ -161,10 +252,33 @@ def get_logits_single_row(
         return get_logprobs_from_openai_choice(response.choices[0], CHOICES)
 
 
+def _response_metadata(response, model_name, use_responses_api, use_anthropic_api):
+    """The finish reason and the model version the API reported for one sample.
+
+    Kept next to every raw text: the endpoints behind undated model names
+    change over time, and a truncated or blocked reply must stay visible.
+    Missing fields are recorded as None rather than guessed.
+    """
+    if "gemini" in model_name.lower():
+        candidates = response.candidates or []
+        finish = candidates[0].finish_reason if candidates else None
+        finish_reason = getattr(finish, "name", None) or (
+            str(finish) if finish else None
+        )
+        model = getattr(response, "model_version", None)
+    elif use_anthropic_api:
+        finish_reason, model = response.stop_reason, response.model
+    elif use_responses_api:
+        finish_reason, model = getattr(response, "status", None), response.model
+    else:
+        finish_reason, model = response.choices[0].finish_reason, response.model
+    return {"finish_reason": finish_reason, "model": model}
+
+
 def get_single_sample(
     client, model_name, messages, use_responses_api=False, use_anthropic_api=False
 ):
-    """Make a single API call and return (raw_text, extracted_choice)."""
+    """Make a single API call and return (raw_text, extracted_choice, metadata)."""
     response = get_completion_with_backoff(
         client,
         model_name,
@@ -181,7 +295,10 @@ def get_single_sample(
         raw = response.content[0].text.strip()
     else:
         raw = response.choices[0].message.content.strip()
-    return raw, _extract_choice(raw)
+    metadata = _response_metadata(
+        response, model_name, use_responses_api, use_anthropic_api
+    )
+    return raw, _extract_choice(raw), metadata
 
 
 def _counts_to_logprobs(counts, n_samples):
@@ -197,15 +314,19 @@ def get_samples_single_row(
     use_responses_api=False,
     use_anthropic_api=False,
 ):
-    """Resample n_samples times and return (logprobs_dict, raw_responses)."""
+    """Resample n_samples times and return (logprobs_dict, raw_responses).
+
+    Each raw response is {"text", "finish_reason", "model"}; runs before
+    28 Aug 2026 stored the bare text (src.frontier_reparse reads both).
+    """
     results = [
         get_single_sample(
             client, model_name, messages, use_responses_api, use_anthropic_api
         )
         for _ in range(n_samples)
     ]
-    raw_responses = [raw for raw, _ in results]
-    tokens = [choice for _, choice in results]
+    raw_responses = [{"text": raw, **metadata} for raw, _, metadata in results]
+    tokens = [choice for _, choice, _ in results]
     counts = Counter(t for t in tokens if t in CHOICES)
     logprobs = _counts_to_logprobs(counts, n_samples) if counts else {}
     return logprobs, raw_responses

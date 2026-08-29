@@ -1,109 +1,127 @@
 """
-Rerun frontier models (Claude, GPT, Gemini) on rows affected by the banana→ba''a bug.
+Rerun frontier models (Claude, GPT, Gemini) on rows affected by the banana -> ba''a bug.
 
-The bug was in src/utils.py where literal_eval(x.replace("nan", "''")) corrupted
-"banana" to "ba''a". This script reruns only the affected rows to save cost.
+The bug was in src/utils.py, where literal_eval(x.replace("nan", "''")) corrupted
+"banana" to "ba''a" in the prompts. This script reruns only the affected trials
+to save cost, then verifies against the pre-rerun backup that every affected
+row / session actually changed.
 
-- Batch mode (no_context): reruns individual affected rows (where message contains "banana")
-- Interactive mode (limited_feedback_yoked): reruns full sessions that contain any affected row,
-  since model predictions cascade through the session's feedback history.
+- batch mode (no_context): reruns the individual affected rows (message contains "banana").
+- interactive mode (limited_feedback_yoked): reruns every session containing an
+  affected row, because model predictions cascade through the session's feedback history.
+
+Results are read from and written to data/logprobs/frontier/, the layout used by
+the analysis (01-data_processing.qmd) and by the OSF archive. A missing results
+file is an error, never a skip. The first backup (<results>.bak) is kept as the
+reference copy of the original run and is never overwritten.
 """
 
 import os
 import shutil
-from argparse import ArgumentParser
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Literal, Optional
 
-import anthropic
 import pandas as pd
-from google import genai
-from openai import OpenAI
+import tyro
 from PIL import Image
 from pyprojroot import here
 
+from src.banana_rerun import (
+    BATCH_KEY_COLS,
+    SESSION_COL,
+    RerunReport,
+    affected_rows,
+    affected_sessions,
+    compare_rerun,
+    has_banana,
+)
+from src.clients import setup_client
 from src.interactive import run_interactive_evaluation
 from src.lm import get_logits
 
-BATCH_KEY_COLS = ["gameId", "trialNum", "repNum"]
-INTERACTIVE_SESSION_COL = "workerid"
+__all__ = ["has_banana", "rerun_batch", "rerun_interactive"]
+
+RESULTS_DIR = here("data/logprobs/frontier")
+RAW_RESPONSES_DIR = here("data/raw_responses/frontier")
+BATCH_PREP_PATH = here("context_prep/full_feedback/no_context.csv")
+INTERACTIVE_PREP_PATH = here("context_prep/human_history/limited_feedback_yoked.csv")
+
+RerunMode = Literal["batch", "interactive", "both"]
 
 
-def has_banana(df: pd.DataFrame) -> pd.Series:
-    """Return a boolean mask of rows where 'banana' appears in message or message_history."""
-    in_message = df["message"].str.contains("banana", case=False, na=False)
-    in_history = df["message_history"].str.contains("banana", case=False, na=False)
-    return in_message | in_history
+def results_path_for(model_name: str, prep_path: Path) -> Path:
+    """data/logprobs/frontier/<prep stem>_<model short name>_logprobs.csv"""
+    short_name = model_name.split("/")[-1]
+    path = Path(RESULTS_DIR) / f"{Path(prep_path).stem}_{short_name}_logprobs.csv"
+    if not path.exists():
+        raise FileNotFoundError(
+            f"No existing results at {path}. Download the frontier results from OSF "
+            "into data/logprobs/frontier/ before rerunning."
+        )
+    return path
 
 
-def setup_client(api_base: str):
-    """Set up the API client based on the api_base URL. Returns (client, use_responses_api, use_anthropic_api)."""
-    if "google" in api_base:
-        client = genai.Client(api_key=os.getenv("COCOLAB_GEMINI_API_KEY"))
-        return client, False, False
-    elif "anthropic" in api_base:
-        client = anthropic.Anthropic()
-        return client, False, True
+def backup_results(results_path: Path) -> Path:
+    """Back up the results file, keeping an existing .bak as the original reference."""
+    backup_path = Path(f"{results_path}.bak")
+    if backup_path.exists():
+        print(f"  Keeping existing backup {backup_path} (original run) as the reference")
     else:
-        client = OpenAI(base_url=api_base)
-        use_responses_api = "openai.com" in api_base
-        return client, use_responses_api, False
+        shutil.copy2(results_path, backup_path)
+        print(f"  Backed up results to {backup_path}")
+    return backup_path
+
+
+def raw_responses_path_for(results_path: Path, n_samples: Optional[int]) -> Optional[str]:
+    if not n_samples:
+        return None
+    os.makedirs(RAW_RESPONSES_DIR, exist_ok=True)
+    return str(Path(RAW_RESPONSES_DIR) / f"{results_path.stem}_banana_rerun.json")
+
+
+def verify_and_save(
+    report: RerunReport, df_merged: pd.DataFrame, df_results: pd.DataFrame, results_path: Path
+) -> None:
+    """Fail loudly if the merge changed the row count or the rerun is incomplete."""
+    if len(df_merged) != len(df_results):
+        raise RuntimeError(
+            f"Row count mismatch after merge: {len(df_merged)} vs {len(df_results)}"
+        )
+    print(report.summary())
+    if not report.complete:
+        raise RuntimeError(
+            "Rerun incomplete: some affected rows/sessions did not change. "
+            "The merged results were NOT saved."
+        )
+    df_merged.to_csv(results_path, index=False)
+    print(f"  Saved updated results to {results_path}")
 
 
 def rerun_batch(
     model_name: str,
     client,
     grid_image,
-    n_samples: int | None,
+    n_samples: Optional[int],
     use_responses_api: bool,
     use_anthropic_api: bool,
     dry_run: bool,
-):
+) -> None:
     """Rerun affected rows in the batch (no_context) condition."""
-    short_name = model_name.split("/")[-1]
-    input_path = here("context_prep/full_feedback/no_context.csv")
-    results_path = here(
-        f"data/logprobs/full_feedback/no_context_{short_name}_logprobs.csv"
-    )
-
-    if not os.path.exists(results_path):
-        print(f"  No existing results at {results_path}, skipping batch mode.")
-        return
-
-    df_input = pd.read_csv(input_path)
+    results_path = results_path_for(model_name, BATCH_PREP_PATH)
+    df_input = pd.read_csv(BATCH_PREP_PATH)
     df_results = pd.read_csv(results_path)
 
-    # Find affected rows using the input CSV (which has uncorrupted text)
     affected_mask = has_banana(df_input)
-    n_affected = affected_mask.sum()
-    print(f"  Batch (no_context): {n_affected} affected rows out of {len(df_input)}")
-
-    if n_affected == 0:
-        print("  No affected rows, skipping.")
-        return
-
+    print(f"  Batch (no_context): {affected_mask.sum()} affected rows out of {len(df_input)}")
+    if affected_mask.sum() == 0:
+        raise RuntimeError("No affected rows found; nothing to rerun.")
     if dry_run:
-        print("  Affected rows:")
         print(df_input.loc[affected_mask, BATCH_KEY_COLS].to_string(index=False))
         return
 
-    # Back up existing results
-    backup_path = str(results_path) + ".bak"
-    shutil.copy2(results_path, backup_path)
-    print(f"  Backed up results to {backup_path}")
-
-    # Run inference on affected rows
+    backup_path = backup_results(results_path)
     df_subset = df_input.loc[affected_mask].copy().reset_index(drop=True)
-
-    checkpoint_path = str(results_path) + ".banana_rerun.checkpoint"
-
-    raw_responses_path = None
-    if n_samples:
-        raw_responses_path = (
-            str(results_path)
-            .replace("data/logprobs", "data/raw_responses")
-            .replace(".csv", "_banana_rerun.json")
-        )
-        os.makedirs(os.path.dirname(raw_responses_path), exist_ok=True)
-
     df_new = get_logits(
         df_subset,
         model_name,
@@ -111,96 +129,49 @@ def rerun_batch(
         grid_image,
         include_image=True,
         n_samples=n_samples,
-        raw_responses_path=raw_responses_path,
+        raw_responses_path=raw_responses_path_for(results_path, n_samples),
         use_responses_api=use_responses_api,
         use_anthropic_api=use_anthropic_api,
-        checkpoint_path=checkpoint_path,
+        checkpoint_path=f"{results_path}.banana_rerun.checkpoint",
     )
 
-    # Merge new results back into existing results
-    # Create a key for matching
-    df_results["_key"] = df_results[BATCH_KEY_COLS].astype(str).agg("_".join, axis=1)
-    df_new["_key"] = df_new[BATCH_KEY_COLS].astype(str).agg("_".join, axis=1)
+    # Replace the affected rows, matching on the trial key rather than position.
+    key = lambda df: df[BATCH_KEY_COLS].astype(str).agg("_".join, axis=1)
+    df_kept = df_results[~key(df_results).isin(set(key(df_new)))]
+    df_merged = pd.concat([df_kept, df_new], ignore_index=True)
 
-    # Replace affected rows
-    affected_keys = set(df_new["_key"])
-    df_kept = df_results[~df_results["_key"].isin(affected_keys)]
-    df_merged = pd.concat([df_kept, df_new], ignore_index=True).drop(columns=["_key"])
-
-    assert len(df_merged) == len(df_results), (
-        f"Row count mismatch: {len(df_merged)} vs {len(df_results)}"
-    )
-
-    df_merged.to_csv(results_path, index=False)
-    print(f"  Saved updated results to {results_path}")
+    report = compare_rerun(df_input, df_merged, pd.read_csv(backup_path), mode="batch")
+    verify_and_save(report, df_merged, df_results, results_path)
 
 
 def rerun_interactive(
     model_name: str,
     client,
     grid_image,
-    n_samples: int | None,
+    n_samples: Optional[int],
     use_responses_api: bool,
     use_anthropic_api: bool,
     dry_run: bool,
-):
+) -> None:
     """Rerun affected sessions in the interactive (limited_feedback_yoked) condition."""
-    short_name = model_name.split("/")[-1]
-    input_path = here("context_prep/human_history/limited_feedback_yoked.csv")
-    results_path = here(
-        f"data/logprobs/interactive/limited_feedback_yoked_{short_name}_logprobs.csv"
-    )
-
-    if not os.path.exists(results_path):
-        print(f"  No existing results at {results_path}, skipping interactive mode.")
-        return
-
-    df_input = pd.read_csv(input_path)
+    results_path = results_path_for(model_name, INTERACTIVE_PREP_PATH)
+    df_input = pd.read_csv(INTERACTIVE_PREP_PATH)
     df_results = pd.read_csv(results_path)
 
-    # Find affected sessions: any session where any row has banana
-    affected_mask = has_banana(df_input)
-    affected_sessions = df_input.loc[affected_mask, INTERACTIVE_SESSION_COL].unique()
-    n_sessions = len(affected_sessions)
-    session_rows = df_input[
-        df_input[INTERACTIVE_SESSION_COL].isin(affected_sessions)
-    ].shape[0]
+    sessions = affected_sessions(df_input)
+    session_mask = df_input[SESSION_COL].isin(sessions)
     print(
-        f"  Interactive (limited_feedback_yoked): {n_sessions} affected sessions, "
-        f"{session_rows} rows to rerun out of {len(df_input)}"
+        f"  Interactive (limited_feedback_yoked): {len(sessions)} affected sessions, "
+        f"{session_mask.sum()} rows to rerun out of {len(df_input)}"
     )
-
-    if n_sessions == 0:
-        print("  No affected sessions, skipping.")
-        return
-
+    if not sessions:
+        raise RuntimeError("No affected sessions found; nothing to rerun.")
     if dry_run:
-        print(f"  Affected sessions: {list(affected_sessions)}")
+        print(f"  Affected sessions: {sorted(sessions)}")
         return
 
-    # Back up existing results
-    backup_path = str(results_path) + ".bak"
-    shutil.copy2(results_path, backup_path)
-    print(f"  Backed up results to {backup_path}")
-
-    # Filter input to affected sessions only
-    df_subset = (
-        df_input[df_input[INTERACTIVE_SESSION_COL].isin(affected_sessions)]
-        .copy()
-        .reset_index(drop=True)
-    )
-
-    checkpoint_path = str(results_path) + ".banana_rerun.checkpoint"
-
-    raw_responses_path = None
-    if n_samples:
-        raw_responses_path = (
-            str(results_path)
-            .replace("data/logprobs", "data/raw_responses")
-            .replace(".csv", "_banana_rerun.json")
-        )
-        os.makedirs(os.path.dirname(raw_responses_path), exist_ok=True)
-
+    backup_path = backup_results(results_path)
+    df_subset = df_input.loc[session_mask].copy().reset_index(drop=True)
     df_new = run_interactive_evaluation(
         df_subset,
         model_name,
@@ -208,72 +179,55 @@ def rerun_interactive(
         grid_image,
         include_image=True,
         n_samples=n_samples,
-        raw_responses_path=raw_responses_path,
+        raw_responses_path=raw_responses_path_for(results_path, n_samples),
         use_responses_api=use_responses_api,
         use_anthropic_api=use_anthropic_api,
-        checkpoint_path=checkpoint_path,
+        checkpoint_path=f"{results_path}.banana_rerun.checkpoint",
     )
 
-    # Merge new results back into existing results, replacing affected sessions
-    df_kept = df_results[~df_results[INTERACTIVE_SESSION_COL].isin(affected_sessions)]
+    df_kept = df_results[~df_results[SESSION_COL].astype(str).isin({str(s) for s in sessions})]
     df_merged = pd.concat([df_kept, df_new], ignore_index=True)
 
-    assert len(df_merged) == len(df_results), (
-        f"Row count mismatch: {len(df_merged)} vs {len(df_results)}"
+    report = compare_rerun(
+        df_input, df_merged, pd.read_csv(backup_path), mode="interactive"
     )
+    verify_and_save(report, df_merged, df_results, results_path)
 
-    df_merged.to_csv(results_path, index=False)
-    print(f"  Saved updated results to {results_path}")
+
+@dataclass
+class Args:
+    model_name: str
+    """Frontier model name, e.g. gemini-3-flash-preview, gpt-5.2, claude-sonnet-4-6."""
+
+    api_base: str
+    """API base URL; selects the client (google / anthropic / openai)."""
+
+    mode: RerunMode = "both"
+    """Which condition(s) to rerun: batch (no_context), interactive (limited_feedback_yoked), or both."""
+
+    grid_image_path: Path = Path("data/compiled_grid.png")
+
+    n_samples: Optional[int] = None
+    """Resample N times instead of using logprobs (frontier models use 10)."""
+
+    dry_run: bool = False
+    """Print the affected rows / sessions without calling any API."""
+
+
+def main(args: Args) -> None:
+    grid_image = Image.open(here(str(args.grid_image_path)))
+    client, use_responses_api, use_anthropic_api = setup_client(args.api_base)
+    print(f"Model: {args.model_name}\nMode: {args.mode}\nDry run: {args.dry_run}\n")
+
+    common = (args.model_name, client, grid_image, args.n_samples,
+              use_responses_api, use_anthropic_api, args.dry_run)
+    if args.mode in ("batch", "both"):
+        print("=== Batch mode (no_context) ===")
+        rerun_batch(*common)
+    if args.mode in ("interactive", "both"):
+        print("\n=== Interactive mode (limited_feedback_yoked) ===")
+        rerun_interactive(*common)
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(description="Rerun frontier models on banana-affected rows")
-    parser.add_argument("--model_name", type=str, required=True)
-    parser.add_argument("--api_base", type=str, required=True)
-    parser.add_argument(
-        "--grid_image_path",
-        type=str,
-        default="data/compiled_grid.png",
-    )
-    parser.add_argument(
-        "--n_samples",
-        type=int,
-        default=None,
-        help="Resample N times instead of using logprobs",
-    )
-    parser.add_argument(
-        "--dry_run",
-        action="store_true",
-        help="Print affected rows/sessions without running inference",
-    )
-    args = parser.parse_args()
-
-    grid_image = Image.open(here(args.grid_image_path))
-    client, use_responses_api, use_anthropic_api = setup_client(args.api_base)
-
-    print(f"Model: {args.model_name}")
-    print(f"Dry run: {args.dry_run}")
-    print()
-
-    # print("=== Batch mode (no_context) ===")
-    # rerun_batch(
-    #     args.model_name,
-    #     client,
-    #     grid_image,
-    #     args.n_samples,
-    #     use_responses_api,
-    #     use_anthropic_api,
-    #     args.dry_run,
-    # )
-
-    print()
-    print("=== Interactive mode (limited_feedback_yoked) ===")
-    rerun_interactive(
-        args.model_name,
-        client,
-        grid_image,
-        args.n_samples,
-        use_responses_api,
-        use_anthropic_api,
-        args.dry_run,
-    )
+    main(tyro.cli(Args, use_underscores=True))
