@@ -12,6 +12,11 @@ library(jsonlite)
 source(here("analysis_scripts", "logprobs.R"))
 
 OUTPUT_LOC <- here("outputs")
+
+# The human data CSVs fetched below are ~15 MB each. R's default internet
+# timeout is 60 seconds, which a slow connection can exceed, producing
+# "cannot read from connection". Allow up to 10 minutes per download.
+options(timeout = 600)
 ```
 
 # Load human data
@@ -139,7 +144,7 @@ random_human <- human_selections_new |>
 ```
 
 # Load model data
-```{r eval=F}
+```{r eval=Sys.getenv("REBUILD_FULL_LOGPROBS") == "true"}
 # Only real result files. The pattern excludes the .bak backups and checkpoint
 # files left by the banana rerun, which are valid CSVs and would otherwise be
 # loaded as duplicate (pre-fix) datasets.
@@ -155,13 +160,16 @@ saveRDS(full_logprobs, here(OUTPUT_LOC, "full_logprobs.rds"))
 ```
 
 ```{r}
-# Refuse to run on a stale cache: the rds must be newer than every logprob file.
+# Refuse to run on a stale cache: the rds must be newer than its data and code.
 rds_path <- here(OUTPUT_LOC, "full_logprobs.rds")
 result_files <- list.files(here("data", "logprobs"), recursive = TRUE, full.names = TRUE,
                            pattern = "_logprobs(_no_image)?\\.csv$")
-newer_than_rds <- result_files[file.mtime(result_files) > file.mtime(rds_path)]
+cache_dependencies <- c(result_files, here("analysis_scripts", "logprobs.R"))
+newer_than_rds <- cache_dependencies[
+  file.mtime(cache_dependencies) > file.mtime(rds_path)
+]
 if (length(newer_than_rds) > 0) {
-  stop(length(newer_than_rds), " logprob file(s) are newer than full_logprobs.rds ",
+  stop(length(newer_than_rds), " input file(s) are newer than full_logprobs.rds ",
        "(built ", format(file.mtime(rds_path)), "). Rebuild it with the chunk above. ",
        "Newest: ", basename(newer_than_rds[which.max(file.mtime(newer_than_rds))]))
 }
@@ -409,5 +417,3 @@ frontier_summary <- frontier_data |>
 
 saveRDS(frontier_summary, here(OUTPUT_LOC, "frontier_summary.rds"))
 ```
-
-

@@ -104,9 +104,28 @@ logprobs_to_long <- function(logprobs, normalise = TRUE) {
   logprobs_combined
 }
 
+restore_backward_original_indices <- function(logprobs, condition_name,
+                                              original_indices_were_provided) {
+  if (condition_name == "backward" && !original_indices_were_provided) {
+    return(logprobs |>
+      mutate(
+        orig_trialNum = 71 - orig_trialNum,
+        orig_repNum = 5 - orig_repNum
+      ))
+  }
+
+  logprobs
+}
+
 load_logprobs <- function(file_name, normalise = TRUE) {
-  logprobs <- read_csv(here("data", "logprobs", file_name), show_col_types = FALSE) |>
-    logprobs_to_long(normalise)
+  raw_logprobs <- read_csv(
+    here("data", "logprobs", file_name),
+    show_col_types = FALSE
+  )
+  original_indices_were_provided <- all(
+    c("orig_trialNum", "orig_repNum") %in% colnames(raw_logprobs)
+  )
+  logprobs <- logprobs_to_long(raw_logprobs, normalise)
 
   condition_name <- file_name |>
     str_replace(".*/", "") |>
@@ -119,13 +138,11 @@ load_logprobs <- function(file_name, normalise = TRUE) {
   if (condition_name %in% c("r1", "r6")) {
     condition_name <- str_c(condition_name, " practice")
   }
-  if (condition_name == "backward") {
-    logprobs <- logprobs |>
-      mutate(
-        orig_trialNum = 71 - orig_trialNum,
-        orig_repNum = 5 - orig_repNum
-      )
-  }
+  logprobs <- restore_backward_original_indices(
+    logprobs,
+    condition_name,
+    original_indices_were_provided
+  )
 
   model_name <- file_name |>
     str_extract("(?<=_)([A-Za-z0-9.-]+)(?=_logprobs)")

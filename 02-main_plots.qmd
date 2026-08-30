@@ -12,6 +12,7 @@ library(patchwork)
 library(ggview)
 
 source(here("analysis_scripts", "plot_helpers.R"))
+source(here("analysis_scripts", "table_helpers.R"))
 
 OUTPUT_LOC <- here("outputs")
 FIG_LOC <- here("figs")
@@ -28,28 +29,28 @@ frontier_summary <- readRDS(here(OUTPUT_LOC, "frontier_summary.rds"))
 
 # Main feedback plot
 ```{r}
-p_interactive <- full_combined |> 
+p_interactive <- full_combined |>
   filter(feedback == "limited interactive" | is.na(feedback),
          image == "image" | is.na(image),
-         condition %in% c("yoked", "backward", "shuffled", "random")) |> 
+         condition %in% c("yoked", "backward", "shuffled", "random")) |>
   make_accuracy_plot() +
   ggtitle("Interactive limited feedback")
 ```
 
 ```{r}
-p_humanyoked <- full_combined |> 
+p_humanyoked <- full_combined |>
   filter(feedback == "limited human-yoked" | is.na(feedback),
          image == "image" | is.na(image),
-         condition %in% c("yoked", "backward", "shuffled", "random")) |> 
+         condition %in% c("yoked", "backward", "shuffled", "random")) |>
   make_accuracy_plot() +
   ggtitle("Human-yoked limited feedback")
 ```
 
 ```{r}
-p_fullfeedback <- full_combined |> 
+p_fullfeedback <- full_combined |>
   filter(feedback == "full" | is.na(feedback),
          image == "image" | is.na(image),
-         condition %in% c("yoked", "backward", "shuffled", "random")) |> 
+         condition %in% c("yoked", "backward", "shuffled", "random")) |>
   make_accuracy_plot() +
   ggtitle("Full feedback")
 ```
@@ -62,39 +63,39 @@ p_feedback <- (p_interactive | p_humanyoked | p_fullfeedback) +
   theme(legend.position = "bottom",
         plot.title = element_text(size = 13, face = "italic"))
 
-(p_feedback + 
-  canvas(width = 800, height = 400, 
-         scale = 4, units = "px")) |> 
+(p_feedback +
+  canvas(width = 800, height = 400,
+         scale = 4, units = "px")) |>
   save_ggplot(here(FIG_LOC, "feedback.png"))
 ```
 
 # Non-cumulative contexts
 ```{r}
-p_noncumulative <- full_combined |> 
+p_noncumulative <- full_combined |>
   filter(feedback == "full" | is.na(feedback),
          image == "image" | is.na(image),
-         condition %in% c("other-within", "other-across", "ablated", "no context")) |> 
+         condition %in% c("other-within", "other-across", "ablated", "no context")) |>
   make_accuracy_plot() +
   COL_SCALE_NOLIM +
   coord_cartesian(ylim = c(0, 1)) +
   ggtitle("Full feedback") +
   theme(plot.title = element_text(size = 13, face = "italic"))
 
-(p_noncumulative + 
+(p_noncumulative +
   canvas(width = 380, height = 300,
-         scale = 4, units = "px")) |> 
+         scale = 4, units = "px")) |>
   save_ggplot(here(FIG_LOC, "noncumulative.png"))
 ```
 
 # Learning
 ```{r}
-p_learning <- all_acc |> 
+p_learning <- all_acc |>
   filter(!is.na(prev_accuracy),
-         condition %in% c("yoked", "backward", "shuffled", "random")) |> 
+         condition %in% c("yoked", "backward", "shuffled", "random")) |>
   mutate(target_repNum = target_repNum + 1,
-         prev_accuracy = ifelse(prev_accuracy == 1, 
-                                "Prev correct", "Prev incorrect")) |> 
-  ggplot(aes(x = target_repNum, y = accuracy, 
+         prev_accuracy = ifelse(prev_accuracy == 1,
+                                "Prev correct", "Prev incorrect")) |>
+  ggplot(aes(x = target_repNum, y = accuracy,
              col = type)) +
   geom_hline(yintercept = 1 / 12, lty = "dashed") +
   stat_summary(
@@ -123,25 +124,25 @@ p_learning <- all_acc |>
   ggtitle("Interactive limited feedback") +
   theme(plot.title = element_text(size = 13, face = "italic"))
 
-(p_learning + 
+(p_learning +
   canvas(width = 700, height = 320,
-         scale = 4, units = "px")) |> 
+         scale = 4, units = "px")) |>
   save_ggplot(here(FIG_LOC, "learning.png"))
 ```
 
 # Image vs no image
 ```{r}
-full_image_wide <- full_combined |> 
-  rename(image_type = image) |> 
-  select(-file_name) |> 
-  filter(feedback == "full") |> 
+full_image_wide <- full_combined |>
+  rename(image_type = image) |>
+  select(-file_name) |>
+  filter(feedback == "full") |>
   pivot_wider(names_from = image_type,
-              values_from = accuracy) |> 
+              values_from = accuracy) |>
   mutate(accuracy = image - `no image`)
 ```
 
 ```{r}
-p_noimg_diff <- full_image_wide |> 
+p_noimg_diff <- full_image_wide |>
   make_accuracy_plot(ref_level = 0) +
   COL_SCALE_NOLIM +
   labs(y = "Accuracy difference (image–text − text-only)") +
@@ -149,109 +150,118 @@ p_noimg_diff <- full_image_wide |>
   ggtitle("Full feedback") +
   theme(plot.title = element_text(size = 13, face = "italic"))
 
-(p_noimg_diff + 
+(p_noimg_diff +
     canvas(width = 600, height = 320,
-           scale = 4, units = "px")) |> 
+           scale = 4, units = "px")) |>
   save_ggplot(here(FIG_LOC, "noimg_diff.png"))
 ```
 
 # Human--model correlations
 ```{r}
-yoked_data <- full_combined |> 
+yoked_data <- full_combined |>
   filter(condition == "yoked",
          feedback == "limited interactive" | is.na(feedback),
          image == "image" | is.na(image),
-         !str_starts(type, "human_")) |> 
-  left_join(full_combined |> 
+         !str_starts(type, "human_")) |>
+  left_join(full_combined |>
               filter(condition == "yoked",
-                     type == "human_naive") |> 
-              rename(orig_acc = accuracy) |> 
-              select(-condition, -matcher_trialNum, -matcher_repNum, 
+                     type == "human_naive") |>
+              rename(orig_acc = accuracy) |>
+              select(-condition, -matcher_trialNum, -matcher_repNum,
                      -message_length, -context_length, -type),
-            by = join_by(gameId, orig_trialNum, orig_repNum, target)) |> 
+            by = join_by(gameId, orig_trialNum, orig_repNum, target)) |>
   mutate(repnum = orig_repNum + 1,
          condition = "yoked")
 
-backward_data <- full_combined |> 
+backward_data <- full_combined |>
   filter(condition == "backward",
          feedback == "limited interactive" | is.na(feedback),
          image == "image" | is.na(image),
-         !str_starts(type, "human_")) |> 
-  left_join(full_combined |> 
+         !str_starts(type, "human_")) |>
+  left_join(full_combined |>
               filter(condition == "backward",
-                     type == "human_naive") |> 
-              rename(orig_acc = accuracy) |> 
-              select(-condition, -matcher_trialNum, -matcher_repNum, 
+                     type == "human_naive") |>
+              rename(orig_acc = accuracy) |>
+              select(-condition, -matcher_trialNum, -matcher_repNum,
                      -message_length, -context_length, -type),
-            by = join_by(gameId, orig_trialNum, orig_repNum, target)) |> 
+            by = join_by(gameId, orig_trialNum, orig_repNum, target)) |>
   mutate(repnum = orig_repNum + 1,
          condition = "backward")
 
-shuffled_data <- full_combined |> 
+if (anyNA(backward_data$orig_acc)) {
+  stop(
+    sum(is.na(backward_data$orig_acc)),
+    " backward model rows did not match human trials. ",
+    "Rebuild full_logprobs.rds and rerun 01-data_processing.qmd.",
+    call. = FALSE
+  )
+}
+
+shuffled_data <- full_combined |>
   filter(condition == "shuffled",
          feedback == "limited interactive" | is.na(feedback),
          image == "image" | is.na(image),
-         !str_starts(type, "human_")) |> 
-  left_join(full_combined |> 
+         !str_starts(type, "human_")) |>
+  left_join(full_combined |>
               filter(condition == "shuffled",
-                     type == "human_naive") |> 
-              rename(orig_acc = accuracy) |> 
+                     type == "human_naive") |>
+              rename(orig_acc = accuracy) |>
               select(-condition, -message_length, -context_length, -type),
-            by = join_by(gameId, runId, orig_trialNum, orig_repNum, 
-                         matcher_trialNum, matcher_repNum, target)) |> 
-  mutate(repnum = orig_repNum + 1) |> 
+            by = join_by(gameId, runId, orig_trialNum, orig_repNum,
+                         matcher_trialNum, matcher_repNum, target)) |>
+  mutate(repnum = orig_repNum + 1) |>
   group_by(gameId, orig_trialNum, orig_repNum, type) |>
   summarise(
     accuracy = mean(accuracy),
     orig_acc = mean(orig_acc),
     .groups = "drop"
-  ) |> 
+  ) |>
   mutate(condition = "shuffled")
 
-random_data <- full_combined |> 
+random_data <- full_combined |>
   filter(condition == "random",
          feedback == "limited interactive" | is.na(feedback),
          image == "image" | is.na(image),
-         !str_starts(type, "human_")) |> 
-  left_join(full_combined |> 
+         !str_starts(type, "human_")) |>
+  left_join(full_combined |>
               filter(condition == "random",
-                     type == "human_naive") |> 
-              rename(orig_acc = accuracy) |> 
+                     type == "human_naive") |>
+              rename(orig_acc = accuracy) |>
               select(-condition, -message_length, -context_length, -type),
-            by = join_by(gameId, runId, orig_trialNum, orig_repNum, 
-                         matcher_trialNum, matcher_repNum, target)) |> 
-  mutate(repnum = orig_repNum + 1) |> 
+            by = join_by(gameId, runId, orig_trialNum, orig_repNum,
+                         matcher_trialNum, matcher_repNum, target)) |>
+  mutate(repnum = orig_repNum + 1) |>
   group_by(gameId, orig_trialNum, orig_repNum, type) |>
   summarise(
     accuracy = mean(accuracy),
     orig_acc = mean(orig_acc),
     .groups = "drop"
-  ) |> 
+  ) |>
   mutate(condition = "random")
 
-comparison_data <- bind_rows(yoked_data, backward_data, shuffled_data, random_data) |> 
+comparison_data <- bind_rows(yoked_data, backward_data, shuffled_data, random_data) |>
   mutate(type = fct_drop(type),
          condition = factor(condition, levels = c("yoked", "backward", "shuffled", "random")))
 ```
 
 Correlations
 ```{r}
-comparison_cors <- comparison_data |> 
-  group_by(type, condition, gameId, orig_trialNum) |> 
+comparison_cors <- comparison_data |>
+  group_by(type, condition, gameId, orig_trialNum) |>
   summarise(
     accuracy = mean(accuracy),
     orig_acc = mean(orig_acc),
     .groups = "drop"
   ) |>
-  group_by(type, condition) |> 
+  group_by(type, condition) |>
   summarise(
     correlation = cor(orig_acc, accuracy, use = "pairwise.complete.obs"),
     spearman = cor(orig_acc, accuracy, method = "spearman", use = "pairwise.complete.obs"),
     .groups = "drop"
   )
 
-cor_text <- comparison_cors |> 
-  group_by(condition) |> 
+cor_text <- comparison_cors |>
+  group_by(condition) |>
   summarise(
     cor_text = glue(
     'plain(\"model \") * italic(r) %in% \"[{min(correlation) |> strip_zero()}, ',
@@ -261,35 +271,35 @@ cor_text <- comparison_cors |>
 
 Human split-half
 ```{r}
-workers <- all_human |> 
+workers <- all_human |>
   distinct(workerid)
 
 sh_cors <- map(1:1000, \(i) {
   set.seed(i)
-  
-  workers_split <- workers |> 
+
+  workers_split <- workers |>
     mutate(split = sample(1:2, n(), replace = TRUE))
-  
-  sh_split <- all_human |> 
+
+  sh_split <- all_human |>
     left_join(workers_split, by = "workerid") |>
-    group_by(condition, split, gameId, orig_trialNum, orig_repNum, 
+    group_by(condition, split, gameId, orig_trialNum, orig_repNum,
              correct_tangram) |>
     summarise(accuracy = mean(correct),
               .groups = "drop") |>
     pivot_wider(names_from = split, values_from = accuracy, names_prefix = "split_") |>
     filter(!is.na(split_1) & !is.na(split_2)) |>
-    group_by(condition) |> 
+    group_by(condition) |>
     summarise(
       cor = cor(split_1, split_2, use = "pairwise.complete.obs"),
       spearman = cor(split_1, split_2, method = "spearman", use = "pairwise.complete.obs"),
       .groups = "drop"
-    ) |> 
+    ) |>
     mutate(split = i)
   sh_split
 }) |> list_rbind()
 
-sh_cors_sum <- sh_cors |> 
-  group_by(condition) |> 
+sh_cors_sum <- sh_cors |>
+  group_by(condition) |>
   summarise(
     mean_cor = mean(cor),
     sd_cor = sd(cor),
@@ -299,12 +309,12 @@ sh_cors_sum <- sh_cors |>
     .groups = "drop"
   )
 
-sh_sum_text <- sh_cors_sum |> 
+sh_sum_text <- sh_cors_sum |>
   mutate(
     sh_text = glue(
       'plain(\"human \") * italic(r) == \"{mean_cor |> strip_zero()} ',
       '[{ci_lower |> strip_zero()}, {ci_upper |> strip_zero()}]\"')
-  ) |> 
+  ) |>
   select(condition, sh_text)
 ```
 
@@ -312,13 +322,20 @@ sh_sum_text <- sh_cors_sum |>
 full_cor_text <- cor_text |> 
   left_join(sh_sum_text, by = join_by(condition)) |> 
   mutate(cor_text = glue("atop({cor_text}, {sh_text})")) |> 
-  mutate(condition = factor(condition, 
+  mutate(condition = factor(condition,
                             levels = c("yoked", "backward", "shuffled", "random")))
+```
+
+# Table 2
+```{r results='asis', echo=FALSE}
+table2_latex <- format_table2_latex(comparison_cors, sh_cors_sum)
+
+cat("```latex\n", table2_latex, "\n```\n", sep = "")
 ```
 
 Plot
 ```{r}
-p_comparison <- comparison_data |> 
+p_comparison <- comparison_data |>
   ggplot(aes(x = orig_acc, y = accuracy, col = type)) +
   geom_abline(slope = 1, intercept = 0, lty = "dashed") +
   geom_point(alpha = .06) +
@@ -337,9 +354,9 @@ p_comparison <- comparison_data |>
         legend.box.spacing = unit(0.5, "pt"),
         plot.title = element_text(size = 13, face = "italic"))
 
-(p_comparison + 
+(p_comparison +
     canvas(width = 800, height = 280,
-           scale = 4, units = "px")) |> 
+           scale = 4, units = "px")) |>
   save_ggplot(here(FIG_LOC, "comparison.png"))
 ```
 
@@ -358,10 +375,10 @@ p_comparison <- comparison_data |>
 
 # Frontier models
 ```{r}
-p_frontier <- full_combined |> 
+p_frontier <- full_combined |>
   filter(feedback == "frontier" | is.na(feedback),
          image == "image" | is.na(image),
-         condition %in% c("yoked", "no context")) |> 
+         condition %in% c("yoked", "no context")) |>
   make_accuracy_plot(repnum_type = "original") +
   COL_SCALE_FRONTIER +
   facet_wrap(~ condition, ncol = 2,
@@ -372,15 +389,15 @@ p_frontier <- full_combined |>
   theme(plot.title = element_text(size = 13, face = "italic"),
         legend.position = "bottom")
 
-(p_frontier + 
+(p_frontier +
   canvas(width = 450, height = 300,
-         scale = 4, units = "px")) |> 
+         scale = 4, units = "px")) |>
   save_ggplot(here(FIG_LOC, "frontier.png"))
 ```
 
 ```{r}
-p_invalid <- frontier_summary |> 
-  mutate(accuracy = n_invalid / 10) |> 
+p_invalid <- frontier_summary |>
+  mutate(accuracy = n_invalid / 10) |>
   make_accuracy_plot(repnum_type = "original", ref_level = -10) +
   COL_SCALE_FRONTIER_NOLIM +
   facet_wrap(~ condition, ncol = 2,
@@ -392,35 +409,35 @@ p_invalid <- frontier_summary |>
   theme(plot.title = element_text(size = 13, face = "italic"),
         legend.position = "bottom")
 
-(p_invalid + 
+(p_invalid +
   canvas(width = 450, height = 280,
-         scale = 4, units = "px")) |> 
+         scale = 4, units = "px")) |>
   save_ggplot(here(FIG_LOC, "invalid.png"))
 ```
 
 
 # Original order
 ```{r}
-p_original <- full_combined |> 
+p_original <- full_combined |>
   filter(feedback == "full" | is.na(feedback),
          image == "image" | is.na(image),
-         condition %in% c("shuffled", "backward", "random", "no context")) |> 
+         condition %in% c("shuffled", "backward", "random", "no context")) |>
   make_accuracy_plot(repnum_type = "original") +
   COL_SCALE_NOLIM +
   ggtitle("Full feedback") +
   theme(plot.title = element_text(size = 13, face = "italic"))
 
-(p_original + 
+(p_original +
   canvas(width = 380, height = 300,
-         scale = 4, units = "px")) |> 
+         scale = 4, units = "px")) |>
   save_ggplot(here(FIG_LOC, "original.png"))
 ```
 
 # Item-wise variation
 ```{r}
-p_items <- full_combined |> 
+p_items <- full_combined |>
   filter(feedback == "limited interactive" | is.na(feedback),
-         image == "image" | is.na(image)) |> 
+         image == "image" | is.na(image)) |>
   mutate(target = fct_reorder(target, accuracy, .na_rm = TRUE)) |>
   ggplot(aes(x = target, y = accuracy, col = type)) +
   geom_hline(yintercept = 1 / 12, lty = "dashed") +
@@ -429,7 +446,7 @@ p_items <- full_combined |>
       fun = mean, geom = "point", alpha = .2,
       position = position_jitter(width = .2)
     ) +
-  stat_summary(fun.data = mean_cl_boot, 
+  stat_summary(fun.data = mean_cl_boot,
                geom = "pointrange", size = .4,
                position = position_dodge(width = .2)) +
   facet_wrap(~condition, nrow = 2,
@@ -441,20 +458,20 @@ p_items <- full_combined |>
 
 (p_items +
     canvas(width = 420, height = 300,
-         scale = 4, units = "px")) |> 
+         scale = 4, units = "px")) |>
   save_ggplot(here(FIG_LOC, "items.png"))
 ```
 
 # Confusion matrices
 ```{r}
-p_rsa <- mat_conf_rsa_long |> 
+p_rsa <- mat_conf_rsa_long |>
   mutate(type = case_when(
            type == "model_gemma" ~ "Gemma 3",
            type == "model_qwen" ~ "Qwen 3 VL",
            type == "model_llama" ~ "Llama 3.2",
            type == "model_molmo" ~ "Molmo 2",
            type == "model_kimi" ~ "Kimi VL"
-         ) |> factor(levels = c("Qwen 3 VL", "Gemma 3", "Llama 3.2", 
+         ) |> factor(levels = c("Qwen 3 VL", "Gemma 3", "Llama 3.2",
                                 "Molmo 2", "Kimi VL"))) |>
   ggplot(aes(x = condition2, y = condition1, fill = cor)) +
   geom_tile() +
@@ -467,14 +484,14 @@ p_rsa <- mat_conf_rsa_long |>
 
 (p_rsa +
     canvas(width = 1000, height = 290,
-         scale = 4, units = "px")) |> 
+         scale = 4, units = "px")) |>
   save_ggplot(here(FIG_LOC, "rsa.png"))
 ```
 
-# Practice 
+# Practice
 ```{r}
-p_practice <- full_combined |> 
-  filter(str_detect(condition, "practice")) |> 
+p_practice <- full_combined |>
+  filter(str_detect(condition, "practice")) |>
   make_accuracy_plot() +
   COL_SCALE_NOLIM +
   facet_wrap(~ condition, ncol = 2,
@@ -483,12 +500,12 @@ p_practice <- full_combined |>
 ```
 
 ```{r}
-p_persev <- persev_full |> 
+p_persev <- persev_full |>
   rename(accuracy = is_same,
-         matcher_trialNum = matcher_trialNum.x) |> 
-  mutate(type = factor(type, 
-                       levels = c("model_qwen", "model_gemma", 
-                                  "model_llama", "model_molmo", "model_kimi"))) |> 
+         matcher_trialNum = matcher_trialNum.x) |>
+  mutate(type = factor(type,
+                       levels = c("model_qwen", "model_gemma",
+                                  "model_llama", "model_molmo", "model_kimi"))) |>
   make_accuracy_plot() +
   COL_SCALE_NOLIM +
   facet_wrap(~ condition, ncol = 2,
@@ -503,12 +520,11 @@ p_prac_pers <- (p_practice / p_persev) +
   plot_layout(guides = "collect") +
   plot_annotation(tag_levels = "A",
                   title = "Interactive limited feedback",
-                  theme = theme(plot.title = 
+                  theme = theme(plot.title =
                                   element_text(size = 13, face = "italic")))
 
-(p_prac_pers + 
+(p_prac_pers +
   canvas(width = 450, height = 400,
-         scale = 4, units = "px")) |> 
+         scale = 4, units = "px")) |>
   save_ggplot(here(FIG_LOC, "practice.png"))
 ```
-
